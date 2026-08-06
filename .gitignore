@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+
+# Video gốc quá lớn (28GB+) — không đưa lên git/hosting, chỉ cần transcript đã trích
+data/raw_videos/
+data/video_uploads/

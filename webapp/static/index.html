@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Nano Shark Content OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --sidebar-bg: #16261c;
+    --sidebar-text: #b8c4bb;
+    --sidebar-text-active: #ffffff;
+    --accent: #2f8f5e;
+    --accent-light: #e6f5ec;
+    --bg: #f5f5f2;
+    --card-bg: #ffffff;
+    --border: #e3e2dc;
+    --text-primary: #1c1c1a;
+    --text-secondary: #6b6a63;
+    --text-muted: #9a9990;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    display: flex;
+    min-height: 100vh;
+  }
+  #sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 20px 14px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  #sidebar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding: 0 6px;
+  }
+  #sidebar .brand .logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700;
+  }
+  #sidebar .brand .titles { line-height: 1.2; }
+  #sidebar .brand .titles .t1 { font-weight: 600; color: white; font-size: 14px; }
+  #sidebar .brand .titles .t2 { font-size: 11px; color: var(--sidebar-text); }
+  .nav-group-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #6f7d73; margin: 18px 8px 6px;
+  }
+  .nav-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; border-radius: 8px; cursor: pointer;
+    font-size: 13.5px; margin-bottom: 2px;
+  }
+  .nav-item:hover { background: #1f3327; }
+  .nav-item.active { background: var(--accent); color: white; }
+  .nav-item .badge {
+    font-size: 10px; background: #2a3a30; color: #8fa093;
+    padding: 2px 6px; border-radius: 10px;
+  }
+  .nav-item.disabled { opacity: 0.5; cursor: default; }
+  .nav-item.disabled:hover { background: transparent; }
+
+  #main { flex: 1; padding: 24px 32px; min-width: 0; }
+  #stat-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .stat-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-card .value { font-size: 24px; font-weight: 700; margin-top: 4px; }
+
+  .page-title { font-size: 20px; font-weight: 600; margin: 4px 0 4px; display: flex; align-items: center; gap: 8px; }
+  .page-sub { color: var(--text-secondary); font-size: 13px; margin-bottom: 18px; }
+
+  .card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .card h3 { margin: 0 0 10px; font-size: 14.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11.5px; text-transform: uppercase;
+       border-bottom: 1px solid var(--border); padding: 6px 8px; }
+  td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 900px) { .grid-2, .grid-4 { grid-template-columns: 1fr; } }
+
+  .pill {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 12px;
+    background: var(--accent-light); color: var(--accent); font-weight: 600;
+  }
+  .pill.gray { background: #eee; color: #777; }
+  .pill.score { background: #fff4e0; color: #a5690a; }
+
+  .idea-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .idea-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .idea-card .name { font-weight: 600; font-size: 14px; }
+  .idea-card .hook { color: var(--text-secondary); font-size: 12.5px; margin: 6px 0; font-style: italic; }
+  .idea-card .meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+
+  button.toggle-btn {
+    border: 1px solid var(--border); background: white; border-radius: 8px;
+    padding: 6px 12px; font-size: 12.5px; cursor: pointer;
+  }
+  button.toggle-btn.done { background: var(--accent); color: white; border-color: var(--accent); }
+
+  select.status-select {
+    border: 1px solid var(--border); border-radius: 6px; font-size: 12px; padding: 3px 6px;
+  }
+
+  .bar-row { margin-bottom: 12px; }
+  .bar-row .bar-label { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px; }
+  .bar-track { background: #eee; border-radius: 6px; height: 8px; overflow: hidden; }
+  .bar-fill { background: var(--accent); height: 100%; }
+
+  .empty-state { color: var(--text-muted); font-size: 13px; padding: 20px 0; text-align: center; }
+
+  pre.script-detail {
+    white-space: pre-wrap; font-family: -apple-system, sans-serif; font-size: 13px;
+    line-height: 1.6; max-height: 70vh; overflow-y: auto;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none;
+    align-items: center; justify-content: center; z-index: 50;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: white; border-radius: 12px; padding: 20px 24px; width: min(700px, 90vw);
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal-close { float: right; cursor: pointer; color: var(--text-muted); font-size: 20px; }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="brand">
+    <div class="logo">NS</div>
+    <div class="titles">
+      <div class="t1">Nano Shark Content OS</div>
+      <div class="t2">Nano Premium Shark Cartilage</div>
+    </div>
+  </div>
+
+  <div class="nav-group-label">Tổng quan</div>
+  <div class="nav-item" data-page="goal">Não Marketing</div>
+  <div class="nav-item" data-page="research">Research</div>
+  <div class="nav-item" data-page="voc">Tiếng nói khách hàng</div>
+  <div class="nav-item" data-page="belief">Belief Map</div>
+
+  <div class="nav-group-label">Sản xuất nội dung</div>
+  <div class="nav-item" data-page="insights">Ngân hàng Insight</div>
+  <div class="nav-item" data-page="ideas">Ý tưởng hôm nay</div>
+  <div class="nav-item" data-page="portfolio">Cân đối danh mục</div>
+  <div class="nav-item" data-page="contentmap">Bản đồ nội dung</div>
+  <div class="nav-item" data-page="ideation">Kiến tạo 1.000 video</div>
+
+  <div class="nav-group-label">Vận hành</div>
+  <div class="nav-item" data-page="upload">Upload video</div>
+  <div class="nav-item" data-page="queue">Hàng đợi video</div>
+  <div class="nav-item" data-page="ads">Ads Autopilot</div>
+
+  <div class="nav-group-label">&nbsp;</div>
+  <a class="nav-item" href="/logout" style="display:block; text-decoration:none; color:inherit;">Đăng xuất</a>
+</div>
+
+<div id="main">
+  <div id="stat-row"></div>
+  <div id="content"></div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const content = document.getElementById('content');
+const navItems = document.querySelectorAll('.nav-item[data-page]');
+
+navItems.forEach(el => el.addEventListener('click', () => loadPage(el.dataset.page)));
+
+async function loadOverview() {
+  const res = await fetch('/api/overview');
+  const d = await res.json();
+  const row = document.getElementById('stat-row');
+  row.innerHTML = `
+    <div class="stat-card"><div class="label">Research</div><div class="value">${d.research_records}</div></div>
+    <div class="stat-card"><div class="label">Voice of Customer</div><div class="value">${d.voice_of_customer_insights}</div></div>
+    <div class="stat-card"><div class="label">Insight ưu tiên</div><div class="value">${d.priority_insights}</div></div>
+    <div class="stat-card"><div class="label">Kịch bản</div><div class="value">${d.scripts}</div></div>
+    <div class="stat-card"><div class="label">Ads đã sync</div><div class="value">${d.ads_synced ? '✅' : '—'}</div></div>
+  `;
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function mdInline(text) {
+  // Chuyển markdown inline đơn giản (bold/italic/link) sang HTML, escape trước để tránh XSS.
+  let s = escapeHtml(text || '');
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  return s;
+}
+
+function setActive(page) {
+  navItems.forEach(el => el.classList.toggle('active', el.dataset.page === page));
+}
+
+async function loadPage(page) {
+  setActive(page);
+  content.innerHTML = '<div class="empty-state">Đang tải…</div>';
+  if (page === 'research') return renderResearch();
+  if (page === 'voc') return renderVoC();
+  if (page === 'insights') return renderInsights();
+  if (page === 'ideas') return renderIdeas();
+  if (page === 'portfolio') return renderPortfolio();
+  if (page === 'goal') return renderGoal();
+  if (page === 'belief') return renderBeliefMap();
+  if (page === 'contentmap') return renderContentMap();
+  if (page === 'ideation') return renderIdeation();
+  if (page === 'upload') return renderUpload();
+  if (page === 'queue') return renderQueue();
+  if (page === 'ads') return renderAdsAutopilot();
+}
+
+async function renderResearch() {
+  const res = await fetch('/api/research');
+  const d = await res.json();
+  let typeRows = Object.entries(d.by_source_type).map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  let platRows = Object.entries(d.by_platform).sort((a,b)=>b[1]-a[1]).map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  content.innerHTML = `
+    <div class="page-title">🔎 Research</div>
+    <div class="page-sub">Dữ liệu thô thu thập từ Google, YouTube, Facebook Group công khai (data/raw_research.json)</div>
+    <div class="grid-2">
+      <div class="card"><h3>Theo loại nguồn (${d.total} bản ghi)</h3><table><tr><th>Loại</th><th>Số lượng</th></tr>${typeRows || '<tr><td colspan=2 class="empty-state">Chưa có dữ liệu — chạy <code>agent research</code></td></tr>'}</table></div>
+      <div class="card"><h3>Theo nền tảng</h3><table><tr><th>Nền tảng</th><th>Số lượng</th></tr>${platRows || ''}</table></div>
+    </div>
+  `;
+}
+
+async function renderVoC() {
+  const res = await fetch('/api/voice-of-customer');
+  const sections = await res.json();
+  if (!sections.length) { content.innerHTML = emptyMsg('Chưa có data/voice_of_customer.md — chạy `agent synthesize`'); return; }
+  let html = `<div class="page-title">💬 Tiếng nói khách hàng</div><div class="page-sub">6 nhóm insight tổng hợp từ dữ liệu research thật, mỗi dòng có trích dẫn nguồn</div><div class="grid-2">`;
+  sections.forEach(s => {
+    const rows = s.rows.map(r => `<tr><td>${mdInline(r['Insight'] || '')}</td></tr>`).join('');
+    html += `<div class="card"><h3>${s.title}</h3><table>${rows || '<tr><td class="empty-state">Không có</td></tr>'}</table></div>`;
+  });
+  html += `</div>`;
+  content.innerHTML = html;
+}
+
+async function renderInsights() {
+  const res = await fetch('/api/insights');
+  const rows = await res.json();
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có data/priority_insights.md — chạy `agent filter-insights`'); return; }
+  let html = `<div class="page-title">🏦 Ngân hàng Insight</div><div class="page-sub">${rows.length} insight đã chấm điểm (tần suất + cường độ cảm xúc). Đổi trạng thái để tự theo dõi tiến độ khai thác.</div>`;
+  rows.forEach(r => {
+    html += `
+    <div class="card">
+      <div class="top-row" style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <span class="pill score">#${r.num} · ${r.total}</span>
+          <div style="font-weight:600; margin-top:6px;">${mdInline(r.insight)}</div>
+        </div>
+        <select class="status-select" onchange="setInsightStatus('${r.num}', this.value)">
+          ${['Mới','Đang dùng','Đã khai thác','Vắt kiệt'].map(s => `<option ${s===r.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div style="color:var(--text-secondary); font-size:12.5px; margin-top:8px;">${mdInline(r.reason)}</div>
+    </div>`;
+  });
+  content.innerHTML = html;
+}
+
+async function setInsightStatus(num, status) {
+  await fetch(`/api/insights/${num}/status`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({status})
+  });
+}
+
+async function renderIdeas() {
+  const res = await fetch('/api/ideas-today');
+  const rows = await res.json();
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có kịch bản — chạy `agent write-scripts`'); return; }
+  let html = `<div class="page-title">💡 Ý tưởng hôm nay</div><div class="page-sub">10 kịch bản đã viết, sắp theo điểm số. Bấm "Xem kịch bản" để đọc chi tiết, tick khi đã quay xong.</div>`;
+  rows.forEach(r => {
+    html += `
+    <div class="idea-card">
+      <div class="top-row">
+        <div>
+          <span class="pill score">${r.score || '—'}/40</span>
+          <span class="pill gray">${r.pillar}</span>
+          <div class="name">#${r.script_id} — ${mdInline(r.name)}</div>
+          <div class="hook">${mdInline(r.hook)}</div>
+          <div style="font-size:12px; color:var(--text-muted);">${mdInline(r.insight)}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+          <button class="toggle-btn" onclick="viewScript('${r.script_id}')">Xem kịch bản</button>
+          <button class="toggle-btn ${r.quay_xong ? 'done' : ''}" onclick="toggleQuay('${r.script_id}', this)">${r.quay_xong ? '✅ Đã quay' : '○ Chưa quay'}</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  content.innerHTML = html;
+}
+
+async function toggleQuay(scriptId, btn) {
+  const res = await fetch(`/api/ideas-today/${scriptId}/toggle-quay`, {method:'POST'});
+  const d = await res.json();
+  btn.textContent = d.quay_xong ? '✅ Đã quay' : '○ Chưa quay';
+  btn.classList.toggle('done', d.quay_xong);
+}
+
+async function viewScript(scriptId) {
+  const res = await fetch(`/api/scripts/${scriptId}`);
+  const d = await res.json();
+  document.getElementById('modal-body').innerHTML = `<pre class="script-detail"></pre>`;
+  document.querySelector('#modal-body pre').textContent = d.content;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+async function renderPortfolio() {
+  const res = await fetch('/api/portfolio');
+  const rows = await res.json();
+  let html = `<div class="page-title">📊 Cân đối danh mục nội dung</div><div class="page-sub">Phân bố 10 kịch bản theo 4 nhóm mục tiêu nhận thức (Pain & Insight / Education / Belief Shift / Proof)</div><div class="card">`;
+  rows.forEach(r => {
+    html += `
+    <div class="bar-row">
+      <div class="bar-label"><span>${r.pillar}</span><span>${r.count} kịch bản (${r.pct}%)</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${r.pct}%"></div></div>
+    </div>`;
+  });
+  html += `</div>`;
+  content.innerHTML = html;
+}
+
+function emptyMsg(msg) { return `<div class="card empty-state">${msg}</div>`; }
+
+// --- 1. Não Marketing ------------------------------------------------------
+
+async function renderGoal() {
+  const res = await fetch('/api/goal');
+  const d = await res.json();
+  content.innerHTML = `
+    <div class="page-title">🎯 Não Marketing — Business Goal</div>
+    <div class="page-sub">Nhập mục tiêu kinh doanh hiện tại, AI (Claude Haiku, chi phí thấp) sẽ gợi ý 10 chủ đề video bám sát mục tiêu + insight ưu tiên đã có.</div>
+    <div class="card">
+      <textarea id="goal-input" rows="4" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:13.5px;">${escapeHtml(d.goal)}</textarea>
+      <div style="margin-top:10px; display:flex; gap:8px;">
+        <button class="toggle-btn" onclick="saveGoal()">💾 Lưu goal</button>
+        <button class="toggle-btn done" id="run-engine-btn" onclick="runObjectiveEngine()">⚡ Chạy Objective Engine (10 ý)</button>
+      </div>
+    </div>
+    <div class="card" id="goal-ideas-card">
+      <h3>Ý tưởng đã sinh</h3>
+      <div id="goal-ideas-list">${renderGoalIdeas(d.ideas)}</div>
+    </div>
+  `;
+}
+function renderGoalIdeas(ideas) {
+  if (!ideas || !ideas.length) return '<div class="empty-state">Chưa có — bấm "Chạy Objective Engine"</div>';
+  return '<ol>' + ideas.map(i => `<li style="margin-bottom:6px;">${mdInline(i)}</li>`).join('') + '</ol>';
+}
+async function saveGoal() {
+  const goal = document.getElementById('goal-input').value;
+  await fetch('/api/goal', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({goal})});
+}
+async function runObjectiveEngine() {
+  await saveGoal();
+  const btn = document.getElementById('run-engine-btn');
+  btn.textContent = 'Đang chạy…'; btn.disabled = true;
+  const res = await fetch('/api/objective-engine', {method:'POST'});
+  const d = await res.json();
+  btn.textContent = '⚡ Chạy Objective Engine (10 ý)'; btn.disabled = false;
+  if (!d.ok) { document.getElementById('goal-ideas-list').innerHTML = `<div class="empty-state">Lỗi: ${escapeHtml(d.error)}</div>`; return; }
+  document.getElementById('goal-ideas-list').innerHTML = renderGoalIdeas(d.ideas);
+}
+
+// --- 3. Belief Map ----------------------------------------------------------
+
+async function renderBeliefMap() {
+  const res = await fetch('/api/belief-map');
+  const groups = await res.json();
+  const colors = {'ĐANG TIN':'#2f8f5e', 'HIỂU SAI':'#c0392b', 'NGHI NGỜ':'#b7791f', 'NGĂN MUA':'#6b46c1'};
+  let html = `<div class="page-title">🧭 Customer Belief Map</div><div class="page-sub">Remap từ 6 nhóm trong Tiếng nói khách hàng — khách đang TIN / HIỂU SAI / NGHI NGỜ / bị NGĂN MUA điều gì</div><div class="grid-2">`;
+  groups.forEach(g => {
+    const items = g.items.slice(0, 8).map(i => `<li style="margin-bottom:6px; font-size:12.5px;">${mdInline(i)}</li>`).join('');
+    html += `<div class="card"><h3 style="color:${colors[g.bucket]||'#333'}">${g.bucket} (${g.items.length})</h3><ul style="padding-left:18px; margin:0;">${items || '<li class="empty-state">Không có</li>'}</ul></div>`;
+  });
+  html += `</div>`;
+  content.innerHTML = html;
+}
+
+// --- 7. Bản đồ nội dung ------------------------------------------------------
+
+async function renderContentMap() {
+  const res = await fetch('/api/content-map');
+  const rows = await res.json();
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có insight — chạy `agent filter-insights`'); return; }
+  let html = `<div class="page-title">🗺️ Bản đồ nội dung</div><div class="page-sub">Mỗi insight ưu tiên → những kịch bản đã khai thác insight đó</div>`;
+  rows.forEach(r => {
+    const scripts = r.scripts.map(s => `<span class="pill">#${s.script_id} ${mdInline(s.name)}</span>`).join(' ');
+    html += `<div class="card"><div style="font-weight:600;">#${r.num} — ${mdInline(r.insight)} <span class="pill score">${r.total}</span></div><div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">${scripts || '<span class="empty-state">Chưa có kịch bản nào khai thác insight này</span>'}</div></div>`;
+  });
+  content.innerHTML = html;
+}
+
+// --- 6. Kiến tạo 1.000 video --------------------------------------------------
+
+async function renderIdeation() {
+  const res = await fetch('/api/insights');
+  const rows = await res.json();
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có insight — chạy `agent filter-insights`'); return; }
+  let html = `<div class="page-title">🌱 Kiến tạo 1.000 video</div><div class="page-sub">Mỗi insight → bấm "Bung 10 góc nhìn" để AI (Haiku) sinh 10 ý tưởng góc tiếp cận khác nhau. Kết quả được cache lại, không sinh lại trừ khi xóa file data/web_state.json.</div>`;
+  rows.forEach(r => {
+    html += `
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div style="font-weight:600;">#${r.num} — ${mdInline(r.insight)}</div>
+        <button class="toggle-btn" onclick="expandAngles('${r.num}', this)">🔀 Bung 10 góc nhìn</button>
+      </div>
+      <div id="angles-${r.num}" style="margin-top:8px;"></div>
+    </div>`;
+  });
+  content.innerHTML = html;
+}
+async function expandAngles(num, btn) {
+  btn.textContent = 'Đang sinh…'; btn.disabled = true;
+  const res = await fetch(`/api/insights/${num}/expand-angles`, {method:'POST'});
+  const d = await res.json();
+  btn.textContent = '🔀 Bung 10 góc nhìn'; btn.disabled = false;
+  const target = document.getElementById(`angles-${num}`);
+  if (!d.ok) { target.innerHTML = `<div class="empty-state">Lỗi: ${escapeHtml(d.error)}</div>`; return; }
+  target.innerHTML = '<ol style="padding-left:18px; font-size:12.5px;">' + d.angles.map(a => `<li style="margin-bottom:4px;">${mdInline(a)}</li>`).join('') + '</ol>' +
+    (d.cached ? '<div style="font-size:11px; color:var(--text-muted);">(lấy từ cache)</div>' : '');
+}
+
+// --- 10. Upload video ---------------------------------------------------------
+
+async function renderUpload() {
+  content.innerHTML = `
+    <div class="page-title">⬆️ Upload video</div>
+    <div class="page-sub">Chỉ lưu file vào <code>data/video_uploads/</code> — <strong>chưa có auto-edit thật</strong> (cắt/dựng tự động). Video vẫn cần bạn tự edit trước hoặc sau khi upload.</div>
+    <div class="card">
+      <input type="file" id="video-file-input" accept="video/*" />
+      <button class="toggle-btn done" onclick="uploadVideo()">Upload</button>
+      <div id="upload-status" style="margin-top:8px; font-size:12.5px; color:var(--text-secondary);"></div>
+    </div>
+  `;
+}
+async function uploadVideo() {
+  const input = document.getElementById('video-file-input');
+  if (!input.files.length) return;
+  const fd = new FormData();
+  fd.append('file', input.files[0]);
+  document.getElementById('upload-status').textContent = 'Đang tải lên…';
+  const res = await fetch('/api/video-upload', {method:'POST', body: fd});
+  const d = await res.json();
+  document.getElementById('upload-status').textContent = d.ok ? `✅ Đã lưu ${d.filename} — xem ở "Hàng đợi video"` : `Lỗi: ${d.error}`;
+}
+
+// --- 11. Hàng đợi video ---------------------------------------------------------
+
+async function renderQueue() {
+  const res = await fetch('/api/video-queue');
+  const rows = await res.json();
+  let html = `<div class="page-title">🎬 Hàng đợi video</div><div class="page-sub">Theo dõi thủ công — tick khi bạn đã tự đăng video lên từng kênh. <strong>Không tự động đăng</strong> (chưa kết nối OAuth từng nền tảng).</div>`;
+  if (!rows.length) { content.innerHTML = html + emptyMsg('Chưa có video nào — vào "Upload video" để thêm'); return; }
+  rows.forEach(r => {
+    const platBtns = Object.entries(r.platforms).map(([p, done]) =>
+      `<button class="toggle-btn ${done?'done':''}" style="font-size:11px; padding:4px 8px;" onclick="togglePublish('${encodeURIComponent(r.filename)}','${p}', this)">${done?'✅':'○'} ${p}</button>`
+    ).join(' ');
+    html += `<div class="card"><div style="font-weight:600;">${r.filename}</div><div style="color:var(--text-muted); font-size:12px;">${r.size_mb} MB</div><div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">${platBtns}</div></div>`;
+  });
+  content.innerHTML = html;
+}
+async function togglePublish(filename, platform, btn) {
+  const res = await fetch(`/api/video-queue/${filename}/${encodeURIComponent(platform)}/toggle`, {method:'POST'});
+  const d = await res.json();
+  btn.classList.toggle('done', d.status);
+  btn.textContent = (d.status ? '✅ ' : '○ ') + platform;
+}
+
+// --- 12. Ads Autopilot ---------------------------------------------------------
+
+async function renderAdsAutopilot() {
+  const res = await fetch('/api/ads-autopilot');
+  const rows = await res.json();
+  let html = `<div class="page-title">🚀 Ads Autopilot</div><div class="page-sub">Báo cáo từ số liệu thật (agent sync-facebook). Chỉ <strong>đề xuất</strong> tạm dừng khi CPL vượt ngưỡng — không tự động bật/tắt chi tiêu quảng cáo thật, mọi quyết định chi tiền cần bạn xác nhận trên Ads Manager.</div>`;
+  if (!rows.length) { content.innerHTML = html + emptyMsg('Chưa có số liệu — chạy `agent sync-facebook`'); return; }
+  let table = `<table><tr><th>Script</th><th>Hook</th><th>Chi phí</th><th>Đơn</th><th>CPL</th><th>Đề xuất</th></tr>`;
+  rows.forEach(r => {
+    table += `<tr style="${r.suggest_pause ? 'background:#fdeceb;' : ''}">
+      <td>${r.script_id || '—'}</td>
+      <td>${mdInline(r.hook_summary)}</td>
+      <td>${r.cost}</td>
+      <td>${r.conversions}</td>
+      <td>${r.cpl !== null ? r.cpl.toLocaleString('vi-VN') + 'đ' : '—'}</td>
+      <td>${r.suggest_pause ? '<span class="pill" style="background:#fdeceb; color:#c0392b;">⚠ Cân nhắc tạm dừng</span>' : '<span class="pill">Ổn</span>'}</td>
+    </tr>`;
+  });
+  table += `</table>`;
+  content.innerHTML = html + `<div class="card">${table}</div>`;
+}
+
+loadOverview();
+loadPage('research');
+</script>
+</body>
+</html>

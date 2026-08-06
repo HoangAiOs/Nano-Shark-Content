@@ -1,0 +1,8 @@
+claude-agent-sdk
+python-dotenv
+httpx
+anthropic
+python-multipart
+itsdangerous
+uvicorn
+starlette

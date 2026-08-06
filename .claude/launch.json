@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nano-shark-webapp",
+      "runtimeExecutable": "/Users/hoangdz888/Hoang Ai Os/agents/nano-shark-content-agent/run_webapp.sh",
+      "runtimeArgs": [],
+      "port": 8811
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: nano-shark-content-os
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m webapp.main
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: APP_USERNAME
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FB_APP_ID
+        sync: false
+      - key: FB_APP_SECRET
+        sync: false
+      - key: FB_PAGE_ID
+        sync: false
+      - key: FB_PAGE_ACCESS_TOKEN
+        sync: false
+      - key: FB_AD_ACCOUNT_ID
+        sync: false
+      - key: FB_USER_ACCESS_TOKEN
+        sync: false
