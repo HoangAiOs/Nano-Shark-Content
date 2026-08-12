@@ -19,6 +19,9 @@
 | 09 | Nghi ngờ trên mạng, rồi theo dõi cả năm mới đánh liều mua | 7 | 7 | 6 | 6 | **26/40** |
 | 10 | Vợ mua giúp chồng | 8 | 9 | 7 | 8 | **32/40** |
 | 11 | Chưa đau không có nghĩa là chưa sao | 6 | 10 | 6 | 6 | **28/40** |
+| 12 | Uống canxi 5 năm rồi mà khớp vẫn đau | 7 | 8 | 7 | 6 | **28/40** |
+| 13 | 30 phút mỗi ngày — điều đơn giản nhất mà ít ai làm đều | 5 | 7 | 6 | 5 | **23/40** |
+| 14 | Cùng uống glucosamine, người hiệu quả người không | 7 | 8 | 7 | 6 | **28/40** |
 
 ## Top 5 kịch bản được chọn
 

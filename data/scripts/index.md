@@ -1,9 +1,11 @@
-# Danh mục 11 kịch bản video quảng cáo Facebook — Nano Premium Shark Cartilage
+# Danh mục 14 kịch bản video quảng cáo Facebook — Nano Premium Shark Cartilage
 
-> Dựa trên 8 insight ưu tiên (`data/priority_insights.md`), tổng hợp từ 69 bản ghi thật
-> (21 video khách hàng + 48 video BS Sơn). Mỗi kịch bản có trích dẫn nguyên văn kèm tên
-> khách + tháng/năm để dùng làm bằng chứng thật khi dàn dựng. Kịch bản #11 (cập nhật
-> 13/08/2026) là kịch bản đầu tiên nhắm nhóm phòng ngừa (chưa có triệu chứng rõ).
+> Dựa trên 8 insight ưu tiên (`data/priority_insights.md`) + hệ thống Content Pillars
+> (`data/content_pillars.md`), tổng hợp từ 69 bản ghi thật (21 video khách hàng + 48
+> video BS Sơn). Mỗi kịch bản có trích dẫn nguyên văn kèm tên khách + tháng/năm để dùng
+> làm bằng chứng thật khi dàn dựng. Kịch bản #11-14 (cập nhật 13/08/2026) là nhóm kịch
+> bản giáo dục/phòng ngừa mới — nhắm nhóm khách hàng chưa có triệu chứng rõ hoặc đang
+> hiểu lầm về sản phẩm, khác với #1-10 vốn nhắm nhóm đã đau và đang tìm giải pháp.
 
 | # | Tên kịch bản | Insight chính | Hook (rút gọn) | File |
 |---|---|---|---|---|
@@ -18,6 +20,9 @@
 | 09 | Nghi ngờ trên mạng, rồi theo dõi cả năm mới đánh liều mua | #2 + #5 kết hợp | "Tôi cũng như cô chú thôi — thấy quảng cáo trên mạng là nghi liền." | [script_09.md](script_09.md) |
 | 10 | Vợ mua giúp chồng | #4 + #6 kết hợp (góc nhìn mua hộ) | "Chồng tôi không bao giờ than đau..." | [script_10.md](script_10.md) |
 | 11 | Chưa đau không có nghĩa là chưa sao | #8 Tổn thương âm thầm (mới) | "Sự thật ít ai biết: sụn khớp của anh chị có thể đang mòn ngay lúc này..." | [script_11.md](script_11.md) |
+| 12 | Uống canxi 5 năm rồi mà khớp vẫn đau | Hiểu lầm canxi ≠ sụn (mới) | "Uống canxi bao nhiêu năm nay rồi, nhưng khớp vẫn đau..." | [script_12.md](script_12.md) |
+| 13 | 30 phút mỗi ngày — điều đơn giản nhất mà ít ai làm đều | Lối sống/phòng ngừa (mới) | "Có một việc miễn phí, ai cũng làm được, nhưng lại rất ít người đau khớp chịu làm đều..." | [script_13.md](script_13.md) |
+| 14 | Cùng uống glucosamine, người hiệu quả người không | Hiểu lầm chất lượng glucosamine (mới) | "Hai người cùng uống glucosamine, một người thấy đỡ hẳn, một người uống mãi chẳng thấy gì..." | [script_14.md](script_14.md) |
 
 **Lưu ý bắt buộc áp dụng cho cả 10 kịch bản:**
 - Câu công dụng chỉ được nói đúng: *"Bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp"* — không cam kết "chữa khỏi".

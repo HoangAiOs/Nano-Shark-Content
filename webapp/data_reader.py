@@ -35,6 +35,9 @@ SCRIPT_PILLAR = {
     "09": "Proof",  # Nghi ngờ trên mạng, theo dõi cả năm mới đánh liều mua
     "10": "Pain & Insight",  # Vợ mua giúp chồng
     "11": "Education",  # Chưa đau không có nghĩa là chưa sao (insight #8, mới 13/08/2026)
+    "12": "Education",  # Uống canxi 5 năm rồi mà khớp vẫn đau (hiểu lầm canxi, mới 13/08/2026)
+    "13": "Education",  # 30 phút mỗi ngày (lối sống/phòng ngừa, mới 13/08/2026)
+    "14": "Education",  # Cùng uống glucosamine (hiểu lầm chất lượng, mới 13/08/2026)
 }
 
 PILLAR_ORDER = ["Pain & Insight", "Education", "Belief Shift", "Proof"]

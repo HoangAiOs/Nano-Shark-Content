@@ -387,7 +387,7 @@ async function renderIdeas() {
   const res = await fetch('/api/ideas-today');
   const rows = await res.json();
   if (!rows.length) { content.innerHTML = emptyMsg('Chưa có kịch bản — chạy `agent write-scripts`'); return; }
-  let html = `<div class="page-title">💡 Ý tưởng hôm nay</div><div class="page-sub">10 kịch bản đã viết, sắp theo điểm số. Bấm "Xem kịch bản" để đọc chi tiết, tick khi đã quay xong.</div>`;
+  let html = `<div class="page-title">💡 Ý tưởng hôm nay</div><div class="page-sub">${rows.length} kịch bản đã viết, sắp theo điểm số. Bấm "Xem kịch bản" để đọc chi tiết, tick khi đã quay xong.</div>`;
   rows.forEach(r => {
     html += `
     <div class="idea-card">
@@ -428,7 +428,7 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 async function renderPortfolio() {
   const res = await fetch('/api/portfolio');
   const rows = await res.json();
-  let html = `<div class="page-title">📊 Cân đối danh mục nội dung</div><div class="page-sub">Phân bố 10 kịch bản theo 4 nhóm mục tiêu nhận thức (Pain & Insight / Education / Belief Shift / Proof)</div><div class="card">`;
+  let html = `<div class="page-title">📊 Cân đối danh mục nội dung</div><div class="page-sub">Phân bố kịch bản theo 4 nhóm mục tiêu nhận thức (Pain & Insight / Education / Belief Shift / Proof)</div><div class="card">`;
   rows.forEach(r => {
     html += `
     <div class="bar-row">
