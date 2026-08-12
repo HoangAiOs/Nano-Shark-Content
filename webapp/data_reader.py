@@ -34,6 +34,7 @@ SCRIPT_PILLAR = {
     "08": "Pain & Insight",  # Đã mổ một lần rồi, bác sĩ lại chỉ định mổ tiếp
     "09": "Proof",  # Nghi ngờ trên mạng, theo dõi cả năm mới đánh liều mua
     "10": "Pain & Insight",  # Vợ mua giúp chồng
+    "11": "Education",  # Chưa đau không có nghĩa là chưa sao (insight #8, mới 13/08/2026)
 }
 
 PILLAR_ORDER = ["Pain & Insight", "Education", "Belief Shift", "Proof"]

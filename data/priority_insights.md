@@ -1,11 +1,13 @@
 # Insight Ưu Tiên — Nano Premium Shark Cartilage
 
-> **Nguồn:** chấm điểm từ `data/voice_of_customer.md`, tổng hợp CHỈ từ 21 video phản
-> hồi khách hàng thật (`real_customer_testimonial`) — không dùng dữ liệu tìm kiếm
-> công khai.
+> **Nguồn:** chấm điểm từ `data/voice_of_customer.md`, tổng hợp từ 69 bản ghi thật
+> (21 video khách hàng gốc + 48 video BS Sơn) — không dùng dữ liệu tìm kiếm công khai.
 >
 > **Cách chấm:** mỗi insight được cho điểm 1–10 ở hai tiêu chí — *tần suất xuất hiện*
 > trong dữ liệu và *cường độ cảm xúc* trong chính lời khách nói. Tổng tối đa 20 điểm.
+>
+> Cập nhật lần 2 (13/08/2026): thêm insight #8 từ loạt video giáo dục BS Sơn, đánh số
+> tiếp theo — không đổi điểm/thứ hạng của 7 insight gốc (vẫn đúng dựa trên 21 testimonial).
 
 ## Bảng tổng hợp
 
@@ -17,6 +19,7 @@
 | 4 | Nỗi đau đến mức tuyệt vọng, bào mòn tinh thần | 5/10 | 10/10 | **15/20** |
 | 5 | Theo dõi nhiều tháng đến cả năm mới dám mua | 7/10 | 6/10 | **13/20** |
 | 6 | Không muốn làm phiền, trở thành gánh nặng cho con cháu | 5/10 | 8/10 | **13/20** |
+| 8 | "Chưa đau" không có nghĩa là "chưa sao" — sụn khớp tổn thương âm thầm không báo trước | 5/10 | 7/10 | **12/20** |
 | 7 | Rào cản giới thiệu là giá, dù đã có bằng chứng sống | 5/10 | 5/10 | **10/20** |
 
 ### Insight #1: Sợ mổ — "còn nước còn tát" trước khi lên bàn mổ
@@ -66,6 +69,14 @@
 - **Tổng điểm:** 13/20
 - **Lý do chọn:** Đánh trúng giá trị văn hoá Việt Nam (không muốn phiền con cháu) — mong muốn ẩn sâu hơn "hết đau" đơn thuần, phù hợp làm angle cảm xúc khác biệt so với quảng cáo chỉ nói về triệu chứng.
 - **Trích dẫn minh họa:** Cô Xong (T4/2026): "Lớn tuổi rồi mình phải làm phiền con cháu" ... "Cô rất là vui... bởi vì cô không cần phải phụ thuộc vào con mình nữa."
+
+### Insight #8: "Chưa đau" không có nghĩa là "chưa sao" — sụn khớp tổn thương âm thầm không báo trước
+- **Mô tả:** Sụn khớp không có dây thần kinh nên không tạo cảm giác đau khi đang bị bào mòn — tổn thương diễn ra âm thầm 10-15 năm trước khi triệu chứng (đau, cứng khớp, kêu lục cục) xuất hiện. Theo mô hình 4 giai đoạn: giai đoạn 1-2 gần như vô cảm (chỉ hơi cứng khớp buổi sáng), tới giai đoạn 3 mới bắt đầu đau rõ — và đây là lúc đa số khách hàng mới tìm đến, khi việc phục hồi đã chậm và tốn thời gian hơn nhiều so với can thiệp sớm.
+- **Điểm tần suất:** 5/10 (xuất hiện tập trung trong loạt video giáo dục BS Sơn, chưa lặp lại nhiều như các insight từ testimonial)
+- **Điểm cường độ cảm xúc:** 7/10 (tạo cảm giác cấp bách/lo lắng kiểu "tôi có thể đang tổn thương mà không biết" — khác kiểu cảm xúc đau khổ trực tiếp của insight #1-4)
+- **Tổng điểm:** 12/20
+- **Lý do chọn:** Đây là insight duy nhất nhắm vào nhóm KHÁCH HÀNG CHƯA ĐAU (phòng ngừa) — tất cả 7 insight còn lại đều giả định người xem ĐÃ đau. Mở ra một pillar nội dung hoàn toàn mới (giáo dục/phòng ngừa) thay vì chỉ giải quyết nỗi đau đã xảy ra, mở rộng phễu sang nhóm khách hàng trẻ hơn/chưa có triệu chứng rõ.
+- **Nguồn:** Video "Sụn khớp không biết kêu" (BS Sơn, 2026) — ẩn dụ "đôi giày da mòn dần mà không biết cho tới khi đi đường xóc mới cảm nhận được".
 
 ### Insight #7: Rào cản giới thiệu là giá, dù đã có bằng chứng sống ngay trước mắt
 - **Mô tả:** Khách hàng đã khỏi bệnh muốn giới thiệu cho người thân/bạn bè, nhưng người được giới thiệu vẫn từ chối vì giá — dù đã tận mắt thấy hiệu quả.

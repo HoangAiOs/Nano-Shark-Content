@@ -1,9 +1,11 @@
 # Voice of Customer — Nano Premium Shark Cartilage
 
-> **Nguồn:** Chỉ dùng 21/21 video phản hồi khách hàng THẬT đã dùng sản phẩm
-> (`data/customer_testimonials/`, transcribe từ Google Drive nội bộ), theo yêu cầu
-> tập trung vào trải nghiệm thật — không dùng dữ liệu tìm kiếm công khai lần này.
+> **Nguồn:** 69 bản ghi thật (`data/raw_research.json`) — 21 video phản hồi khách hàng
+> gốc + 48 video "BS Sơn" (quảng cáo/giáo dục nội bộ, gồm cả testimonial dựng lại và
+> video phá hiểu lầm thuần). Không dùng dữ liệu tìm kiếm công khai (Google/YouTube/Facebook
+> Group đã bị loại bỏ hoàn toàn khỏi research — xem `data/raw_research.json`).
 > Mỗi dòng trích dẫn theo mẫu "[Tên khách], phản hồi tháng [T]/[năm]: câu nói".
+> Cập nhật lần 2 (13/08/2026): bổ sung insight từ loạt video giáo dục/phá hiểu lầm BS Sơn.
 
 ## 1. Câu hỏi thường gặp
 
@@ -35,6 +37,11 @@
 | Ngộ nhận: tiêm giảm đau = chữa khỏi | Cô Xong, phản hồi T4/2026: "Cô chích cô vô... về đau nó là nó bớt liền luôn... trong 5 ngày, là bắt đầu trong 5 ngày nó đau lại như cũ" |
 | Ngộ nhận: đau khớp chỉ là bệnh của người già, 30 tuổi chưa cần lo | Cô Mai (Quyên), phản hồi T4/2026: "Năm cô 30 tuổi ngoài 30 tí ấy thì cũng đã có hiện tượng đau rồi... cái năm mà 30 là ra, ngồi xổm, cô đã không ngồi được rồi" — bà năm nay 66 tuổi vẫn bị từ tuổi 30 |
 | Ngộ nhận: mổ là giải pháp chắc chắn khỏi | Bác Tĩnh, phản hồi T8/2025: "Bà bảo cứu mổ, 50-50 thì bác sợ cho bà mổ được đâu" — Chị Liên: "Mổ là 50-50, là cũng sợ nữa" |
+| Ngộ nhận: uống canxi là đủ để hết đau khớp | Video "Uống Canxi và khớp vẫn đau" (BS Sơn, 2026): đau khớp do thiếu sụn/dịch khớp, không chỉ thiếu canxi — nhiều khách hàng uống canxi nhiều năm mà khớp vẫn đau |
+| Ngộ nhận: ăn chân giò, sụn heo là đủ collagen bồi bổ khớp | Video "Ăn chân giò có đủ collagen cho khớp" (BS Sơn, 2026): collagen từ thực phẩm khó hấp thu trực tiếp vào khớp, khác cơ chế hấp thu dạng nano |
+| Ngộ nhận: khớp kêu lục cục/lụp cụp là chuyện bình thường của tuổi già, chưa đau thì chưa cần lo | Video "Vì sao khớp kêu lụp cụp" + "Sụn khớp không biết kêu" (BS Sơn, 2026): là dấu hiệu thiếu dịch bôi trơn; sụn khớp không có dây thần kinh nên không báo đau — tổn thương âm thầm 10-15 năm trước khi có triệu chứng, tới giai đoạn 3/4 mới đau rõ (đa số khách tìm đến ở giai đoạn này, phục hồi chậm hơn) |
+| Ngộ nhận: sản phẩm nhiều thành phần dễ gây đầy bụng, khó hấp thu | Video "Sụn cá mập nhiều thành phần có gây đầy bụng" (BS Sơn, 2026): công nghệ nano giúp hấp thu 80-90%, không tồn dư gây đầy bụng như lo ngại thường gặp |
+| Ngộ nhận: cùng là glucosamine thì uống loại nào cũng hiệu quả như nhau | Video "Cùng uống glucosamine người hiệu quả người không" (BS Sơn, 2026): khác biệt về nguồn gốc nguyên liệu + công nghệ hấp thu (nano hay không) tạo ra kết quả rất khác nhau dù cùng ghi "glucosamine" trên nhãn |
 
 ## 4. Nỗi lo lớn nhất
 
@@ -59,6 +66,7 @@
 | Làm được việc đơn giản đã mất khả năng (chải đầu, mặc áo, ngồi xổm) | Cô Chính, phản hồi T5/2026: "Chải đầu được rồi", "tự mặc áo với tự chải tóc được rồi" (trước đó do viêm khớp vai không mặc áo/chải đầu được) |
 | Duy trì đi tập thể dục/aerobic như trước khi bệnh | Chị Xuyên, 2024: "Buổi sáng em phải đi tập aerobic kìa" (sau khi đỡ đau) |
 | Khỏi bệnh mà không hại dạ dày như thuốc tây | Chị Hà, phản hồi T6/2026: "Chị uống cái của em được an toàn lành tính" (không đau bao tử như thuốc tây) |
+| Hết cứng khớp, ngồi xuống/đứng lên bình thường trở lại | Cô Lan, Đồng Nai (video "Sụn khớp không biết kêu", BS Sơn 2026): thoái hóa khớp, "ngồi xuống cũng không được" → sau 4 hộp giảm 70-100%, "ngồi xuống được", hết lục cục, không tác dụng phụ |
 
 ## 6. Niềm tin hiện có
 

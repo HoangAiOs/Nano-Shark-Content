@@ -18,6 +18,7 @@
 | 08 | Đã mổ một lần rồi, bác sĩ lại chỉ định mổ tiếp | 8 | 6 | 7 | 7 | **28/40** |
 | 09 | Nghi ngờ trên mạng, rồi theo dõi cả năm mới đánh liều mua | 7 | 7 | 6 | 6 | **26/40** |
 | 10 | Vợ mua giúp chồng | 8 | 9 | 7 | 8 | **32/40** |
+| 11 | Chưa đau không có nghĩa là chưa sao | 6 | 10 | 6 | 6 | **28/40** |
 
 ## Top 5 kịch bản được chọn
 
