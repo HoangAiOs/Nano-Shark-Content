@@ -81,22 +81,84 @@ def read_overview() -> dict:
     ad_perf_path = DATA_DIR / "ad_performance.csv"
     ads_synced = ad_perf_path.exists() and ad_perf_path.stat().st_size > 0
 
+    bank_tables = parse_md_tables(_read(DATA_DIR / "insight_bank.md"))
+    bank_count = sum(len(t) for t in bank_tables)
+
+    pillars_count = len(re.findall(r"^## Pillar \d+:", _read(DATA_DIR / "content_pillars.md"), re.MULTILINE))
+    pillar_tables = parse_md_tables(_read(DATA_DIR / "content_pillars.md"))
+    topics_count = sum(len(t) for t in pillar_tables)
+
     return {
         "research_records": research_count,
         "voice_of_customer_insights": voc_count,
         "priority_insights": insights_count,
         "scripts": scripts_count,
         "ads_synced": ads_synced,
+        "insight_bank": bank_count,
+        "content_pillars": pillars_count,
+        "content_topics": topics_count,
     }
 
 
 def read_voice_of_customer() -> list[dict]:
-    text = _read(DATA_DIR / "voice_of_customer.md")
+    return _read_grouped_sections(DATA_DIR / "voice_of_customer.md")
+
+
+def _read_grouped_sections(path: Path) -> list[dict]:
+    text = _read(path)
     if not text:
         return []
     sections = re.split(r"^## (\d+\.\s*.+)$", text, flags=re.MULTILINE)
     out: list[dict] = []
     # sections[0] is preamble; then alternating title, body
+    for idx in range(1, len(sections), 2):
+        title = sections[idx].strip()
+        body = sections[idx + 1] if idx + 1 < len(sections) else ""
+        tables = parse_md_tables(body)
+        rows = tables[0] if tables else []
+        out.append({"title": title, "rows": rows})
+    return out
+
+
+def read_insight_bank() -> list[dict]:
+    """180 insight (câu hỏi/nỗi đau/nỗi sợ/mong muốn/hiểu lầm/lý do chưa hành động)."""
+    return _read_grouped_sections(DATA_DIR / "insight_bank.md")
+
+
+def read_content_pillars() -> list[dict]:
+    """10 pillar, mỗi pillar có mục đích + insight nguồn + bảng 10 chủ đề."""
+    text = _read(DATA_DIR / "content_pillars.md")
+    if not text:
+        return []
+    sections = re.split(r"^## (Pillar \d+: .+)$", text, flags=re.MULTILINE)
+    out: list[dict] = []
+    for idx in range(1, len(sections), 2):
+        title = sections[idx].strip()
+        body = sections[idx + 1] if idx + 1 < len(sections) else ""
+        purpose = re.search(r"Mục đích:\s*(.+)", body)
+        source = re.search(r"Insight nguồn:\s*(.+)", body)
+        has_video = re.search(r"Đã có video mẫu:\s*(.+)", body)
+        tables = parse_md_tables(body)
+        topics = tables[0] if tables else []
+        out.append(
+            {
+                "title": title,
+                "purpose": purpose.group(1).strip() if purpose else "",
+                "source": source.group(1).strip() if source else "",
+                "has_video": has_video.group(1).strip() if has_video else "",
+                "topics": topics,
+            }
+        )
+    return out
+
+
+def read_content_wave1() -> list[dict]:
+    """Chủ đề đã triển khai đầy đủ 60 mục (Hook/Góc nhìn/Hiểu lầm/Sai lầm/Ví dụ/Câu hỏi mở)."""
+    text = _read(DATA_DIR / "content_wave1.md")
+    if not text:
+        return []
+    sections = re.split(r"^## (\[.+?\] .+)$", text, flags=re.MULTILINE)
+    out: list[dict] = []
     for idx in range(1, len(sections), 2):
         title = sections[idx].strip()
         body = sections[idx + 1] if idx + 1 < len(sections) else ""

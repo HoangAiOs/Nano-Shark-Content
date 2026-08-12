@@ -52,6 +52,18 @@ async def api_voice_of_customer(request):
     return JSONResponse(dr.read_voice_of_customer())
 
 
+async def api_insight_bank(request):
+    return JSONResponse(dr.read_insight_bank())
+
+
+async def api_content_pillars(request):
+    return JSONResponse(dr.read_content_pillars())
+
+
+async def api_content_wave1(request):
+    return JSONResponse(dr.read_content_wave1())
+
+
 async def api_insights(request):
     return JSONResponse(dr.read_priority_insights())
 
@@ -175,7 +187,9 @@ async def api_ads_autopilot(request):
 
 
 async def index(request):
-    return FileResponse(STATIC_DIR / "index.html")
+    # no-store: index.html thay đổi khá thường xuyên trong lúc phát triển dashboard —
+    # tránh trình duyệt lỡ giữ bản cache cũ khi bấm quay lại/mở lại tab.
+    return FileResponse(STATIC_DIR / "index.html", headers={"Cache-Control": "no-store"})
 
 
 app = Starlette(
@@ -191,6 +205,9 @@ app = Starlette(
         Route("/api/overview", api_overview),
         Route("/api/research", api_research),
         Route("/api/voice-of-customer", api_voice_of_customer),
+        Route("/api/insight-bank", api_insight_bank),
+        Route("/api/content-pillars", api_content_pillars),
+        Route("/api/content-wave1", api_content_wave1),
         Route("/api/insights", api_insights),
         Route("/api/insights/{num}/status", api_insight_status, methods=["POST"]),
         Route("/api/ideas-today", api_ideas_today),

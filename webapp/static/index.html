@@ -160,14 +160,19 @@
     </div>
   </div>
 
-  <div class="nav-group-label">Tổng quan</div>
+  <div class="nav-group-label">🆕 Hệ thống Content Pillar</div>
+  <div class="nav-item" data-page="pillars">Content Pillars (10)</div>
+  <div class="nav-item" data-page="insightbank">Insight Bank (180)</div>
+  <div class="nav-item" data-page="wave1">Wave 1 — Chi tiết</div>
+
+  <div class="nav-group-label">Tổng quan (dữ liệu cũ)</div>
   <div class="nav-item" data-page="goal">Não Marketing</div>
   <div class="nav-item" data-page="research">Research</div>
   <div class="nav-item" data-page="voc">Tiếng nói khách hàng</div>
   <div class="nav-item" data-page="belief">Belief Map</div>
 
-  <div class="nav-group-label">Sản xuất nội dung</div>
-  <div class="nav-item" data-page="insights">Ngân hàng Insight</div>
+  <div class="nav-group-label">Sản xuất nội dung (dữ liệu cũ)</div>
+  <div class="nav-item" data-page="insights">Ngân hàng Insight (7)</div>
   <div class="nav-item" data-page="ideas">Ý tưởng hôm nay</div>
   <div class="nav-item" data-page="portfolio">Cân đối danh mục</div>
   <div class="nav-item" data-page="contentmap">Bản đồ nội dung</div>
@@ -210,6 +215,9 @@ async function loadOverview() {
     <div class="stat-card"><div class="label">Insight ưu tiên</div><div class="value">${d.priority_insights}</div></div>
     <div class="stat-card"><div class="label">Kịch bản</div><div class="value">${d.scripts}</div></div>
     <div class="stat-card"><div class="label">Ads đã sync</div><div class="value">${d.ads_synced ? '✅' : '—'}</div></div>
+    <div class="stat-card"><div class="label">Insight Bank</div><div class="value">${d.insight_bank}</div></div>
+    <div class="stat-card"><div class="label">Pillars</div><div class="value">${d.content_pillars}</div></div>
+    <div class="stat-card"><div class="label">Chủ đề</div><div class="value">${d.content_topics}</div></div>
   `;
 }
 
@@ -244,6 +252,77 @@ async function loadPage(page) {
   if (page === 'upload') return renderUpload();
   if (page === 'queue') return renderQueue();
   if (page === 'ads') return renderAdsAutopilot();
+  if (page === 'insightbank') return renderInsightBank();
+  if (page === 'pillars') return renderPillars();
+  if (page === 'wave1') return renderWave1();
+}
+
+async function renderInsightBank() {
+  const res = await fetch('/api/insight-bank');
+  const sections = await res.json();
+  if (!sections.length) { content.innerHTML = emptyMsg('Chưa có data/insight_bank.md'); return; }
+  let html = `<div class="page-title">🏦 Customer Insight Bank</div><div class="page-sub">180 insight (6 nhóm × 30) tổng hợp từ 21 video phản hồi khách hàng thật + loạt video BS Sơn. Câu có * là trích/diễn giải sát nguyên văn.</div>`;
+  sections.forEach(s => {
+    const rows = s.rows.map(r => `<tr><td style="width:36px; color:var(--text-secondary);">${escapeHtml(r['#']||'')}</td><td>${mdInline(r['Insight'] || '')}</td></tr>`).join('');
+    html += `<details class="card" style="margin-bottom:12px;"><summary style="cursor:pointer; font-weight:600;">${escapeHtml(s.title)} <span style="color:var(--text-secondary); font-weight:400;">(${s.rows.length})</span></summary><table style="margin-top:10px;">${rows}</table></details>`;
+  });
+  content.innerHTML = html;
+}
+
+async function renderPillars() {
+  const res = await fetch('/api/content-pillars');
+  const pillars = await res.json();
+  if (!pillars.length) { content.innerHTML = emptyMsg('Chưa có data/content_pillars.md'); return; }
+  let html = `<div class="page-title">🧱 Content Pillars</div><div class="page-sub">${pillars.length} pillar, mỗi pillar 10 chủ đề lớn — xương sống của toàn bộ hệ thống content.</div>`;
+  pillars.forEach(p => {
+    const rows = p.topics.map(t => `
+      <tr>
+        <td style="font-weight:600;">${mdInline(t['Chủ đề']||'')}</td>
+        <td>${mdInline(t['Mục tiêu thay đổi nhận thức']||'')}</td>
+        <td style="color:var(--text-secondary);">${mdInline(t['Khách hàng đang nghĩ gì']||'')}</td>
+        <td>${mdInline(t['Điều tôi muốn họ hiểu']||'')}</td>
+        <td style="color:var(--accent);">${mdInline(t['Điểm khác biệt']||'')}</td>
+      </tr>`).join('');
+    html += `
+    <details class="card" style="margin-bottom:12px;">
+      <summary style="cursor:pointer;">
+        <strong>${escapeHtml(p.title)}</strong>
+        <span class="pill score" style="margin-left:8px;">${p.topics.length} chủ đề</span>
+        ${p.has_video.startsWith('Có') ? '<span class="pill" style="background:#2b4a37; color:#8fd6a8; margin-left:6px;">✓ đã có mẫu</span>' : ''}
+      </summary>
+      <div style="margin-top:10px; font-size:12.5px; color:var(--text-secondary);">
+        <div><strong>Mục đích:</strong> ${mdInline(p.purpose)}</div>
+        <div><strong>Insight nguồn:</strong> ${mdInline(p.source)}</div>
+      </div>
+      <table style="margin-top:10px;"><tr><th>Chủ đề</th><th>Mục tiêu</th><th>Khách hàng nghĩ gì</th><th>Muốn họ hiểu</th><th>Khác biệt</th></tr>${rows}</table>
+    </details>`;
+  });
+  content.innerHTML = html;
+}
+
+async function renderWave1() {
+  const res = await fetch('/api/content-wave1');
+  const topics = await res.json();
+  if (!topics.length) { content.innerHTML = emptyMsg('Chưa có data/content_wave1.md'); return; }
+  let html = `<div class="page-title">🌊 Wave 1 — Chi tiết 60 mục/chủ đề</div><div class="page-sub">${topics.length} chủ đề ưu tiên cao nhất đã triển khai đầy đủ: 10 Hook, 10 Góc nhìn, 10 Hiểu lầm, 10 Sai lầm, 10 Ví dụ, 10 Câu hỏi mở.</div>`;
+  topics.forEach(t => {
+    const rows = t.rows.map(r => `
+      <tr>
+        <td style="width:28px; color:var(--text-secondary);">${escapeHtml(r['#']||'')}</td>
+        <td style="font-weight:600;">${mdInline(r['Hook']||'')}</td>
+        <td>${mdInline(r['Góc nhìn']||'')}</td>
+        <td>${mdInline(r['Hiểu lầm']||'')}</td>
+        <td>${mdInline(r['Sai lầm']||'')}</td>
+        <td>${mdInline(r['Ví dụ']||'')}</td>
+        <td style="color:var(--accent);">${mdInline(r['Câu hỏi mở']||'')}</td>
+      </tr>`).join('');
+    html += `
+    <details class="card" style="margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600;">${escapeHtml(t.title)}</summary>
+      <div style="overflow-x:auto;"><table style="margin-top:10px; min-width:900px;"><tr><th>#</th><th>Hook</th><th>Góc nhìn</th><th>Hiểu lầm</th><th>Sai lầm</th><th>Ví dụ</th><th>Câu hỏi mở</th></tr>${rows}</table></div>
+    </details>`;
+  });
+  content.innerHTML = html;
 }
 
 async function renderResearch() {
@@ -531,7 +610,7 @@ async function renderAdsAutopilot() {
 }
 
 loadOverview();
-loadPage('research');
+loadPage('pillars');
 </script>
 </body>
 </html>
