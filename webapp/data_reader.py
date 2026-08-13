@@ -43,6 +43,16 @@ SCRIPT_NEW_PILLAR = {
     "12": 3,  # Uống canxi 5 năm rồi mà khớp vẫn đau
     "13": 9,  # 30 phút mỗi ngày
     "14": 3,  # Cùng uống glucosamine
+    "15": 1,  # Khớp kêu lục cục
+    "16": 2,  # Bản lề cửa thiếu dầu
+    "17": 3,  # Nano chỉ là chiêu marketing?
+    "18": 4,  # Bác tôi uống kháng viêm nhiều năm — bị thêm bệnh dạ dày
+    "19": 5,  # Bằng sáng chế thật hay chỉ là lời tự nhận?
+    "20": 6,  # Nhận hàng rồi mới trả tiền (COD)
+    "21": 7,  # "Chắc tốn kém lắm, thôi ráng chịu"
+    "22": 8,  # 80 tuổi, bị chỉ định mổ — Ông Diệp
+    "23": 9,  # Anh vẫn phải tiếp khách — khớp và đường ruột trả giá
+    "24": 10,  # Vì sao giá một hộp bằng mua 6 loại cộng lại?
 }
 
 # Chủ đề cụ thể (theo đúng số thứ tự # trong content_pillars.md) đã được viết thành
@@ -59,6 +69,16 @@ TOPIC_TO_SCRIPT = {
     (7, "3"): "06",
     (7, "6"): "10",
     (9, "1"): "13",
+    (1, "1"): "15",
+    (2, "3"): "16",
+    (3, "6"): "17",
+    (4, "2"): "18",
+    (5, "3"): "19",
+    (6, "4"): "20",
+    (7, "5"): "21",
+    (8, "6"): "22",
+    (9, "8"): "23",
+    (10, "1"): "24",
 }
 
 

@@ -1,8 +1,8 @@
 # Bảng điểm kịch bản
 
-> Đối tượng chấm: 10 kịch bản video quảng cáo Nano Premium Shark Cartilage trong
-> `data/scripts/`, viết lại dựa trên insight từ 21 video khách hàng thật (không dùng
-> dữ liệu tìm kiếm công khai lần này).
+> Đối tượng chấm: 24 kịch bản video quảng cáo Nano Premium Shark Cartilage trong
+> `data/scripts/`, viết dựa trên 69 bản ghi thật (21 video khách hàng + 48 video BS Sơn)
+> và hệ thống 10 Content Pillar (không dùng dữ liệu tìm kiếm công khai).
 
 ## Bảng tổng hợp
 
@@ -22,6 +22,16 @@
 | 12 | Uống canxi 5 năm rồi mà khớp vẫn đau | 7 | 8 | 7 | 6 | **28/40** |
 | 13 | 30 phút mỗi ngày — điều đơn giản nhất mà ít ai làm đều | 5 | 7 | 6 | 5 | **23/40** |
 | 14 | Cùng uống glucosamine, người hiệu quả người không | 7 | 8 | 7 | 6 | **28/40** |
+| 15 | Khớp kêu lục cục — chuyện bình thường hay dấu hiệu cảnh báo? | 7 | 6 | 6 | 7 | **26/40** |
+| 16 | Bản lề cửa thiếu dầu — vì sao khớp ngày càng khó cử động | 6 | 7 | 6 | 6 | **25/40** |
+| 17 | Nano chỉ là chiêu marketing? | 7 | 7 | 7 | 7 | **28/40** |
+| 18 | Bác tôi uống kháng viêm nhiều năm — rồi bị thêm bệnh dạ dày | 8 | 7 | 7 | 7 | **29/40** |
+| 19 | Bằng sáng chế thật hay chỉ là lời tự nhận? | 6 | 8 | 6 | 7 | **27/40** |
+| 20 | Nhận hàng rồi mới trả tiền — vì sao chúng tôi làm vậy? | 7 | 6 | 6 | 8 | **27/40** |
+| 21 | "Chắc tốn kém lắm, thôi ráng chịu" | 8 | 8 | 7 | 6 | **29/40** |
+| 22 | 80 tuổi, bị chỉ định mổ — Ông Diệp đã chọn thử cách khác | 9 | 8 | 9 | 7 | **33/40** |
+| 23 | Anh vẫn phải tiếp khách, nhưng khớp và đường ruột đang trả giá | 7 | 8 | 6 | 6 | **27/40** |
+| 24 | Vì sao giá một hộp lại bằng mua 6 loại cộng lại? | 7 | 7 | 6 | 8 | **28/40** |
 
 ## Top 5 kịch bản được chọn
 
