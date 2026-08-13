@@ -25,6 +25,10 @@ from starlette.responses import FileResponse, JSONResponse  # noqa: E402
 from starlette.routing import Route  # noqa: E402
 from starlette.staticfiles import StaticFiles  # noqa: E402
 
+from webapp import persistent_storage  # noqa: E402
+
+persistent_storage.bootstrap_persistent_data()
+
 from webapp import ai_helper  # noqa: E402
 from webapp import auth  # noqa: E402
 from webapp import daily_production as dp  # noqa: E402

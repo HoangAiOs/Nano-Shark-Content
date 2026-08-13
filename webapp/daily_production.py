@@ -1,9 +1,11 @@
 """Daily Content Production — logic riêng, tách khỏi data_reader.py để không
 đụng tới code đang chạy ổn định của 24 script / 10 Pillar / Insight Bank.
 
-State lưu ở 2 nơi:
-  - data/content_calendar.json   — index nhẹ, 1 record/ngày
-  - data/daily_production/{date}.json — chi tiết đầy đủ 1 ngày (ideas/scripts/scores)
+State lưu ở 2 nơi (cả 2 đều là data ĐỘNG — nằm trên persistent disk trên Render,
+xem webapp/persistent_storage.py; local dev không set env var thì vẫn nằm
+trong data/ như trước):
+  - content_calendar.json   — index nhẹ, 1 record/ngày
+  - daily_production/{date}.json — chi tiết đầy đủ 1 ngày (ideas/scripts/scores)
 
 Không gọi AI ở đây — module này chỉ quản lý dữ liệu + rule chọn topic. AI được
 gọi riêng ở webapp/ai_helper.py, kích hoạt từ route trong main.py.
@@ -13,14 +15,13 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
 from webapp import data_reader as dr
+from webapp.persistent_storage import PERSISTENT_DIR
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-CALENDAR_FILE = DATA_DIR / "content_calendar.json"
-DAILY_DIR = DATA_DIR / "daily_production"
-CONTENT_MAP_FILE = DATA_DIR / "content_map.json"
+CALENDAR_FILE = PERSISTENT_DIR / "content_calendar.json"
+DAILY_DIR = PERSISTENT_DIR / "daily_production"
+CONTENT_MAP_FILE = PERSISTENT_DIR / "content_map.json"
 
 VN_TZ = timezone(timedelta(hours=7))
 

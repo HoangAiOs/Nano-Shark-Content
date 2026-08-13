@@ -12,10 +12,14 @@ import json
 import re
 from pathlib import Path
 
+from webapp.persistent_storage import PERSISTENT_DIR
+
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
-STATE_FILE = DATA_DIR / "web_state.json"
-UPLOADS_DIR = DATA_DIR / "video_uploads"
+# Data ĐỘNG — trỏ vào persistent disk trên Render (PERSISTENT_DATA_DIR env var),
+# local dev không set thì PERSISTENT_DIR = DATA_DIR như cũ. Xem persistent_storage.py.
+STATE_FILE = PERSISTENT_DIR / "web_state.json"
+UPLOADS_DIR = PERSISTENT_DIR / "video_uploads"
 
 PUBLISH_PLATFORMS = ["Facebook", "YouTube", "TikTok", "Zalo OA", "Blog", "Email"]
 
@@ -23,10 +27,10 @@ PUBLISH_PLATFORMS = ["Facebook", "YouTube", "TikTok", "Zalo OA", "Blog", "Email"
 CPL_WARN_THRESHOLD_VND = 150_000
 
 # --- Hệ thống Content Pillar mới (10 pillar, khớp với data/content_pillars.md) ---
-# Mapping Pillar/Topic → Script đọc từ data/content_map.json (source of truth) —
-# KHÔNG hard-code trong .py nữa, để thêm script mới (kể cả từ Daily Content
-# Production sau này) không cần sửa code. Xem CONTENT_MAP_FILE bên dưới.
-CONTENT_MAP_FILE = DATA_DIR / "content_map.json"
+# Mapping Pillar/Topic → Script đọc từ content_map.json (source of truth) — data
+# ĐỘNG (bị select_script() ghi thêm), nên cũng nằm trên persistent disk, KHÔNG
+# hard-code trong .py. Xem CONTENT_MAP_FILE bên dưới.
+CONTENT_MAP_FILE = PERSISTENT_DIR / "content_map.json"
 
 
 def _load_content_map() -> dict:

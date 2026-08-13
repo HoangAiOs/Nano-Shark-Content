@@ -2,10 +2,16 @@ services:
   - type: web
     name: nano-shark-content-os
     runtime: python
-    plan: free
+    plan: starter
     buildCommand: pip install -r requirements.txt
     startCommand: python -m webapp.main
+    disk:
+      name: nano-shark-persistent-data
+      mountPath: /opt/render/project/src/persistent_data
+      sizeGB: 5
     envVars:
+      - key: PERSISTENT_DATA_DIR
+        value: /opt/render/project/src/persistent_data
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: APP_USERNAME
