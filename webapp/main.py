@@ -27,6 +27,7 @@ from starlette.staticfiles import StaticFiles  # noqa: E402
 
 from webapp import ai_helper  # noqa: E402
 from webapp import auth  # noqa: E402
+from webapp import daily_production as dp  # noqa: E402
 from webapp import data_reader as dr  # noqa: E402
 
 SESSION_SECRET = os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
@@ -186,6 +187,180 @@ async def api_ads_autopilot(request):
     return JSONResponse(dr.read_ads_autopilot())
 
 
+# --- Daily Content Production ----------------------------------------------
+# AI chỉ gọi khi có request tới đúng 3 route generate/score — không có job nền,
+# không tự chạy. Lỗi AI (hết credit, sai key...) trả JSON lỗi rõ ràng, không
+# crash server, không tạo dữ liệu giả.
+
+
+async def api_daily_suggest(request):
+    return JSONResponse(dp.suggest_topic())
+
+
+async def api_daily_start(request):
+    body = await request.json()
+    pillar_num = body.get("pillar_num")
+    topic_num = body.get("topic_num")
+    if pillar_num is None or topic_num is None:
+        suggestion = dp.suggest_topic()
+        if "error" in suggestion:
+            return JSONResponse({"ok": False, "error": suggestion["error"]}, status_code=400)
+        pillar_num, topic_num = suggestion["pillar_num"], suggestion["topic_num"]
+    try:
+        record = dp.create_today_record(int(pillar_num), str(topic_num))
+    except ValueError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+    return JSONResponse({"ok": True, "record": record})
+
+
+async def api_daily_today(request):
+    date = dp.today_str()
+    record = dp.get_record(date)
+    if record is None:
+        return JSONResponse({"ok": True, "record": None, "detail": None})
+    detail = dp.load_daily(date)
+    return JSONResponse({"ok": True, "record": record, "detail": detail})
+
+
+async def api_daily_detail(request):
+    date = request.path_params["date"]
+    record = dp.get_record(date)
+    detail = dp.load_daily(date)
+    if record is None:
+        return JSONResponse({"ok": False, "error": f"Không có record ngày {date}"}, status_code=404)
+    return JSONResponse({"ok": True, "record": record, "detail": detail})
+
+
+async def api_daily_insight_sources(request):
+    """Nguồn insight cho phép chọn tay — KHÔNG bịa, chỉ lấy từ data đã có."""
+    return JSONResponse(
+        {
+            "priority_insights": dr.read_priority_insights(),
+            "insight_bank": dr.read_insight_bank(),
+            "voice_of_customer": dr.read_voice_of_customer(),
+        }
+    )
+
+
+async def api_daily_set_insights(request):
+    date = request.path_params["date"]
+    body = await request.json()
+    refs = body.get("insight_refs", [])
+    try:
+        record = dp.set_insights(date, refs)
+    except ValueError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+    return JSONResponse({"ok": True, "record": record})
+
+
+async def api_daily_generate_ideas(request):
+    date = request.path_params["date"]
+    record = dp.get_record(date)
+    if record is None:
+        return JSONResponse({"ok": False, "error": f"Không có record ngày {date}"}, status_code=404)
+    pillar_title = dr.pillar_title_by_num().get(record["pillar_num"], "")
+    daily = dp.load_daily(date) or {}
+    topic_title = next(
+        (
+            t.get("Chủ đề", "")
+            for p in dr.read_content_pillars()
+            if p["num"] == record["pillar_num"]
+            for t in p["topics"]
+            if str(t.get("#", "")).strip() == record["topic_num"]
+        ),
+        "",
+    )
+    try:
+        ideas = ai_helper.generate_daily_ideas(
+            pillar_title, topic_title, daily.get("insight_refs", [])
+        )
+    except Exception as exc:  # lỗi API (hết credit, sai key...) — trả lỗi rõ, không giả data
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
+    record = dp.set_ideas(date, ideas)
+    return JSONResponse({"ok": True, "record": record, "ideas": ideas})
+
+
+async def api_daily_generate_scripts(request):
+    date = request.path_params["date"]
+    daily = dp.load_daily(date)
+    if not daily or not daily.get("ideas"):
+        return JSONResponse(
+            {"ok": False, "error": "Chưa có ý tưởng — tạo 10 ý tưởng trước."}, status_code=400
+        )
+    topic_title = next(
+        (
+            t.get("Chủ đề", "")
+            for p in dr.read_content_pillars()
+            if p["num"] == daily["pillar_num"]
+            for t in p["topics"]
+            if str(t.get("#", "")).strip() == daily["topic_num"]
+        ),
+        "",
+    )
+    try:
+        raw_scripts = ai_helper.generate_daily_scripts(topic_title, daily["ideas"])
+    except Exception as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
+
+    date_key = date.replace("-", "")
+    scripts = []
+    for i, s in enumerate(raw_scripts, start=1):
+        s["script_id"] = f"d{date_key}_{i:02d}"
+        # Cảnh báo pháp lý bắt buộc: gắn CỨNG ở backend, không phụ thuộc AI có
+        # tuân thủ prompt hay không — đảm bảo 100% script luôn có câu này.
+        s["mandatory_warning"] = ai_helper.MANDATORY_WARNING
+        scripts.append(s)
+
+    record = dp.set_scripts(date, scripts)
+    return JSONResponse({"ok": True, "record": record, "scripts": scripts})
+
+
+async def api_daily_score(request):
+    date = request.path_params["date"]
+    daily = dp.load_daily(date)
+    if not daily or not daily.get("scripts"):
+        return JSONResponse(
+            {"ok": False, "error": "Chưa có script — tạo 10 script trước."}, status_code=400
+        )
+    try:
+        scores = ai_helper.score_daily_scripts(daily["scripts"])
+    except Exception as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
+
+    ranked = sorted(scores, key=lambda s: s.get("total", 0), reverse=True)
+    top5 = [s["script_id"] for s in ranked[:5]]
+
+    record = dp.set_scores(date, scores, top5)
+    return JSONResponse({"ok": True, "record": record, "scores": scores, "top5": top5})
+
+
+async def api_daily_select(request):
+    date = request.path_params["date"]
+    body = await request.json()
+    script_id = body.get("script_id", "")
+    try:
+        record = dp.select_script(date, script_id)
+    except ValueError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+    return JSONResponse({"ok": True, "record": record})
+
+
+async def api_daily_status(request):
+    date = request.path_params["date"]
+    body = await request.json()
+    status = body.get("status", "")
+    try:
+        record = dp.set_status(date, status)
+    except ValueError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+    return JSONResponse({"ok": True, "record": record})
+
+
+async def api_daily_history(request):
+    days = int(request.query_params.get("days", 7))
+    return JSONResponse(dp.get_history(days))
+
+
 async def index(request):
     # no-store: index.html thay đổi khá thường xuyên trong lúc phát triển dashboard —
     # tránh trình duyệt lỡ giữ bản cache cũ khi bấm quay lại/mở lại tab.
@@ -224,6 +399,19 @@ app = Starlette(
         Route("/api/video-queue", api_video_queue),
         Route("/api/video-queue/{filename}/{platform}/toggle", api_toggle_publish, methods=["POST"]),
         Route("/api/ads-autopilot", api_ads_autopilot),
+        # --- Daily Content Production ---
+        Route("/api/daily/suggest", api_daily_suggest),
+        Route("/api/daily/start", api_daily_start, methods=["POST"]),
+        Route("/api/daily/today", api_daily_today),
+        Route("/api/daily/history", api_daily_history),
+        Route("/api/daily/insight-sources", api_daily_insight_sources),
+        Route("/api/daily/{date}", api_daily_detail),
+        Route("/api/daily/{date}/insight", api_daily_set_insights, methods=["POST"]),
+        Route("/api/daily/{date}/ideas", api_daily_generate_ideas, methods=["POST"]),
+        Route("/api/daily/{date}/scripts", api_daily_generate_scripts, methods=["POST"]),
+        Route("/api/daily/{date}/score", api_daily_score, methods=["POST"]),
+        Route("/api/daily/{date}/select", api_daily_select, methods=["POST"]),
+        Route("/api/daily/{date}/status", api_daily_status, methods=["POST"]),
     ],
 )
 

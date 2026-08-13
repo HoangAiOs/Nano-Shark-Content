@@ -3,7 +3,7 @@
 Không có "AI" chạy ngầm ở đây — toàn bộ dữ liệu hiển thị là parse trực tiếp từ
 các file .md/.json do pipeline agent (agent/cli.py) đã tạo ra thật. Phần phân
 loại "pillar" ở Cân đối danh mục là gán tay dựa trên nội dung đã đọc kỹ từng
-kịch bản (xem SCRIPT_NEW_PILLAR bên dưới), không phải suy luận tự động.
+kịch bản (xem data/content_map.json), không phải suy luận tự động.
 """
 
 from __future__ import annotations
@@ -23,63 +23,27 @@ PUBLISH_PLATFORMS = ["Facebook", "YouTube", "TikTok", "Zalo OA", "Blog", "Email"
 CPL_WARN_THRESHOLD_VND = 150_000
 
 # --- Hệ thống Content Pillar mới (10 pillar, khớp với data/content_pillars.md) ---
-# Dùng SỐ pillar (1-10, đúng theo "## Pillar N: ..." trong content_pillars.md) làm
-# khóa — tránh lệch chuỗi tên đầy đủ. Tên hiển thị luôn lấy trực tiếp từ file .md.
-# Gán tay kịch bản nào thuộc pillar nào, dựa trên đúng nội dung/insight chính của
-# từng kịch bản (không suy luận tự động). Kịch bản 05/07/08/09 kết hợp 2 insight cũ
-# nên gán theo insight nổi bật nhất trong kịch bản đó.
-SCRIPT_NEW_PILLAR = {
-    "01": 7,  # Trước khi lên bàn mổ
-    "02": 6,  # Làm sao biết đây không phải hàng giả?
-    "03": 4,  # Uống thuốc giảm đau rồi lại đau
-    "04": 7,  # Có lúc tôi không muốn sống nữa
-    "05": 6,  # Theo dõi trang cả năm mới dám mua
-    "06": 7,  # Con cháu chưa cần lo
-    "07": 6,  # Rào cản giới thiệu là giá
-    "08": 7,  # Đã mổ 1 lần, bác sĩ lại chỉ định mổ tiếp
-    "09": 6,  # Nghi ngờ trên mạng, theo dõi cả năm
-    "10": 7,  # Vợ mua giúp chồng
-    "11": 2,  # Chưa đau không có nghĩa là chưa sao
-    "12": 3,  # Uống canxi 5 năm rồi mà khớp vẫn đau
-    "13": 9,  # 30 phút mỗi ngày
-    "14": 3,  # Cùng uống glucosamine
-    "15": 1,  # Khớp kêu lục cục
-    "16": 2,  # Bản lề cửa thiếu dầu
-    "17": 3,  # Nano chỉ là chiêu marketing?
-    "18": 4,  # Bác tôi uống kháng viêm nhiều năm — bị thêm bệnh dạ dày
-    "19": 5,  # Bằng sáng chế thật hay chỉ là lời tự nhận?
-    "20": 6,  # Nhận hàng rồi mới trả tiền (COD)
-    "21": 7,  # "Chắc tốn kém lắm, thôi ráng chịu"
-    "22": 8,  # 80 tuổi, bị chỉ định mổ — Ông Diệp
-    "23": 9,  # Anh vẫn phải tiếp khách — khớp và đường ruột trả giá
-    "24": 10,  # Vì sao giá một hộp bằng mua 6 loại cộng lại?
-}
+# Mapping Pillar/Topic → Script đọc từ data/content_map.json (source of truth) —
+# KHÔNG hard-code trong .py nữa, để thêm script mới (kể cả từ Daily Content
+# Production sau này) không cần sửa code. Xem CONTENT_MAP_FILE bên dưới.
+CONTENT_MAP_FILE = DATA_DIR / "content_map.json"
 
-# Chủ đề cụ thể (theo đúng số thứ tự # trong content_pillars.md) đã được viết thành
-# kịch bản — dùng cho Bản đồ nội dung để biết chủ đề nào đã khai thác, chủ đề nào chưa.
-# Khóa: (số pillar, số thứ tự chủ đề trong bảng pillar đó).
-TOPIC_TO_SCRIPT = {
-    (2, "11"): "11",
-    (3, "1"): "12",
-    (3, "5"): "14",
-    (4, "1"): "03",
-    (6, "1"): "02",
-    (7, "1"): "01",
-    (7, "2"): "04",
-    (7, "3"): "06",
-    (7, "6"): "10",
-    (9, "1"): "13",
-    (1, "1"): "15",
-    (2, "3"): "16",
-    (3, "6"): "17",
-    (4, "2"): "18",
-    (5, "3"): "19",
-    (6, "4"): "20",
-    (7, "5"): "21",
-    (8, "6"): "22",
-    (9, "8"): "23",
-    (10, "1"): "24",
-}
+
+def _load_content_map() -> dict:
+    raw = _read(CONTENT_MAP_FILE)
+    if not raw:
+        return {"script_pillar": {}, "topic_script": {}}
+    return json.loads(raw)
+
+
+def script_pillar_map() -> dict[str, int]:
+    """script_id -> số pillar (1-10)."""
+    return _load_content_map().get("script_pillar", {})
+
+
+def topic_script_map() -> dict[str, str]:
+    """'{pillar_num}_{topic_num}' -> script_id."""
+    return _load_content_map().get("topic_script", {})
 
 
 def _read(path: Path) -> str:
@@ -323,7 +287,7 @@ def read_ideas_today() -> list[dict]:
                 "hook": hook,
                 "score": score_by_id.get(script_id, ""),
                 "quay_xong": quay_status.get(script_id, False),
-                "pillar": pillar_title_by_num().get(SCRIPT_NEW_PILLAR.get(script_id), "Chưa gán"),
+                "pillar": pillar_title_by_num().get(script_pillar_map().get(script_id), "Chưa gán"),
             }
         )
     out.sort(key=lambda r: int(r["score"]) if r["score"].isdigit() else -1, reverse=True)
@@ -339,9 +303,11 @@ def read_portfolio() -> list[dict]:
     bao nhiêu kịch bản đã viết, và đã khai thác bao nhiêu / tổng số chủ đề."""
     ideas = read_ideas_today()
     total_scripts = len(ideas) or 1
+    script_pillar = script_pillar_map()
+    topic_script = topic_script_map()
     script_counts: dict[int, int] = {}
     for idea in ideas:
-        pillar_num = SCRIPT_NEW_PILLAR.get(idea["script_id"])
+        pillar_num = script_pillar.get(idea["script_id"])
         if pillar_num:
             script_counts[pillar_num] = script_counts.get(pillar_num, 0) + 1
 
@@ -351,7 +317,7 @@ def read_portfolio() -> list[dict]:
         num = p["num"]
         topic_total = len(p["topics"]) or 1
         topics_covered = sum(
-            1 for t in p["topics"] if (num, str(t.get("#", "")).strip()) in TOPIC_TO_SCRIPT
+            1 for t in p["topics"] if f"{num}_{str(t.get('#', '')).strip()}" in topic_script
         )
         count = script_counts.get(num, 0)
         out.append(
@@ -482,13 +448,14 @@ def read_content_map() -> list[dict]:
     khai thác chưa. Cho thấy rõ pillar nào còn trống hoàn toàn (chưa có video nào)."""
     pillars = read_content_pillars()
     ideas_by_id = {i["script_id"]: i for i in read_ideas_today()}
+    topic_script = topic_script_map()
     out = []
     for p in pillars:
         num = p["num"]
         topics = []
         for t in p["topics"]:
             topic_num = str(t.get("#", "")).strip()
-            script_id = TOPIC_TO_SCRIPT.get((num, topic_num))
+            script_id = topic_script.get(f"{num}_{topic_num}")
             idea = ideas_by_id.get(script_id) if script_id else None
             topics.append(
                 {

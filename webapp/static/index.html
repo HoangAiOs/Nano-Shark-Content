@@ -160,6 +160,9 @@
     </div>
   </div>
 
+  <div class="nav-group-label">🎬 Daily Content Production</div>
+  <div class="nav-item" data-page="daily">Sản xuất hôm nay</div>
+
   <div class="nav-group-label">🆕 Hệ thống Content Pillar</div>
   <div class="nav-item" data-page="pillars">Content Pillars (10)</div>
   <div class="nav-item" data-page="insightbank">Insight Bank (180)</div>
@@ -173,7 +176,7 @@
 
   <div class="nav-group-label">Sản xuất nội dung</div>
   <div class="nav-item" data-page="insights">Ngân hàng Insight (8)</div>
-  <div class="nav-item" data-page="ideas">Ý tưởng hôm nay</div>
+  <div class="nav-item" data-page="ideas">Thư viện kịch bản</div>
   <div class="nav-item" data-page="portfolio">Cân đối danh mục</div>
   <div class="nav-item" data-page="contentmap">Bản đồ nội dung</div>
   <div class="nav-item" data-page="ideation">Kiến tạo 1.000 video</div>
@@ -255,6 +258,7 @@ async function loadPage(page) {
   if (page === 'insightbank') return renderInsightBank();
   if (page === 'pillars') return renderPillars();
   if (page === 'wave1') return renderWave1();
+  if (page === 'daily') return renderDaily();
 }
 
 async function renderInsightBank() {
@@ -325,6 +329,278 @@ async function renderWave1() {
   content.innerHTML = html;
 }
 
+// --- 🎬 Daily Content Production ---------------------------------------------
+
+const DAILY_STATUS_LABELS = {
+  topic_selected: 'Đã chọn Topic — chưa tạo ý tưởng',
+  ideas_generated: 'Đã có 10 ý tưởng — chưa viết script',
+  draft: 'Đã có 10 script — chưa chấm điểm',
+  scored: 'Đã chấm điểm — chọn 1 script để quay',
+  selected: 'Đã chọn script — chờ quay',
+  recorded: 'Đã quay',
+  published: 'Đã đăng',
+  ads_running: 'Đang chạy Ads',
+  completed: 'Có kết quả',
+};
+function dailyStatusLabel(s) { return DAILY_STATUS_LABELS[s] || s; }
+
+async function renderDaily() {
+  const [todayRes, histRes] = await Promise.all([
+    fetch('/api/daily/today'),
+    fetch('/api/daily/history?days=7'),
+  ]);
+  const todayData = await todayRes.json();
+  const history = await histRes.json();
+
+  let html = `<div class="page-title">🎬 Sản xuất hôm nay</div><div class="page-sub">Daily Content Production — chọn Pillar/Topic hôm nay (rule-based, không dùng AI để chọn), AI hỗ trợ tạo ý tưởng + script khi bạn bấm nút, bạn là người quyết định chọn script nào để quay.</div>`;
+  html += await renderDailyBody(todayData);
+  html += renderDailyHistory(history);
+  content.innerHTML = html;
+}
+
+async function renderDailyBody(data) {
+  if (!data.record) return await renderDailyNotStarted();
+
+  const record = data.record;
+  const detail = data.detail || {};
+  let html = `<div class="card">
+    <div style="font-weight:600; margin-bottom:8px;">HÔM NAY — ${escapeHtml(record.date)}</div>
+    <div style="font-size:13px;"><strong>Pillar:</strong> ${escapeHtml(String(record.pillar_num))} &nbsp; <strong>Topic:</strong> #${escapeHtml(record.topic_num)}</div>
+    <div style="font-size:13px; margin-top:4px;"><strong>Insight:</strong> ${(record.insight_refs && record.insight_refs.length) ? record.insight_refs.map(mdInline).join('; ') : '<span style="color:var(--text-muted);">chưa chọn</span>'}</div>
+    <div style="margin-top:8px;"><span class="pill score">${escapeHtml(dailyStatusLabel(record.status))}</span></div>
+  </div>`;
+
+  if (record.status === 'topic_selected') {
+    html += await renderDailyInsightPicker(record);
+  }
+  html += renderDailyActionBar(record);
+  html += renderDailyIdeas(detail.ideas);
+  html += renderDailyScripts(detail.scripts);
+  html += renderDailyTop5(detail, record);
+  html += renderDailySelected(detail, record);
+  return html;
+}
+
+async function renderDailyNotStarted() {
+  const res = await fetch('/api/daily/suggest');
+  const s = await res.json();
+  if (s.error) {
+    return `<div class="card empty-state">${escapeHtml(s.error)}</div>`;
+  }
+  return `<div class="card">
+    <div style="font-weight:600; margin-bottom:6px;">Chưa bắt đầu sản xuất hôm nay</div>
+    <div style="font-size:12.5px; color:var(--text-secondary); margin-bottom:10px;">Gợi ý rule-based (không dùng AI để chọn) — ưu tiên topic chưa có script, pillar coverage thấp, chưa dùng gần đây:</div>
+    <div style="font-size:13px;"><strong>Pillar ${s.pillar_num}</strong> — ${mdInline(s.pillar_title)}</div>
+    <div style="font-size:13px;"><strong>Topic #${s.topic_num}</strong> — ${mdInline(s.topic_title)}</div>
+    <div style="font-size:12px; color:var(--text-secondary); margin-top:6px;">${mdInline(s.reason)}</div>
+    <button class="toggle-btn done" style="margin-top:10px;" onclick="startDailyProduction()">Bắt đầu với gợi ý này</button>
+  </div>`;
+}
+
+async function startDailyProduction(pillarNum, topicNum) {
+  const body = (pillarNum && topicNum) ? {pillar_num: pillarNum, topic_num: topicNum} : {};
+  const res = await fetch('/api/daily/start', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  const d = await res.json();
+  if (!d.ok) { alert('Lỗi: ' + d.error); return; }
+  renderDaily();
+}
+
+async function renderDailyInsightPicker(record) {
+  const res = await fetch('/api/daily/insight-sources');
+  const src = await res.json();
+
+  const rowLabel = (row) => row['Insight'] || Object.values(row).filter(v => typeof v === 'string').join(' — ');
+
+  const priorityHtml = (src.priority_insights || []).map(i =>
+    `<label style="display:block; font-size:12.5px; margin-bottom:4px;"><input type="checkbox" class="daily-insight-cb" value="${escapeHtml(i.insight)}"> ${mdInline(i.insight)}</label>`
+  ).join('') || '<div class="empty-state">Không có</div>';
+
+  const bankHtml = (src.insight_bank || []).map(section => `
+    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
+      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="daily-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
+    </details>`).join('');
+
+  const vocHtml = (src.voice_of_customer || []).map(section => `
+    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
+      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="daily-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
+    </details>`).join('');
+
+  return `<div class="card">
+    <div style="font-weight:600; margin-bottom:8px;">Chọn Insight liên quan (thủ công — Phase 1 chưa auto-match insight↔topic)</div>
+    <details open style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Ngân hàng Insight ưu tiên (8)</summary>${priorityHtml}</details>
+    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Insight Bank (180)</summary>${bankHtml}</details>
+    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Tiếng nói khách hàng</summary>${vocHtml}</details>
+    <button class="toggle-btn done" onclick="dailySaveInsights('${record.date}', this)">💾 Lưu insight đã chọn</button>
+    <div id="daily-insight-err"></div>
+  </div>`;
+}
+
+async function dailySaveInsights(date, btn) {
+  const refs = [...document.querySelectorAll('.daily-insight-cb:checked')].map(cb => cb.value);
+  if (!refs.length) { alert('Chọn ít nhất 1 insight trước khi lưu.'); return; }
+  btn.disabled = true; btn.textContent = 'Đang lưu…';
+  const res = await fetch(`/api/daily/${date}/insight`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({insight_refs: refs})});
+  const d = await res.json();
+  if (!d.ok) {
+    document.getElementById('daily-insight-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">Lỗi: ${escapeHtml(d.error)}</div>`;
+    btn.disabled = false; btn.textContent = '💾 Lưu insight đã chọn';
+    return;
+  }
+  renderDaily();
+}
+
+function renderDailyActionBar(record) {
+  let btn = '';
+  if (record.status === 'topic_selected') {
+    btn = `<button class="toggle-btn done" onclick="dailyGenerateIdeas('${record.date}', this)">⚡ Tạo 10 Ý tưởng (AI)</button>`;
+  } else if (record.status === 'ideas_generated') {
+    btn = `<button class="toggle-btn done" onclick="dailyGenerateScripts('${record.date}', this)">⚡ Tạo 10 Script (AI)</button>`;
+  } else if (record.status === 'draft') {
+    btn = `<button class="toggle-btn done" onclick="dailyScoreScripts('${record.date}', this)">⚡ Chấm điểm 10 Script (AI)</button>`;
+  }
+  if (!btn) return '';
+  return `<div class="card" style="margin-top:14px;">${btn}<div class="daily-action-err"></div></div>`;
+}
+
+async function dailyGenerateIdeas(date, btn) {
+  btn.textContent = 'Đang tạo (gọi AI)…'; btn.disabled = true;
+  const res = await fetch(`/api/daily/${date}/ideas`, {method:'POST'});
+  const d = await res.json();
+  if (!d.ok) {
+    btn.textContent = '⚡ Tạo 10 Ý tưởng (AI)'; btn.disabled = false;
+    btn.parentElement.querySelector('.daily-action-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
+    return;
+  }
+  renderDaily();
+}
+
+async function dailyGenerateScripts(date, btn) {
+  btn.textContent = 'Đang viết script (gọi AI)…'; btn.disabled = true;
+  const res = await fetch(`/api/daily/${date}/scripts`, {method:'POST'});
+  const d = await res.json();
+  if (!d.ok) {
+    btn.textContent = '⚡ Tạo 10 Script (AI)'; btn.disabled = false;
+    btn.parentElement.querySelector('.daily-action-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
+    return;
+  }
+  renderDaily();
+}
+
+async function dailyScoreScripts(date, btn) {
+  btn.textContent = 'Đang chấm điểm (gọi AI)…'; btn.disabled = true;
+  const res = await fetch(`/api/daily/${date}/score`, {method:'POST'});
+  const d = await res.json();
+  if (!d.ok) {
+    btn.textContent = '⚡ Chấm điểm 10 Script (AI)'; btn.disabled = false;
+    btn.parentElement.querySelector('.daily-action-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
+    return;
+  }
+  renderDaily();
+}
+
+function renderDailyIdeas(ideas) {
+  if (!ideas || !ideas.length) return '';
+  const items = ideas.map((idea, i) => `
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-weight:600;">${i+1}. ${mdInline(idea.name||'')}</div>
+      <div style="font-size:12.5px; color:var(--text-secondary); font-style:italic; margin:4px 0;">${mdInline(idea.hook||'')}</div>
+      <div style="font-size:12px;"><strong>Insight:</strong> ${mdInline(idea.insight_used||'')}</div>
+      <div style="font-size:12px;"><strong>Vấn đề:</strong> ${mdInline(idea.problem||'')}</div>
+      <div style="font-size:12px;"><strong>Góc tiếp cận:</strong> ${mdInline(idea.angle||'')} — <strong>Big idea:</strong> ${mdInline(idea.big_idea||'')}</div>
+      <div style="font-size:12px; color:var(--text-secondary);">${mdInline(idea.why||'')}</div>
+    </div>`).join('');
+  return `<div class="page-title" style="font-size:16px; margin-top:18px;">💡 10 Ý TƯỞNG</div>${items}`;
+}
+
+function renderDailyScripts(scripts) {
+  if (!scripts || !scripts.length) return '';
+  const items = scripts.map(s => `
+    <details class="card" style="margin-bottom:8px;">
+      <summary style="cursor:pointer; font-weight:600;">${escapeHtml(s.script_id)} — ${mdInline(s.hook||'')}</summary>
+      <div style="margin-top:8px; font-size:12.5px;">
+        <div><strong>Problem:</strong> ${mdInline(s.problem||'')}</div>
+        <div><strong>Agitate:</strong> ${mdInline(s.agitate||'')}</div>
+        <div><strong>Insight:</strong> ${mdInline(s.insight||'')}</div>
+        <div><strong>Explanation:</strong> ${mdInline(s.explanation||'')}</div>
+        <div><strong>Solution:</strong> ${mdInline(s.solution||'')}</div>
+        <div><strong>Product intro:</strong> ${mdInline(s.product_intro||'')}</div>
+        <div><strong>CTA:</strong> ${mdInline(s.cta||'')}</div>
+        <div><strong>Camera notes:</strong> ${mdInline(s.camera_notes||'')}</div>
+        ${s.text_overlay ? `<div><strong>Text overlay:</strong> ${mdInline(s.text_overlay)}</div>` : ''}
+        <div style="margin-top:6px; padding-top:6px; border-top:1px solid var(--border); color:var(--text-muted); font-size:11px;">${escapeHtml(s.mandatory_warning||'')}</div>
+      </div>
+    </details>`).join('');
+  return `<div class="page-title" style="font-size:16px; margin-top:18px;">📝 10 SCRIPT</div>${items}`;
+}
+
+function renderDailyTop5(detail, record) {
+  if (!detail.top5 || !detail.top5.length) return '';
+  const scoreById = Object.fromEntries((detail.scores||[]).map(s => [s.script_id, s]));
+  const scriptById = Object.fromEntries((detail.scripts||[]).map(s => [s.script_id, s]));
+  const medals = ['🥇','🥈','🥉','4.','5.'];
+  const items = detail.top5.map((sid, i) => {
+    const score = scoreById[sid] || {};
+    const script = scriptById[sid] || {};
+    const canSelect = record.status === 'scored';
+    return `<div class="card" style="margin-bottom:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <span class="pill score">${medals[i]||(i+1)}</span>
+          <span class="pill">${score.total ?? '—'}/100</span>
+          <div style="font-weight:600; margin-top:6px;">${escapeHtml(sid)} — ${mdInline(script.hook||'')}</div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${mdInline(score.reason||'')}</div>
+        </div>
+        ${canSelect ? `<button class="toggle-btn done" onclick="dailySelectScript('${record.date}', '${sid}', this)">Chọn script này</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="page-title" style="font-size:16px; margin-top:18px;">🏆 TOP 5</div>${items}`;
+}
+
+async function dailySelectScript(date, scriptId, btn) {
+  btn.textContent = 'Đang chọn…'; btn.disabled = true;
+  const res = await fetch(`/api/daily/${date}/select`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({script_id: scriptId})});
+  const d = await res.json();
+  if (!d.ok) { alert('Lỗi: ' + d.error); btn.textContent = 'Chọn script này'; btn.disabled = false; return; }
+  renderDaily();
+}
+
+function renderDailySelected(detail, record) {
+  if (!record.selected_script_id) return '';
+  const script = (detail.scripts||[]).find(s => s.script_id === record.selected_script_id);
+  const statusOrder = ['selected','recorded','published','ads_running','completed'];
+  const idx = statusOrder.indexOf(record.status);
+  const nextStatus = statusOrder[idx+1];
+  const nextLabel = {recorded:'✅ Đánh dấu đã quay', published:'✅ Đánh dấu đã đăng', ads_running:'✅ Đánh dấu đang chạy Ads', completed:'✅ Đánh dấu có kết quả'}[nextStatus];
+  return `<div class="page-title" style="font-size:16px; margin-top:18px;">🎯 SCRIPT ĐÃ CHỌN</div>
+  <div class="card">
+    <div style="font-weight:600;">${escapeHtml(record.selected_script_id)} — ${mdInline(script ? script.hook : '')}</div>
+    <div style="margin-top:8px;"><span class="pill score">${escapeHtml(dailyStatusLabel(record.status))}</span></div>
+    ${nextStatus ? `<button class="toggle-btn done" style="margin-top:10px;" onclick="dailySetStatus('${record.date}', '${nextStatus}', this)">${nextLabel}</button>` : ''}
+  </div>`;
+}
+
+async function dailySetStatus(date, status, btn) {
+  btn.disabled = true;
+  const res = await fetch(`/api/daily/${date}/status`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status})});
+  const d = await res.json();
+  if (!d.ok) { alert('Lỗi: ' + d.error); btn.disabled = false; return; }
+  renderDaily();
+}
+
+function renderDailyHistory(history) {
+  if (!history.length) return '';
+  const rows = history.map(r => `<tr>
+    <td>${escapeHtml(r.date)}</td>
+    <td>Pillar ${escapeHtml(String(r.pillar_num))}</td>
+    <td>#${escapeHtml(r.topic_num)}</td>
+    <td>${escapeHtml(r.selected_script_id || '—')}</td>
+    <td>${escapeHtml(dailyStatusLabel(r.status))}</td>
+  </tr>`).join('');
+  return `<div class="page-title" style="font-size:16px; margin-top:18px;">📅 LỊCH SỬ (7 ngày gần nhất)</div>
+  <div class="card"><table><tr><th>Ngày</th><th>Pillar</th><th>Topic</th><th>Script</th><th>Trạng thái</th></tr>${rows}</table></div>`;
+}
+
 async function renderResearch() {
   const res = await fetch('/api/research');
   const d = await res.json();
@@ -387,7 +663,7 @@ async function renderIdeas() {
   const res = await fetch('/api/ideas-today');
   const rows = await res.json();
   if (!rows.length) { content.innerHTML = emptyMsg('Chưa có kịch bản — chạy `agent write-scripts`'); return; }
-  let html = `<div class="page-title">💡 Ý tưởng hôm nay</div><div class="page-sub">${rows.length} kịch bản đã viết, sắp theo điểm số. Bấm "Xem kịch bản" để đọc chi tiết, tick khi đã quay xong.</div>`;
+  let html = `<div class="page-title">📚 Thư viện kịch bản</div><div class="page-sub">${rows.length} kịch bản đã viết, sắp theo điểm số. Bấm "Xem kịch bản" để đọc chi tiết, tick khi đã quay xong. (Sản xuất nội dung mới theo ngày → xem "Sản xuất hôm nay" ở trên.)</div>`;
   rows.forEach(r => {
     html += `
     <div class="idea-card">
