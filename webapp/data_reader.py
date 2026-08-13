@@ -3,7 +3,7 @@
 Không có "AI" chạy ngầm ở đây — toàn bộ dữ liệu hiển thị là parse trực tiếp từ
 các file .md/.json do pipeline agent (agent/cli.py) đã tạo ra thật. Phần phân
 loại "pillar" ở Cân đối danh mục là gán tay dựa trên nội dung đã đọc kỹ từng
-kịch bản (xem SCRIPT_PILLAR bên dưới), không phải suy luận tự động.
+kịch bản (xem SCRIPT_NEW_PILLAR bên dưới), không phải suy luận tự động.
 """
 
 from __future__ import annotations
@@ -22,25 +22,44 @@ PUBLISH_PLATFORMS = ["Facebook", "YouTube", "TikTok", "Zalo OA", "Blog", "Email"
 # Ngưỡng cảnh báo cho Ads Autopilot (báo cáo — KHÔNG tự động tắt chiến dịch thật).
 CPL_WARN_THRESHOLD_VND = 150_000
 
-# Gán tay pillar cho từng kịch bản, dựa trên nội dung + lý do chọn trong scores.md.
-SCRIPT_PILLAR = {
-    "01": "Pain & Insight",  # Trước khi lên bàn mổ
-    "02": "Proof",  # Làm sao biết đây không phải hàng giả?
-    "03": "Pain & Insight",  # Uống thuốc giảm đau rồi lại đau
-    "04": "Pain & Insight",  # Có lúc tôi không muốn sống nữa
-    "05": "Belief Shift",  # Tôi theo dõi trang này cả năm mới dám mua
-    "06": "Pain & Insight",  # Con cháu chưa cần lo
-    "07": "Belief Shift",  # Mẹ tôi thấy tôi uống mà mẹ vẫn không mua
-    "08": "Pain & Insight",  # Đã mổ một lần rồi, bác sĩ lại chỉ định mổ tiếp
-    "09": "Proof",  # Nghi ngờ trên mạng, theo dõi cả năm mới đánh liều mua
-    "10": "Pain & Insight",  # Vợ mua giúp chồng
-    "11": "Education",  # Chưa đau không có nghĩa là chưa sao (insight #8, mới 13/08/2026)
-    "12": "Education",  # Uống canxi 5 năm rồi mà khớp vẫn đau (hiểu lầm canxi, mới 13/08/2026)
-    "13": "Education",  # 30 phút mỗi ngày (lối sống/phòng ngừa, mới 13/08/2026)
-    "14": "Education",  # Cùng uống glucosamine (hiểu lầm chất lượng, mới 13/08/2026)
+# --- Hệ thống Content Pillar mới (10 pillar, khớp với data/content_pillars.md) ---
+# Dùng SỐ pillar (1-10, đúng theo "## Pillar N: ..." trong content_pillars.md) làm
+# khóa — tránh lệch chuỗi tên đầy đủ. Tên hiển thị luôn lấy trực tiếp từ file .md.
+# Gán tay kịch bản nào thuộc pillar nào, dựa trên đúng nội dung/insight chính của
+# từng kịch bản (không suy luận tự động). Kịch bản 05/07/08/09 kết hợp 2 insight cũ
+# nên gán theo insight nổi bật nhất trong kịch bản đó.
+SCRIPT_NEW_PILLAR = {
+    "01": 7,  # Trước khi lên bàn mổ
+    "02": 6,  # Làm sao biết đây không phải hàng giả?
+    "03": 4,  # Uống thuốc giảm đau rồi lại đau
+    "04": 7,  # Có lúc tôi không muốn sống nữa
+    "05": 6,  # Theo dõi trang cả năm mới dám mua
+    "06": 7,  # Con cháu chưa cần lo
+    "07": 6,  # Rào cản giới thiệu là giá
+    "08": 7,  # Đã mổ 1 lần, bác sĩ lại chỉ định mổ tiếp
+    "09": 6,  # Nghi ngờ trên mạng, theo dõi cả năm
+    "10": 7,  # Vợ mua giúp chồng
+    "11": 2,  # Chưa đau không có nghĩa là chưa sao
+    "12": 3,  # Uống canxi 5 năm rồi mà khớp vẫn đau
+    "13": 9,  # 30 phút mỗi ngày
+    "14": 3,  # Cùng uống glucosamine
 }
 
-PILLAR_ORDER = ["Pain & Insight", "Education", "Belief Shift", "Proof"]
+# Chủ đề cụ thể (theo đúng số thứ tự # trong content_pillars.md) đã được viết thành
+# kịch bản — dùng cho Bản đồ nội dung để biết chủ đề nào đã khai thác, chủ đề nào chưa.
+# Khóa: (số pillar, số thứ tự chủ đề trong bảng pillar đó).
+TOPIC_TO_SCRIPT = {
+    (2, "11"): "11",
+    (3, "1"): "12",
+    (3, "5"): "14",
+    (4, "1"): "03",
+    (6, "1"): "02",
+    (7, "1"): "01",
+    (7, "2"): "04",
+    (7, "3"): "06",
+    (7, "6"): "10",
+    (9, "1"): "13",
+}
 
 
 def _read(path: Path) -> str:
@@ -134,11 +153,12 @@ def read_content_pillars() -> list[dict]:
     text = _read(DATA_DIR / "content_pillars.md")
     if not text:
         return []
-    sections = re.split(r"^## (Pillar \d+: .+)$", text, flags=re.MULTILINE)
+    sections = re.split(r"^## (Pillar (\d+): .+)$", text, flags=re.MULTILINE)
     out: list[dict] = []
-    for idx in range(1, len(sections), 2):
+    for idx in range(1, len(sections), 3):
         title = sections[idx].strip()
-        body = sections[idx + 1] if idx + 1 < len(sections) else ""
+        num = int(sections[idx + 1])
+        body = sections[idx + 2] if idx + 2 < len(sections) else ""
         purpose = re.search(r"Mục đích:\s*(.+)", body)
         source = re.search(r"Insight nguồn:\s*(.+)", body)
         has_video = re.search(r"Đã có video mẫu:\s*(.+)", body)
@@ -146,6 +166,7 @@ def read_content_pillars() -> list[dict]:
         topics = tables[0] if tables else []
         out.append(
             {
+                "num": num,
                 "title": title,
                 "purpose": purpose.group(1).strip() if purpose else "",
                 "source": source.group(1).strip() if source else "",
@@ -282,23 +303,49 @@ def read_ideas_today() -> list[dict]:
                 "hook": hook,
                 "score": score_by_id.get(script_id, ""),
                 "quay_xong": quay_status.get(script_id, False),
-                "pillar": SCRIPT_PILLAR.get(script_id, "Chưa gán"),
+                "pillar": pillar_title_by_num().get(SCRIPT_NEW_PILLAR.get(script_id), "Chưa gán"),
             }
         )
     out.sort(key=lambda r: int(r["score"]) if r["score"].isdigit() else -1, reverse=True)
     return out
 
 
+def pillar_title_by_num() -> dict[int, str]:
+    return {p["num"]: p["title"] for p in read_content_pillars()}
+
+
 def read_portfolio() -> list[dict]:
+    """Cân đối danh mục theo 10 Pillar thật (content_pillars.md) — cho mỗi pillar:
+    bao nhiêu kịch bản đã viết, và đã khai thác bao nhiêu / tổng số chủ đề."""
     ideas = read_ideas_today()
-    total = len(ideas) or 1
-    counts: dict[str, int] = {p: 0 for p in PILLAR_ORDER}
+    total_scripts = len(ideas) or 1
+    script_counts: dict[int, int] = {}
     for idea in ideas:
-        counts[idea["pillar"]] = counts.get(idea["pillar"], 0) + 1
-    return [
-        {"pillar": p, "count": counts.get(p, 0), "pct": round(100 * counts.get(p, 0) / total, 1)}
-        for p in PILLAR_ORDER
-    ]
+        pillar_num = SCRIPT_NEW_PILLAR.get(idea["script_id"])
+        if pillar_num:
+            script_counts[pillar_num] = script_counts.get(pillar_num, 0) + 1
+
+    pillars = read_content_pillars()
+    out = []
+    for p in pillars:
+        num = p["num"]
+        topic_total = len(p["topics"]) or 1
+        topics_covered = sum(
+            1 for t in p["topics"] if (num, str(t.get("#", "")).strip()) in TOPIC_TO_SCRIPT
+        )
+        count = script_counts.get(num, 0)
+        out.append(
+            {
+                "pillar": p["title"],
+                "num": num,
+                "count": count,
+                "pct": round(100 * count / total_scripts, 1),
+                "topics_total": len(p["topics"]),
+                "topics_covered": topics_covered,
+                "topics_pct": round(100 * topics_covered / topic_total, 1),
+            }
+        )
+    return out
 
 
 def read_script_detail(script_id: str) -> str:
@@ -411,17 +458,35 @@ def set_cached_angles(insight_num: str, angles: list[str]) -> None:
 
 
 def read_content_map() -> list[dict]:
-    insights = read_priority_insights()
-    ideas = read_ideas_today()
+    """Bản đồ nội dung theo 10 Pillar thật: mỗi pillar → từng chủ đề → đã có kịch bản
+    khai thác chưa. Cho thấy rõ pillar nào còn trống hoàn toàn (chưa có video nào)."""
+    pillars = read_content_pillars()
+    ideas_by_id = {i["script_id"]: i for i in read_ideas_today()}
     out = []
-    for ins in insights:
-        matched = [i for i in ideas if f"#{ins['num']}" in i["insight"]]
+    for p in pillars:
+        num = p["num"]
+        topics = []
+        for t in p["topics"]:
+            topic_num = str(t.get("#", "")).strip()
+            script_id = TOPIC_TO_SCRIPT.get((num, topic_num))
+            idea = ideas_by_id.get(script_id) if script_id else None
+            topics.append(
+                {
+                    "topic_num": topic_num,
+                    "topic": t.get("Chủ đề", ""),
+                    "script": (
+                        {"script_id": idea["script_id"], "name": idea["name"]} if idea else None
+                    ),
+                }
+            )
+        covered = sum(1 for t in topics if t["script"])
         out.append(
             {
-                "num": ins["num"],
-                "insight": ins["insight"],
-                "total": ins["total"],
-                "scripts": [{"script_id": m["script_id"], "name": m["name"]} for m in matched],
+                "num": num,
+                "title": p["title"],
+                "topics_total": len(topics),
+                "topics_covered": covered,
+                "topics": topics,
             }
         )
     return out

@@ -428,12 +428,13 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 async function renderPortfolio() {
   const res = await fetch('/api/portfolio');
   const rows = await res.json();
-  let html = `<div class="page-title">📊 Cân đối danh mục nội dung</div><div class="page-sub">Phân bố kịch bản theo 4 nhóm mục tiêu nhận thức (Pain & Insight / Education / Belief Shift / Proof)</div><div class="card">`;
+  let html = `<div class="page-title">📊 Cân đối danh mục nội dung</div><div class="page-sub">Phân bố ${rows.reduce((s,r)=>s+r.count,0)} kịch bản đã viết theo 10 Pillar thật (content_pillars.md) — và tỉ lệ chủ đề mỗi pillar đã có kịch bản khai thác.</div><div class="card">`;
   rows.forEach(r => {
+    const empty = r.count === 0 ? ' style="color:var(--text-muted)"' : '';
     html += `
     <div class="bar-row">
-      <div class="bar-label"><span>${r.pillar}</span><span>${r.count} kịch bản (${r.pct}%)</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${r.pct}%"></div></div>
+      <div class="bar-label"><span${empty}>${mdInline(r.pillar)}</span><span>${r.count} kịch bản (${r.pct}%) · ${r.topics_covered}/${r.topics_total} chủ đề đã khai thác</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${r.topics_pct}%"></div></div>
     </div>`;
   });
   html += `</div>`;
@@ -502,11 +503,19 @@ async function renderBeliefMap() {
 async function renderContentMap() {
   const res = await fetch('/api/content-map');
   const rows = await res.json();
-  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có insight — chạy `agent filter-insights`'); return; }
-  let html = `<div class="page-title">🗺️ Bản đồ nội dung</div><div class="page-sub">Mỗi insight ưu tiên → những kịch bản đã khai thác insight đó</div>`;
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có data/content_pillars.md'); return; }
+  const doneCount = rows.reduce((s,r) => s + r.topics_covered, 0);
+  const totalCount = rows.reduce((s,r) => s + r.topics_total, 0);
+  let html = `<div class="page-title">🗺️ Bản đồ nội dung</div><div class="page-sub">10 Pillar → từng chủ đề → đã có kịch bản chưa. ${doneCount}/${totalCount} chủ đề đã khai thác — phần còn lại là dư địa 1.000 video.</div>`;
   rows.forEach(r => {
-    const scripts = r.scripts.map(s => `<span class="pill">#${s.script_id} ${mdInline(s.name)}</span>`).join(' ');
-    html += `<div class="card"><div style="font-weight:600;">#${r.num} — ${mdInline(r.insight)} <span class="pill score">${r.total}</span></div><div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">${scripts || '<span class="empty-state">Chưa có kịch bản nào khai thác insight này</span>'}</div></div>`;
+    const emptyPillar = r.topics_covered === 0;
+    const topics = r.topics.map(t => {
+      if (t.script) {
+        return `<span class="pill score">✅ #${t.topic_num} ${mdInline(t.topic)} — kịch bản #${t.script.script_id}</span>`;
+      }
+      return `<span class="pill gray">#${t.topic_num} ${mdInline(t.topic)}</span>`;
+    }).join(' ');
+    html += `<div class="card"><div style="font-weight:600; ${emptyPillar ? 'color:var(--text-muted);' : ''}">${mdInline(r.title)} <span class="pill score">${r.topics_covered}/${r.topics_total}</span></div><div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">${topics}</div></div>`;
   });
   content.innerHTML = html;
 }
@@ -517,7 +526,7 @@ async function renderIdeation() {
   const res = await fetch('/api/insights');
   const rows = await res.json();
   if (!rows.length) { content.innerHTML = emptyMsg('Chưa có insight — chạy `agent filter-insights`'); return; }
-  let html = `<div class="page-title">🌱 Kiến tạo 1.000 video</div><div class="page-sub">Mỗi insight → bấm "Bung 10 góc nhìn" để AI (Haiku) sinh 10 ý tưởng góc tiếp cận khác nhau. Kết quả được cache lại, không sinh lại trừ khi xóa file data/web_state.json.</div>`;
+  let html = `<div class="page-title">🌱 Kiến tạo 1.000 video</div><div class="page-sub">Mỗi insight → bấm "Bung 10 góc nhìn" để AI (Haiku) sinh 10 ý tưởng góc tiếp cận khác nhau. Kết quả được cache lại, không sinh lại trừ khi xóa file data/web_state.json.<br><strong style="color:var(--warn, #b7791f);">Lưu ý: tính năng này cần Anthropic API credit — hiện tài khoản đã hết credit nên nút "Bung 10 góc nhìn" sẽ báo lỗi cho tới khi nạp lại.</strong> Trong lúc chờ, xem <a href="#" onclick="loadPage('wave1'); return false;">Wave 1 — Chi tiết</a>: 5 chủ đề đã được viết tay đầy đủ 60 mục mỗi chủ đề, không phụ thuộc API.</div>`;
   rows.forEach(r => {
     html += `
     <div class="card">
