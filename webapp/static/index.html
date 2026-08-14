@@ -344,6 +344,8 @@ const DAILY_STATUS_LABELS = {
 };
 function dailyStatusLabel(s) { return DAILY_STATUS_LABELS[s] || s; }
 
+let lastDailyDetail = null; // giữ lại detail (ideas/scripts/scores) đã fetch, dùng cho nút "Xem kịch bản"
+
 async function renderDaily() {
   const [todayRes, histRes] = await Promise.all([
     fetch('/api/daily/today'),
@@ -363,6 +365,7 @@ async function renderDailyBody(data) {
 
   const record = data.record;
   const detail = data.detail || {};
+  lastDailyDetail = detail;
   let html = `<div class="card">
     <div style="font-weight:600; margin-bottom:8px;">HÔM NAY — ${escapeHtml(record.date)}</div>
     <div style="font-size:13px;"><strong>Pillar:</strong> ${escapeHtml(String(record.pillar_num))} &nbsp; <strong>Topic:</strong> #${escapeHtml(record.topic_num)}</div>
@@ -576,8 +579,32 @@ function renderDailySelected(detail, record) {
   <div class="card">
     <div style="font-weight:600;">${escapeHtml(record.selected_script_id)} — ${mdInline(script ? script.hook : '')}</div>
     <div style="margin-top:8px;"><span class="pill score">${escapeHtml(dailyStatusLabel(record.status))}</span></div>
-    ${nextStatus ? `<button class="toggle-btn done" style="margin-top:10px;" onclick="dailySetStatus('${record.date}', '${nextStatus}', this)">${nextLabel}</button>` : ''}
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="toggle-btn" onclick="viewDailyScript('${record.selected_script_id}')">📜 Xem kịch bản</button>
+      ${nextStatus ? `<button class="toggle-btn done" onclick="dailySetStatus('${record.date}', '${nextStatus}', this)">${nextLabel}</button>` : ''}
+    </div>
   </div>`;
+}
+
+function viewDailyScript(scriptId) {
+  const script = ((lastDailyDetail && lastDailyDetail.scripts) || []).find(s => s.script_id === scriptId);
+  if (!script) { alert('Không tìm thấy nội dung kịch bản — thử tải lại trang.'); return; }
+  document.getElementById('modal-body').innerHTML = `
+    <div class="page-title" style="font-size:16px;">${escapeHtml(script.script_id)}</div>
+    <div style="font-size:13.5px; line-height:1.6;">
+      <div style="margin-bottom:10px;"><strong>Hook:</strong> ${mdInline(script.hook||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Problem:</strong> ${mdInline(script.problem||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Agitate:</strong> ${mdInline(script.agitate||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Insight:</strong> ${mdInline(script.insight||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Explanation:</strong> ${mdInline(script.explanation||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Solution:</strong> ${mdInline(script.solution||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Product intro:</strong> ${mdInline(script.product_intro||'')}</div>
+      <div style="margin-bottom:10px;"><strong>CTA:</strong> ${mdInline(script.cta||'')}</div>
+      <div style="margin-bottom:10px;"><strong>Camera notes:</strong> ${mdInline(script.camera_notes||'')}</div>
+      ${script.text_overlay ? `<div style="margin-bottom:10px;"><strong>Text overlay:</strong> ${mdInline(script.text_overlay)}</div>` : ''}
+      <div style="margin-top:14px; padding-top:10px; border-top:1px solid var(--border); color:var(--text-muted); font-size:12px;">${escapeHtml(script.mandatory_warning||'')}</div>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
 }
 
 async function dailySetStatus(date, status, btn) {
