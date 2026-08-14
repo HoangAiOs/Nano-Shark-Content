@@ -32,6 +32,24 @@ def _client() -> anthropic.Anthropic:
     return anthropic.Anthropic()
 
 
+def _call_and_extract_json(*, model: str, max_tokens: int, prompt: str):
+    """Gọi Claude 1 lần, parse JSON nghiêm ngặt. Nếu AI bị cắt giữa chừng vì
+    chạm max_tokens, raise lỗi RÕ RÀNG ngay tại đây thay vì để lộ ra ngoài
+    dưới dạng lỗi parse JSON khó hiểu (vd "Unterminated string...")."""
+    response = _client().messages.create(
+        model=model,
+        max_tokens=max_tokens,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    if response.stop_reason == "max_tokens":
+        raise RuntimeError(
+            f"AI bị cắt giữa chừng vì vượt giới hạn max_tokens={max_tokens} "
+            f"(model={model}) — nội dung yêu cầu quá dài so với giới hạn hiện tại. "
+            f"Cần tăng max_tokens trong ai_helper.py hoặc giảm khối lượng nội dung/lần gọi."
+        )
+    return _extract_json_strict(response.content[0].text)
+
+
 def generate_ideas_from_goal(goal: str, top_insights: list[str]) -> list[str]:
     """Sinh 10 ý tưởng chủ đề video từ 1 goal + danh sách insight ưu tiên."""
     insights_text = "\n".join(f"- {i}" for i in top_insights[:7]) or "(chưa có insight)"
@@ -108,12 +126,7 @@ Ràng buộc bắt buộc: chỉ dùng insight có trong danh sách trên, khôn
 
 Trả lời CHỈ bằng JSON: một mảng đúng 10 object theo cấu trúc trên, không có text nào khác."""
 
-    response = _client().messages.create(
-        model=DAILY_IDEA_MODEL,
-        max_tokens=4096,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return _extract_json_strict(response.content[0].text)
+    return _call_and_extract_json(model=DAILY_IDEA_MODEL, max_tokens=4096, prompt=prompt)
 
 
 def generate_daily_scripts(topic_title: str, ideas: list[dict]) -> list[dict]:
@@ -148,12 +161,9 @@ Ràng buộc bắt buộc:
 
 Trả lời CHỈ bằng JSON: một mảng đúng {len(ideas)} object theo cấu trúc trên, không có text nào khác."""
 
-    response = _client().messages.create(
-        model=DAILY_SCRIPT_MODEL,
-        max_tokens=8192,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return _extract_json_strict(response.content[0].text)
+    # 10 script đầy đủ (~10 field/script) cần nhiều token hơn nhiều so với bước ý
+    # tưởng — 8192 từng bị cắt giữa chừng (lỗi "Unterminated string"), tăng lên 16384.
+    return _call_and_extract_json(model=DAILY_SCRIPT_MODEL, max_tokens=16384, prompt=prompt)
 
 
 _SCORE_CRITERIA = [
@@ -191,12 +201,7 @@ Với MỖI script, trả về 1 object JSON với đúng các field:
 
 Trả lời CHỈ bằng JSON: một mảng đúng {len(scripts)} object theo cấu trúc trên, không có text nào khác."""
 
-    response = _client().messages.create(
-        model=DAILY_SCORE_MODEL,
-        max_tokens=4096,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return _extract_json_strict(response.content[0].text)
+    return _call_and_extract_json(model=DAILY_SCORE_MODEL, max_tokens=4096, prompt=prompt)
 
 
 def _extract_json_strict(text: str):
