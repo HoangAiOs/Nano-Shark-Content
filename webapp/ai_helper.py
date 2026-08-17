@@ -156,15 +156,26 @@ không được lấy thông tin thành phần/cơ chế từ đâu khác, kể 
 ---
 
 Cách dựng nội dung (đây là DÀN Ý TƯ DUY nội bộ — bài nói cuối cùng phải là 1 đoạn
-văn liền mạch tự nhiên, KHÔNG được chia thành từng đoạn có tiêu đề như dàn ý này):
-1. Hook — nêu đúng tình trạng/nỗi đau khách hàng, tự nhiên, không sáo rỗng.
-2. Giải thích ngắn gọn vì sao tình trạng này đáng quan tâm.
-3. Giải thích cơ chế liên quan — CHỈ dùng đúng 1 trong 5 cơ chế ở mục 4 tài liệu trên.
-4. Với TỪNG thành phần được nhắc tới: nêu tên → vai trò/chức năng → vì sao vai trò
-   đó liên quan tới vấn đề đang nói. Nếu nhắc từ 2 thành phần trở lên, giải thích
-   thêm vì sao chúng bổ trợ nhau cho mục tiêu hỗ trợ.
-5. Giới thiệu sản phẩm tự nhiên.
-6. CTA tìm hiểu/tư vấn thêm, nếu phù hợp.
+văn liền mạch tự nhiên, KHÔNG được chia thành từng đoạn có tiêu đề như dàn ý này,
+KHÔNG viết chữ "Hook:"/"Vấn đề:"/"Giải pháp:"... ra lời thoại):
+1. Hook — đánh thẳng vào insight, gần với trải nghiệm thật, không giật tít quá
+   đà, không hù dọa, không đưa claim y khoa không có nguồn.
+2. Vấn đề — giúp hiểu vì sao tình trạng này đáng quan tâm, giải thích bằng ngôn
+   ngữ đời thường (không chỉ nêu triệu chứng suông). Không tự chẩn đoán bệnh,
+   không khẳng định chắc chắn nguyên nhân nếu tài liệu không cho phép.
+3. Giải pháp — CẦU NỐI LOGIC bắt buộc phải có giữa vấn đề và thành phần: "nếu
+   muốn hỗ trợ tình trạng này thì cần quan tâm/tác động vào đâu". KHÔNG được
+   nhảy thẳng từ vấn đề sang tên sản phẩm/thành phần mà không qua bước này.
+4. Cơ chế — CHỈ dùng đúng 1 trong 5 cơ chế ở mục 4 tài liệu trên.
+5. Với TỪNG thành phần được nhắc tới: nêu tên → vai trò/chức năng theo đúng tài
+   liệu → vì sao vai trò đó liên quan tới vấn đề đang nói. Nếu nhắc từ 2 thành
+   phần trở lên, giải thích thêm vì sao chúng bổ trợ nhau cho mục tiêu hỗ trợ.
+   TUYỆT ĐỐI không viết kiểu liệt kê rời rạc "A tốt cho khớp. B tốt cho khớp." —
+   phải nối bằng quan hệ nhân quả: vấn đề → cần hỗ trợ điều gì → thành phần nào
+   dùng cho mục tiêu đó → vai trò được tài liệu xác nhận → liên hệ lại insight.
+6. Bằng chứng thật — xem khối ràng buộc riêng bên dưới.
+7. Giới thiệu sản phẩm tự nhiên — "đó là lý do công thức được xây dựng...".
+8. CTA tìm hiểu/tư vấn thêm, tự nhiên, không ép buộc.
 
 RÀNG BUỘC BẮT BUỘC VỀ THÀNH PHẦN/CƠ CHẾ (quan trọng nhất):
 - Tài liệu tham chiếu ở trên chỉ mô tả VAI TRÒ/CƠ CHẾ CỤ THỂ cho 3 thành phần:
@@ -193,15 +204,35 @@ RÀNG BUỘC BẮT BUỘC VỀ THÀNH PHẦN/CƠ CHẾ (quan trọng nhất):
   xảy ra, KHÔNG giải thích lý do đó — chỉ nêu triệu chứng (đúng insight đã cho) rồi
   chuyển thẳng sang cơ chế/thành phần sản phẩm có trong tài liệu.
 
+RÀNG BUỘC BẮT BUỘC VỀ BẰNG CHỨNG THẬT (sau phần cơ chế/thành phần, trước phần
+giới thiệu sản phẩm — có thể bỏ qua nếu không có gì phù hợp, không ép phải có):
+- CHỈ được dùng bằng chứng thuộc các loại sau, VÀ CHỈ khi tài liệu tham chiếu
+  thực sự có ghi rõ: nguồn gốc nguyên liệu, công nghệ sản xuất, bằng sáng chế,
+  thông tin kỹ thuật đã ghi rõ (vd số hiệu GMP, Certificate of Analysis), đặc
+  điểm nguyên liệu đã được tài liệu xác nhận (vd "phân tử nhỏ, hấp thụ nhanh
+  hơn 1.5 lần"), câu chuyện nguồn gốc sản phẩm nếu tài liệu có ghi.
+- TUYỆT ĐỐI CẤM tự bịa: review giả, số người dùng giả, phần trăm hiệu quả giả,
+  nghiên cứu giả, bác sĩ giả, bệnh viện giả, chứng nhận giả, hình ảnh trước/sau
+  giả, câu chuyện khách hàng giả. Nếu tài liệu không có bằng chứng cho 1 claim,
+  KHÔNG được bịa ra bằng chứng đó.
+- Nếu topic/insight đang viết không có bằng chứng nào phù hợp trong tài liệu,
+  bỏ qua phần này hoàn toàn — không cố nhét bằng chứng không liên quan.
+
 RÀNG BUỘC BẮT BUỘC VỀ NGÔN TỪ:
 - Câu công dụng CHỈ được nói đúng: "{MANDATORY_CLAIM}".
-- TUYỆT ĐỐI KHÔNG dùng: "chữa", "điều trị", "đánh tan bệnh", "khỏi hoàn toàn",
-  "phục hồi chắc chắn", "thay thế thuốc", "cam kết hết đau", tỷ lệ % hiệu quả cụ
-  thể, thời gian khỏi bệnh cụ thể, hoặc bất kỳ tác động sinh học nào ngoài tài liệu.
+- TUYỆT ĐỐI KHÔNG dùng: "chữa", "điều trị", "khỏi", "chữa khỏi hoàn toàn", "đánh
+  tan bệnh", "thay thế thuốc", "thay thế điều trị", "cam kết hiệu quả", "chắc
+  chắn hết đau", "hết thoái hóa", "phục hồi 100%", "phục hồi chắc chắn", "hiệu
+  quả sau X ngày" (hoặc bất kỳ mốc thời gian hiệu quả cụ thể nào), tỷ lệ % hiệu
+  quả nếu tài liệu không có, hoặc bất kỳ claim y khoa nào không có trong tài liệu.
 - TUYỆT ĐỐI KHÔNG dùng các câu khẳng định chắc chắn tình trạng SẼ cải thiện —
   ví dụ cấm: "sẽ giảm dần", "sẽ đỡ hơn", "sẽ hết", "sẽ khỏe lại", "chắc chắn cải
   thiện". Đây là dạng cam kết kết quả trá hình, không được phép dù không dùng từ
-  "chữa"/"khỏi" trực tiếp.
+  "chữa"/"khỏi" trực tiếp. KHÔNG được biến "có thể hỗ trợ" thành "giúp chữa" hay
+  bất kỳ cách paraphrase nào làm mất đi tính không-cam-kết của câu gốc.
+- Luôn phân biệt rõ ràng: (a) thông tin về thành phần, (b) cơ chế/vai trò được
+  tài liệu xác nhận, (c) mục tiêu hỗ trợ, (d) bằng chứng kỹ thuật thật — với (e)
+  tuyên bố điều trị bệnh. Chỉ được viết (a)-(d), tuyệt đối không viết (e).
 - KHÔNG tự viết câu kiểu "đây không phải là thuốc chữa bệnh" hay bất kỳ cách diễn
   đạt nào gần giống câu cảnh báo bắt buộc — hệ thống tự thêm nguyên văn câu cảnh
   báo vào cuối, lời thoại không cần và không được tự ý paraphrase trước.
@@ -249,6 +280,7 @@ Mỗi script là 1 object JSON với đúng các field:
 - "loi_thoai": toàn bộ lời thoại, 1 đoạn văn liền mạch (string)
 - "footage": mảng 3-5 gợi ý bối cảnh quay CỰC ĐƠN GIẢN (vd "Nói trực tiếp trước camera", "Đi bộ", "Cầm sản phẩm", "Ngồi làm việc", "Sinh hoạt đời thường") — chỉ là gợi ý cho AI dựng video sau này, KHÔNG phải yêu cầu bắt buộc người quay phải làm đúng từng shot
 - "mechanism": mảng các object {{"ingredient": tên thành phần, "role": vai trò/chức năng theo đúng tài liệu, "relation_to_problem": vì sao liên quan tới vấn đề đang nói}} — 1 object cho MỖI thành phần thực sự được nhắc trong loi_thoai (có thể là mảng rỗng [] nếu không nhắc thành phần nào cụ thể). Đây là metadata để kiểm tra chất lượng, KHÔNG hiển thị cho người dùng.
+- "evidence": mảng các object {{"type": loại bằng chứng (vd "nguồn gốc nguyên liệu"/"bằng sáng chế"/"công nghệ sản xuất"/"thông tin kỹ thuật"/"đặc điểm nguyên liệu"), "claim": nội dung bằng chứng, phải trích được từ đúng tài liệu, "source": "product_reference.md"}} — 1 object cho MỖI bằng chứng thực sự được nhắc trong loi_thoai (mảng rỗng [] nếu không có bằng chứng nào phù hợp, không ép phải có). Cũng là metadata để audit, KHÔNG hiển thị cho người dùng nếu UI hiện tại chưa cần.
 
 Trả lời CHỈ bằng JSON: một mảng đúng {len(ideas)} object theo cấu trúc trên, không có text nào khác."""
 
@@ -271,8 +303,7 @@ Sản phẩm: {PRODUCT_NAME}. Khách hàng mục tiêu: {TARGET_AUDIENCE}.
 {constraints}
 
 {len(insights)} insight khách hàng thật đã chọn (viết đúng theo thứ tự, 1 lời
-thoại/1 insight, mỗi insight là 1 góc nội dung RIÊNG — không được để 2 lời thoại
-na ná nhau dù insight gần giống nhau, mỗi bài phải có góc tiếp cận/hook riêng):
+thoại/1 insight):
 {insights_text}
 
 Với MỖI insight, viết 1 ĐOẠN LỜI THOẠI HOÀN CHỈNH để 1 người tự quay vlog trước
@@ -281,11 +312,21 @@ hiểu được: khách hàng đang gặp vấn đề gì (đúng insight đư�
 liên quan cơ chế nào → (các) thành phần liên quan có vai trò gì → vì sao thành
 phần đó liên quan tới vấn đề đang nói → sản phẩm hướng tới hỗ trợ mục tiêu gì.
 
+BẮT BUỘC — MỖI VIDEO PHẢI KHÁC BIỆT THẬT SỰ, KHÔNG CHỈ ĐỔI CÂU ĐẦU:
+Đây là {len(insights)} video RIÊNG BIỆT cho {len(insights)} insight riêng biệt —
+TUYỆT ĐỐI KHÔNG được viết 1 khung sườn chung rồi chỉ thay tên insight vào. Mỗi
+script phải có: Hook riêng (không dùng chung 1 mẫu câu mở đầu), cách mở vấn đề
+riêng, logic giải pháp phù hợp đúng insight đó, thành phần được chọn phù hợp
+đúng insight đó (không phải luôn chọn y hệt thành phần cho mọi video nếu insight
+khác nhau), bằng chứng phù hợp (nếu có), CTA tự nhiên không rập khuôn. Nếu 2
+insight có nội dung gần giống nhau, vẫn phải tìm góc tiếp cận/hook khác nhau.
+
 Mỗi script là 1 object JSON với đúng các field:
 - "insight_idx": số thứ tự insight tương ứng (1-{len(insights)}, đúng thứ tự ở trên)
 - "loi_thoai": toàn bộ lời thoại, 1 đoạn văn liền mạch (string)
 - "footage": mảng 3-5 gợi ý bối cảnh quay CỰC ĐƠN GIẢN (vd "Nói trực tiếp trước camera", "Đi bộ", "Cầm sản phẩm", "Ngồi làm việc", "Sinh hoạt đời thường") — chỉ là gợi ý cho AI dựng video sau này, KHÔNG phải yêu cầu bắt buộc người quay phải làm đúng từng shot
 - "mechanism": mảng các object {{"ingredient": tên thành phần, "role": vai trò/chức năng theo đúng tài liệu, "relation_to_problem": vì sao liên quan tới vấn đề đang nói}} — 1 object cho MỖI thành phần thực sự được nhắc trong loi_thoai (có thể là mảng rỗng [] nếu không nhắc thành phần nào cụ thể). Đây là metadata để kiểm tra chất lượng, KHÔNG hiển thị cho người dùng.
+- "evidence": mảng các object {{"type": loại bằng chứng (vd "nguồn gốc nguyên liệu"/"bằng sáng chế"/"công nghệ sản xuất"/"thông tin kỹ thuật"/"đặc điểm nguyên liệu"), "claim": nội dung bằng chứng, phải trích được từ đúng tài liệu, "source": "product_reference.md"}} — 1 object cho MỖI bằng chứng thực sự được nhắc trong loi_thoai (mảng rỗng [] nếu không có bằng chứng nào phù hợp, không ép phải có). Cũng là metadata để audit, KHÔNG hiển thị cho người dùng nếu UI hiện tại chưa cần.
 
 Trả lời CHỈ bằng JSON: một mảng đúng {len(insights)} object theo cấu trúc trên, không có text nào khác."""
 
