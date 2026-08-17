@@ -515,24 +515,23 @@ function renderDailyIdeas(ideas) {
   return `<div class="page-title" style="font-size:16px; margin-top:18px;">💡 10 Ý TƯỞNG</div>${items}`;
 }
 
+function _truncate(text, n) {
+  text = text || '';
+  return text.length > n ? text.slice(0, n).trim() + '…' : text;
+}
+
 function renderDailyScripts(scripts) {
   if (!scripts || !scripts.length) return '';
-  const items = scripts.map(s => `
+  const items = scripts.map(s => {
+    const loiThoai = _dailyScriptLoiThoai(s);
+    const footage = s.footage || [];
+    return `
     <details class="card" style="margin-bottom:8px;">
-      <summary style="cursor:pointer; font-weight:600;">${escapeHtml(s.script_id)} — ${mdInline(s.hook||'')}</summary>
-      <div style="margin-top:8px; font-size:12.5px;">
-        <div><strong>Problem:</strong> ${mdInline(s.problem||'')}</div>
-        <div><strong>Agitate:</strong> ${mdInline(s.agitate||'')}</div>
-        <div><strong>Insight:</strong> ${mdInline(s.insight||'')}</div>
-        <div><strong>Explanation:</strong> ${mdInline(s.explanation||'')}</div>
-        <div><strong>Solution:</strong> ${mdInline(s.solution||'')}</div>
-        <div><strong>Product intro:</strong> ${mdInline(s.product_intro||'')}</div>
-        <div><strong>CTA:</strong> ${mdInline(s.cta||'')}</div>
-        <div><strong>Camera notes:</strong> ${mdInline(s.camera_notes||'')}</div>
-        ${s.text_overlay ? `<div><strong>Text overlay:</strong> ${mdInline(s.text_overlay)}</div>` : ''}
-        <div style="margin-top:6px; padding-top:6px; border-top:1px solid var(--border); color:var(--text-muted); font-size:11px;">${escapeHtml(s.mandatory_warning||'')}</div>
-      </div>
-    </details>`).join('');
+      <summary style="cursor:pointer; font-weight:600;">${escapeHtml(s.script_id)} — ${mdInline(_truncate(loiThoai, 70))}</summary>
+      <div style="margin-top:8px; font-size:13.5px; line-height:1.6; white-space:pre-wrap;">${mdInline(loiThoai)} <span style="color:var(--text-muted);">${escapeHtml(s.mandatory_warning||'')}</span></div>
+      ${footage.length ? `<div style="margin-top:8px; font-size:12px; color:var(--text-secondary);"><strong>🎥 Footage gợi ý:</strong> ${footage.map(f => escapeHtml(f)).join(' · ')}</div>` : ''}
+    </details>`;
+  }).join('');
   return `<div class="page-title" style="font-size:16px; margin-top:18px;">📝 10 SCRIPT</div>${items}`;
 }
 
@@ -550,7 +549,7 @@ function renderDailyTop5(detail, record) {
         <div>
           <span class="pill score">${medals[i]||(i+1)}</span>
           <span class="pill">${score.total ?? '—'}/100</span>
-          <div style="font-weight:600; margin-top:6px;">${escapeHtml(sid)} — ${mdInline(script.hook||'')}</div>
+          <div style="font-weight:600; margin-top:6px;">${escapeHtml(sid)} — ${mdInline(_truncate(_dailyScriptLoiThoai(script), 70))}</div>
           <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${mdInline(score.reason||'')}</div>
         </div>
         ${canSelect ? `<button class="toggle-btn done" onclick="dailySelectScript('${record.date}', '${sid}', this)">Chọn script này</button>` : ''}
@@ -586,24 +585,32 @@ function renderDailySelected(detail, record) {
   </div>`;
 }
 
+function _dailyScriptLoiThoai(script) {
+  // Script mới có "loi_thoai" (1 đoạn liền mạch). Script cũ (sinh trước khi đổi
+  // format) không có field này — ghép tạm từ các field cũ để không vỡ trang,
+  // không mất dữ liệu đã sinh trước đó.
+  if (script.loi_thoai) return script.loi_thoai;
+  const legacyParts = [script.hook, script.problem, script.agitate, script.explanation, script.solution, script.cta]
+    .filter(Boolean);
+  return legacyParts.join(' ');
+}
+
 function viewDailyScript(scriptId) {
   const script = ((lastDailyDetail && lastDailyDetail.scripts) || []).find(s => s.script_id === scriptId);
   if (!script) { alert('Không tìm thấy nội dung kịch bản — thử tải lại trang.'); return; }
+  const loiThoai = _dailyScriptLoiThoai(script);
+  const footage = script.footage || [];
   document.getElementById('modal-body').innerHTML = `
-    <div class="page-title" style="font-size:16px;">${escapeHtml(script.script_id)}</div>
-    <div style="font-size:13.5px; line-height:1.6;">
-      <div style="margin-bottom:10px;"><strong>Hook:</strong> ${mdInline(script.hook||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Problem:</strong> ${mdInline(script.problem||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Agitate:</strong> ${mdInline(script.agitate||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Insight:</strong> ${mdInline(script.insight||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Explanation:</strong> ${mdInline(script.explanation||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Solution:</strong> ${mdInline(script.solution||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Product intro:</strong> ${mdInline(script.product_intro||'')}</div>
-      <div style="margin-bottom:10px;"><strong>CTA:</strong> ${mdInline(script.cta||'')}</div>
-      <div style="margin-bottom:10px;"><strong>Camera notes:</strong> ${mdInline(script.camera_notes||'')}</div>
-      ${script.text_overlay ? `<div style="margin-bottom:10px;"><strong>Text overlay:</strong> ${mdInline(script.text_overlay)}</div>` : ''}
-      <div style="margin-top:14px; padding-top:10px; border-top:1px solid var(--border); color:var(--text-muted); font-size:12px;">${escapeHtml(script.mandatory_warning||'')}</div>
-    </div>`;
+    <div class="page-title" style="font-size:16px;">🎙️ ${escapeHtml(script.script_id)}</div>
+    <div style="font-size:16px; line-height:1.75; white-space:pre-wrap; background:var(--accent-light); padding:16px; border-radius:10px; margin:8px 0 6px;">${mdInline(loiThoai)} <span style="color:var(--text-muted);">${escapeHtml(script.mandatory_warning||'')}</span></div>
+    <div style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">Đọc trực tiếp trước camera — không cần nhớ từng câu, cứ nói tự nhiên theo ý này.</div>
+    ${footage.length ? `
+    <div style="font-size:12.5px; color:var(--text-secondary);">
+      <strong>🎥 Footage gợi ý</strong> (chỉ để tham khảo, không bắt buộc):
+      <ul style="margin:6px 0 0; padding-left:18px;">
+        ${footage.map(f => `<li>${mdInline(f)}</li>`).join('')}
+      </ul>
+    </div>` : ''}`;
   document.getElementById('modal').classList.add('open');
 }
 

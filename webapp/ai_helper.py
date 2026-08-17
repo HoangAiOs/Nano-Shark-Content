@@ -130,39 +130,39 @@ Trả lời CHỈ bằng JSON: một mảng đúng 10 object theo cấu trúc tr
 
 
 def generate_daily_scripts(topic_title: str, ideas: list[dict]) -> list[dict]:
-    """Viết 10 script video 2-6 phút, mỗi script dựa trên đúng 1 ý tưởng đầu vào."""
+    """Viết lời thoại vlog hoàn chỉnh cho từng ý tưởng — KHÔNG phải kịch bản quảng
+    cáo có shot list. Người dùng chỉ cần đọc lời thoại và bật camera quay."""
     ideas_text = json.dumps(ideas, ensure_ascii=False, indent=2)
     prompt = f"""\
 Sản phẩm: {PRODUCT_NAME}. Khách hàng mục tiêu: {TARGET_AUDIENCE}.
 Topic: {topic_title}
 
-10 ý tưởng đã chọn (viết script đúng theo thứ tự, 1 script/1 ý tưởng, giữ nguyên "idea_idx"):
+10 ý tưởng đã chọn (viết đúng theo thứ tự, 1 lời thoại/1 ý tưởng, giữ nguyên "idea_idx"):
 {ideas_text}
 
-Với MỖI ý tưởng, viết 1 script video quảng cáo Facebook dài 2-6 phút, tiếng Việt tự
-nhiên gần gũi (không dùng thuật ngữ marketing trong nội dung). Mỗi script là 1 object
-JSON với đúng các field:
+Với MỖI ý tưởng, viết 1 ĐOẠN LỜI THOẠI HOÀN CHỈNH để 1 người tự quay vlog trước
+camera — KHÔNG PHẢI kịch bản quảng cáo có shot list. Bắt buộc:
+- Là 1 bài nói liền mạch, tự nhiên như đang tâm sự trước camera — KHÔNG chia nhỏ
+  thành Hook/Problem/Agitate/Insight/Explanation/Solution/CTA riêng biệt.
+- Có câu mở đầu tự nhiên gây chú ý ngay (không sáo rỗng, không nghe như quảng cáo, không dùng câu văn "kiểu AI").
+- Phát triển đúng 1 ý duy nhất, có chuyển ý mượt mà.
+- Kết bằng câu chốt/CTA nếu phù hợp, tự nhiên, không ép buộc.
+- Văn nói tiếng Việt thật — người quay chỉ cần đọc là nói được ngay, không cần diễn xuất hay nhớ từng câu riêng lẻ.
+- Câu công dụng CHỈ được nói đúng: "{MANDATORY_CLAIM}", không cam kết "chữa khỏi" hay vượt quá công dụng này.
+- Độ dài khoảng 45-90 giây khi đọc thành tiếng (~110-220 chữ).
+- KHÔNG cần viết câu cảnh báo bắt buộc trong lời thoại — hệ thống tự thêm vào cuối.
+
+Mỗi script là 1 object JSON với đúng các field:
 - "idea_idx": trùng với idea_idx của ý tưởng tương ứng
-- "hook": hook 3-10 giây đầu
-- "problem": vấn đề
-- "agitate": đào sâu vấn đề
-- "insight": insight dùng trong script (phải khớp insight_used của ý tưởng)
-- "explanation": giải thích cơ chế
-- "solution": giải pháp — CHỈ được mô tả công dụng đúng câu: "{MANDATORY_CLAIM}", không cam kết "chữa khỏi" hay vượt quá công dụng này
-- "product_intro": giới thiệu sản phẩm
-- "cta": kêu gọi hành động
-- "camera_notes": gợi ý cảnh quay
-- "text_overlay": chữ chạy/overlay nếu cần (có thể để chuỗi rỗng nếu không cần)
+- "loi_thoai": toàn bộ lời thoại, 1 đoạn văn liền mạch (string)
+- "footage": mảng 3-5 gợi ý bối cảnh quay CỰC ĐƠN GIẢN (vd "Nói trực tiếp trước camera", "Đi bộ", "Cầm sản phẩm", "Ngồi làm việc", "Sinh hoạt đời thường") — chỉ là gợi ý cho AI dựng video sau này, KHÔNG phải yêu cầu bắt buộc người quay phải làm đúng từng shot
 
 Ràng buộc bắt buộc:
 - Không tự tạo claim y khoa hoặc claim sản phẩm ngoài câu công dụng đã duyệt ở trên.
 - Không bịa thêm insight/nỗi đau khách hàng ngoài insight đã cho trong từng ý tưởng.
-- Câu cảnh báo bắt buộc "{MANDATORY_WARNING}" sẽ được hệ thống tự thêm vào cuối, KHÔNG cần viết lại trong "cta" hay "text_overlay".
 
 Trả lời CHỈ bằng JSON: một mảng đúng {len(ideas)} object theo cấu trúc trên, không có text nào khác."""
 
-    # 10 script đầy đủ (~10 field/script) cần nhiều token hơn nhiều so với bước ý
-    # tưởng — 8192 từng bị cắt giữa chừng (lỗi "Unterminated string"), tăng lên 16384.
     return _call_and_extract_json(model=DAILY_SCRIPT_MODEL, max_tokens=16384, prompt=prompt)
 
 
