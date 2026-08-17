@@ -145,30 +145,15 @@ def _read_product_reference() -> str:
     return text
 
 
-def generate_daily_scripts(topic_title: str, ideas: list[dict]) -> list[dict]:
-    """Viết lời thoại vlog hoàn chỉnh cho từng ý tưởng — KHÔNG phải kịch bản quảng
-    cáo có shot list. Người dùng chỉ cần đọc lời thoại và bật camera quay. Cơ chế/
-    thành phần nhắc tới PHẢI lấy đúng từ product_reference.md, không suy diễn."""
-    ideas_text = json.dumps(ideas, ensure_ascii=False, indent=2)
-    product_reference = _read_product_reference()
-    prompt = f"""\
-Sản phẩm: {PRODUCT_NAME}. Khách hàng mục tiêu: {TARGET_AUDIENCE}.
-Topic: {topic_title}
-
+def _script_writing_constraints(product_reference: str) -> str:
+    """Khối ràng buộc dùng chung cho MỌI hàm sinh lời thoại (daily + batch) —
+    tách riêng để không lặp lại ~60 dòng giữa các hàm, sửa 1 chỗ áp dụng cho cả 2."""
+    return f"""\
 Tài liệu tham chiếu sản phẩm (NGUỒN DUY NHẤT được phép dùng cho thành phần/cơ chế —
 không được lấy thông tin thành phần/cơ chế từ đâu khác, kể cả kiến thức chung):
 ---
 {product_reference}
 ---
-
-10 ý tưởng đã chọn (viết đúng theo thứ tự, 1 lời thoại/1 ý tưởng, giữ nguyên "idea_idx"):
-{ideas_text}
-
-Với MỖI ý tưởng, viết 1 ĐOẠN LỜI THOẠI HOÀN CHỈNH để 1 người tự quay vlog trước
-camera — KHÔNG PHẢI kịch bản quảng cáo có shot list. Nội dung phải giúp người xem
-hiểu được: khách hàng đang gặp vấn đề gì → vấn đề đó liên quan cơ chế nào → (các)
-thành phần liên quan có vai trò gì → vì sao thành phần đó liên quan tới vấn đề đang
-nói → sản phẩm hướng tới hỗ trợ mục tiêu gì.
 
 Cách dựng nội dung (đây là DÀN Ý TƯ DUY nội bộ — bài nói cuối cùng phải là 1 đoạn
 văn liền mạch tự nhiên, KHÔNG được chia thành từng đoạn có tiêu đề như dàn ý này):
@@ -224,7 +209,7 @@ RÀNG BUỘC BẮT BUỘC VỀ NGÔN TỪ:
   "hướng tới mục tiêu...". Nếu tài liệu không đủ chi tiết để giải thích sâu 1 thành
   phần, dùng câu an toàn kiểu "thành phần này được dùng với mục tiêu hỗ trợ..."
   thay vì bịa cơ chế.
-- Không bịa thêm insight/nỗi đau khách hàng ngoài insight đã cho trong từng ý tưởng.
+- Không bịa thêm insight/nỗi đau khách hàng ngoài insight đã cho.
 
 CHẤT LƯỢNG LỜI THOẠI:
 - Tự nhiên, dễ nói, câu ngắn, giống 1 người thật đang giải thích cho khách hàng —
@@ -234,7 +219,30 @@ CHẤT LƯỢNG LỜI THOẠI:
   lại ý đã nói dưới dạng khác. Nếu cần thêm chữ để đạt độ dài, ưu tiên: giải thích
   SÂU HƠN cơ chế/thành phần (vẫn trong phạm vi tài liệu) và liên hệ RÕ HƠN, cụ thể
   hơn tới vấn đề khách hàng đang gặp trong insight — không thêm câu thừa/lặp ý.
-- KHÔNG cần viết câu cảnh báo bắt buộc trong lời thoại — hệ thống tự thêm vào cuối.
+- KHÔNG cần viết câu cảnh báo bắt buộc trong lời thoại — hệ thống tự thêm vào cuối."""
+
+
+def generate_daily_scripts(topic_title: str, ideas: list[dict]) -> list[dict]:
+    """Viết lời thoại vlog hoàn chỉnh cho từng ý tưởng — KHÔNG phải kịch bản quảng
+    cáo có shot list. Người dùng chỉ cần đọc lời thoại và bật camera quay. Cơ chế/
+    thành phần nhắc tới PHẢI lấy đúng từ product_reference.md, không suy diễn."""
+    ideas_text = json.dumps(ideas, ensure_ascii=False, indent=2)
+    product_reference = _read_product_reference()
+    constraints = _script_writing_constraints(product_reference)
+    prompt = f"""\
+Sản phẩm: {PRODUCT_NAME}. Khách hàng mục tiêu: {TARGET_AUDIENCE}.
+Topic: {topic_title}
+
+{constraints}
+
+10 ý tưởng đã chọn (viết đúng theo thứ tự, 1 lời thoại/1 ý tưởng, giữ nguyên "idea_idx"):
+{ideas_text}
+
+Với MỖI ý tưởng, viết 1 ĐOẠN LỜI THOẠI HOÀN CHỈNH để 1 người tự quay vlog trước
+camera — KHÔNG PHẢI kịch bản quảng cáo có shot list. Nội dung phải giúp người xem
+hiểu được: khách hàng đang gặp vấn đề gì → vấn đề đó liên quan cơ chế nào → (các)
+thành phần liên quan có vai trò gì → vì sao thành phần đó liên quan tới vấn đề đang
+nói → sản phẩm hướng tới hỗ trợ mục tiêu gì.
 
 Mỗi script là 1 object JSON với đúng các field:
 - "idea_idx": trùng với idea_idx của ý tưởng tương ứng
@@ -246,6 +254,41 @@ Trả lời CHỈ bằng JSON: một mảng đúng {len(ideas)} object theo cấ
 
     # Lời thoại 2-3 phút (~300-450 chữ) dài hơn ~2-2.5 lần bản 45-90s trước đó, cộng
     # thêm field "mechanism" mới — tăng max_tokens để không lặp lại lỗi cắt giữa chừng.
+    return _call_and_extract_json(model=DAILY_SCRIPT_MODEL, max_tokens=24000, prompt=prompt)
+
+
+def generate_batch_scripts(insights: list[str]) -> list[dict]:
+    """Batch Content Production — sinh thẳng 1 script/1 insight, KHÔNG qua bước
+    ideation/scoring như generate_daily_scripts(). Tái dùng nguyên vẹn toàn bộ
+    ràng buộc chống bịa cơ chế/claim (_script_writing_constraints), chỉ khác đầu
+    vào là list insight thô thay vì list ý tưởng đã có sẵn hook/problem/angle."""
+    product_reference = _read_product_reference()
+    constraints = _script_writing_constraints(product_reference)
+    insights_text = "\n".join(f"{i}. {insight}" for i, insight in enumerate(insights, start=1))
+    prompt = f"""\
+Sản phẩm: {PRODUCT_NAME}. Khách hàng mục tiêu: {TARGET_AUDIENCE}.
+
+{constraints}
+
+{len(insights)} insight khách hàng thật đã chọn (viết đúng theo thứ tự, 1 lời
+thoại/1 insight, mỗi insight là 1 góc nội dung RIÊNG — không được để 2 lời thoại
+na ná nhau dù insight gần giống nhau, mỗi bài phải có góc tiếp cận/hook riêng):
+{insights_text}
+
+Với MỖI insight, viết 1 ĐOẠN LỜI THOẠI HOÀN CHỈNH để 1 người tự quay vlog trước
+camera — KHÔNG PHẢI kịch bản quảng cáo có shot list. Nội dung phải giúp người xem
+hiểu được: khách hàng đang gặp vấn đề gì (đúng insight được giao) → vấn đề đó
+liên quan cơ chế nào → (các) thành phần liên quan có vai trò gì → vì sao thành
+phần đó liên quan tới vấn đề đang nói → sản phẩm hướng tới hỗ trợ mục tiêu gì.
+
+Mỗi script là 1 object JSON với đúng các field:
+- "insight_idx": số thứ tự insight tương ứng (1-{len(insights)}, đúng thứ tự ở trên)
+- "loi_thoai": toàn bộ lời thoại, 1 đoạn văn liền mạch (string)
+- "footage": mảng 3-5 gợi ý bối cảnh quay CỰC ĐƠN GIẢN (vd "Nói trực tiếp trước camera", "Đi bộ", "Cầm sản phẩm", "Ngồi làm việc", "Sinh hoạt đời thường") — chỉ là gợi ý cho AI dựng video sau này, KHÔNG phải yêu cầu bắt buộc người quay phải làm đúng từng shot
+- "mechanism": mảng các object {{"ingredient": tên thành phần, "role": vai trò/chức năng theo đúng tài liệu, "relation_to_problem": vì sao liên quan tới vấn đề đang nói}} — 1 object cho MỖI thành phần thực sự được nhắc trong loi_thoai (có thể là mảng rỗng [] nếu không nhắc thành phần nào cụ thể). Đây là metadata để kiểm tra chất lượng, KHÔNG hiển thị cho người dùng.
+
+Trả lời CHỈ bằng JSON: một mảng đúng {len(insights)} object theo cấu trúc trên, không có text nào khác."""
+
     return _call_and_extract_json(model=DAILY_SCRIPT_MODEL, max_tokens=24000, prompt=prompt)
 
 

@@ -31,6 +31,7 @@ persistent_storage.bootstrap_persistent_data()
 
 from webapp import ai_helper  # noqa: E402
 from webapp import auth  # noqa: E402
+from webapp import batch_production as bp  # noqa: E402
 from webapp import daily_production as dp  # noqa: E402
 from webapp import data_reader as dr  # noqa: E402
 
@@ -365,6 +366,63 @@ async def api_daily_history(request):
     return JSONResponse(dp.get_history(days))
 
 
+# --- Batch Content Production --------------------------------------------
+# Song song với Daily Content Production — không đụng dp/content_calendar.json.
+# "Quay 1 lần, đủ content cả tháng": 1 batch = N insight = N script, tất cả
+# sống song song (không có khái niệm "chọn 1/N" như Daily Production).
+
+
+async def api_batches_list(request):
+    return JSONResponse(bp.list_batches())
+
+
+async def api_batches_create(request):
+    body = await request.json()
+    name = (body.get("name") or "").strip()
+    if not name:
+        return JSONResponse({"ok": False, "error": "Cần nhập tên batch."}, status_code=400)
+    record = bp.create_batch(name)
+    return JSONResponse({"ok": True, "record": record})
+
+
+async def api_batch_detail(request):
+    batch_id = request.path_params["batch_id"]
+    batch = bp.load_batch(batch_id)
+    if batch is None:
+        return JSONResponse({"ok": False, "error": f"Không có batch '{batch_id}'"}, status_code=404)
+    return JSONResponse({"ok": True, "batch": batch})
+
+
+async def api_batch_generate(request):
+    """Sinh script cho 1 đợt insight (vd 10/lần) — nối thêm vào batch, không
+    xoá script đã có. AI chỉ chạy khi route này được gọi (bấm nút), không nền."""
+    batch_id = request.path_params["batch_id"]
+    if bp.load_batch(batch_id) is None:
+        return JSONResponse({"ok": False, "error": f"Không có batch '{batch_id}'"}, status_code=404)
+    body = await request.json()
+    insights = body.get("insights") or []
+    if not insights:
+        return JSONResponse({"ok": False, "error": "Cần ít nhất 1 insight."}, status_code=400)
+    try:
+        raw_scripts = ai_helper.generate_batch_scripts(insights)
+    except Exception as exc:  # lỗi API (hết credit, sai key...) — trả lỗi rõ, không giả data
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
+    batch = bp.add_scripts(batch_id, insights, raw_scripts, ai_helper.MANDATORY_WARNING)
+    return JSONResponse({"ok": True, "batch": batch})
+
+
+async def api_batch_script_status(request):
+    batch_id = request.path_params["batch_id"]
+    script_id = request.path_params["script_id"]
+    body = await request.json()
+    status = body.get("status")  # None -> tự chuyển sang trạng thái kế tiếp
+    try:
+        batch = bp.set_script_status(batch_id, script_id, status)
+    except ValueError as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+    return JSONResponse({"ok": True, "batch": batch})
+
+
 async def index(request):
     # no-store: index.html thay đổi khá thường xuyên trong lúc phát triển dashboard —
     # tránh trình duyệt lỡ giữ bản cache cũ khi bấm quay lại/mở lại tab.
@@ -416,6 +474,12 @@ app = Starlette(
         Route("/api/daily/{date}/score", api_daily_score, methods=["POST"]),
         Route("/api/daily/{date}/select", api_daily_select, methods=["POST"]),
         Route("/api/daily/{date}/status", api_daily_status, methods=["POST"]),
+        # --- Batch Content Production ---
+        Route("/api/batches", api_batches_list),
+        Route("/api/batches", api_batches_create, methods=["POST"]),
+        Route("/api/batches/{batch_id}", api_batch_detail),
+        Route("/api/batches/{batch_id}/generate", api_batch_generate, methods=["POST"]),
+        Route("/api/batches/{batch_id}/scripts/{script_id}/status", api_batch_script_status, methods=["POST"]),
     ],
 )
 

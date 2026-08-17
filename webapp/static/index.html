@@ -160,7 +160,10 @@
     </div>
   </div>
 
-  <div class="nav-group-label">🎬 Daily Content Production</div>
+  <div class="nav-group-label">🎬 Batch Content Production</div>
+  <div class="nav-item" data-page="batch">Batch quay</div>
+
+  <div class="nav-group-label">Daily Content Production</div>
   <div class="nav-item" data-page="daily">Sản xuất hôm nay</div>
 
   <div class="nav-group-label">🆕 Hệ thống Content Pillar</div>
@@ -259,6 +262,8 @@ async function loadPage(page) {
   if (page === 'pillars') return renderPillars();
   if (page === 'wave1') return renderWave1();
   if (page === 'daily') return renderDaily();
+  if (page === 'batch') return renderBatch();
+  if (page === 'batchDetail') return renderBatchDetail(window.__currentBatchId);
 }
 
 async function renderInsightBank() {
@@ -595,23 +600,38 @@ function _dailyScriptLoiThoai(script) {
   return legacyParts.join(' ');
 }
 
-function viewDailyScript(scriptId) {
-  const script = ((lastDailyDetail && lastDailyDetail.scripts) || []).find(s => s.script_id === scriptId);
+function viewScriptModal(script) {
+  // Dùng chung cho Daily Production (viewDailyScript) và Batch Production —
+  // cùng 1 schema script {loi_thoai, footage, mechanism}.
   if (!script) { alert('Không tìm thấy nội dung kịch bản — thử tải lại trang.'); return; }
   const loiThoai = _dailyScriptLoiThoai(script);
   const footage = script.footage || [];
+  const mechanism = script.mechanism || [];
   document.getElementById('modal-body').innerHTML = `
     <div class="page-title" style="font-size:16px;">🎙️ ${escapeHtml(script.script_id)}</div>
+    ${script.insight ? `<div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;"><strong>Insight:</strong> ${mdInline(script.insight)}</div>` : ''}
     <div style="font-size:16px; line-height:1.75; white-space:pre-wrap; background:var(--accent-light); padding:16px; border-radius:10px; margin:8px 0 6px;">${mdInline(loiThoai)} <span style="color:var(--text-muted);">${escapeHtml(script.mandatory_warning||'')}</span></div>
     <div style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">Đọc trực tiếp trước camera — không cần nhớ từng câu, cứ nói tự nhiên theo ý này.</div>
     ${footage.length ? `
-    <div style="font-size:12.5px; color:var(--text-secondary);">
+    <div style="font-size:12.5px; color:var(--text-secondary); margin-bottom:14px;">
       <strong>🎥 Footage gợi ý</strong> (chỉ để tham khảo, không bắt buộc):
       <ul style="margin:6px 0 0; padding-left:18px;">
         ${footage.map(f => `<li>${mdInline(f)}</li>`).join('')}
       </ul>
+    </div>` : ''}
+    ${mechanism.length ? `
+    <div style="font-size:12.5px; color:var(--text-secondary);">
+      <strong>🧬 Mechanism</strong> (thành phần → vai trò → liên hệ tình trạng):
+      <ul style="margin:6px 0 0; padding-left:18px;">
+        ${mechanism.map(m => `<li><strong>${mdInline(m.ingredient||'')}</strong> — ${mdInline(m.role||'')}. <em>${mdInline(m.relation_to_problem||'')}</em></li>`).join('')}
+      </ul>
     </div>` : ''}`;
   document.getElementById('modal').classList.add('open');
+}
+
+function viewDailyScript(scriptId) {
+  const script = ((lastDailyDetail && lastDailyDetail.scripts) || []).find(s => s.script_id === scriptId);
+  viewScriptModal(script);
 }
 
 async function dailySetStatus(date, status, btn) {
@@ -633,6 +653,153 @@ function renderDailyHistory(history) {
   </tr>`).join('');
   return `<div class="page-title" style="font-size:16px; margin-top:18px;">📅 LỊCH SỬ (7 ngày gần nhất)</div>
   <div class="card"><table><tr><th>Ngày</th><th>Pillar</th><th>Topic</th><th>Script</th><th>Trạng thái</th></tr>${rows}</table></div>`;
+}
+
+// --- 🎬 Batch Content Production --------------------------------------------
+// "Quay 1 lần, đủ content cả tháng" — song song với Daily Content Production,
+// không đụng content_calendar.json/content_map.json. 1 batch = N insight = N
+// script, tất cả sống song song (không có khái niệm "chọn 1/N").
+
+const BATCH_STATUS_LABELS = {
+  chua_quay: '⬜ Chưa quay',
+  da_quay: '🎥 Đã quay',
+  da_dung: '✂️ Đã dựng',
+  da_dang: '📤 Đã đăng',
+};
+function batchStatusLabel(s) { return BATCH_STATUS_LABELS[s] || s; }
+
+async function renderBatch() {
+  const res = await fetch('/api/batches');
+  const batches = await res.json();
+  let html = `<div class="page-title">🎬 Batch Content Production</div><div class="page-sub">Quay 1 lần cho nhiều insight cùng lúc — đủ content đăng cả tháng, tiết kiệm thời gian.</div>`;
+
+  html += `<div class="card">
+    <div style="font-weight:600; margin-bottom:8px;">Tạo batch mới</div>
+    <input id="new-batch-name" type="text" placeholder="Vd: Batch quay tháng 9" style="width:100%; max-width:360px; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-family:inherit; font-size:13px;">
+    <button class="toggle-btn done" style="margin-left:8px;" onclick="createBatch(this)">Tạo batch</button>
+    <div id="new-batch-err"></div>
+  </div>`;
+
+  if (!batches.length) {
+    html += emptyMsg('Chưa có batch nào — tạo batch đầu tiên ở trên.');
+  } else {
+    batches.forEach(b => {
+      const counts = b.status_counts || {};
+      const summary = Object.entries(BATCH_STATUS_LABELS).map(([k, label]) => `${label.split(' ')[0]} ${counts[k]||0}`).join('  ');
+      html += `<div class="card" style="cursor:pointer;" onclick="openBatch('${b.id}')">
+        <div style="font-weight:600;">${escapeHtml(b.name)} — ${b.script_count} video</div>
+        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${summary}</div>
+      </div>`;
+    });
+  }
+  content.innerHTML = html;
+}
+
+async function createBatch(btn) {
+  const name = document.getElementById('new-batch-name').value.trim();
+  if (!name) { alert('Nhập tên batch trước.'); return; }
+  btn.disabled = true;
+  const res = await fetch('/api/batches', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})});
+  const d = await res.json();
+  if (!d.ok) {
+    document.getElementById('new-batch-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">Lỗi: ${escapeHtml(d.error)}</div>`;
+    btn.disabled = false;
+    return;
+  }
+  openBatch(d.record.id);
+}
+
+function openBatch(batchId) {
+  window.__currentBatchId = batchId;
+  loadPage('batchDetail');
+}
+
+async function renderBatchDetail(batchId) {
+  if (!batchId) { renderBatch(); return; }
+  const res = await fetch(`/api/batches/${batchId}`);
+  const d = await res.json();
+  if (!d.ok) { content.innerHTML = emptyMsg('Lỗi: ' + escapeHtml(d.error)); return; }
+  window.__currentBatch = d.batch;
+  const batch = d.batch;
+  const scripts = batch.scripts || [];
+  const counts = {};
+  scripts.forEach(s => { counts[s.status] = (counts[s.status]||0) + 1; });
+
+  let html = `<div class="page-title">🎬 ${escapeHtml(batch.name)}</div><div class="page-sub">${scripts.length} video · ${Object.entries(BATCH_STATUS_LABELS).map(([k,l]) => `${l}: ${counts[k]||0}`).join(' · ')}</div>`;
+  html += `<button class="toggle-btn" onclick="renderBatch()">← Quay lại danh sách batch</button>`;
+
+  html += await renderBatchInsightPicker(batchId);
+
+  if (scripts.length) {
+    const rows = scripts.map((s, i) => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
+        <div style="min-width:0; flex:1;">
+          <span style="color:var(--text-muted); font-size:12px;">${String(i+1).padStart(2,'0')}.</span>
+          <span style="font-weight:600;">${mdInline(_truncate(s.insight || '', 70))}</span>
+        </div>
+        <div style="display:flex; gap:6px; flex-shrink:0;">
+          <button class="toggle-btn" onclick="viewScriptModal(window.__currentBatch.scripts.find(x=>x.script_id==='${s.script_id}'))">📜 Xem kịch bản</button>
+          <button class="toggle-btn ${s.status !== 'chua_quay' ? 'done' : ''}" onclick="batchAdvanceStatus('${batchId}', '${s.script_id}', this)">${batchStatusLabel(s.status)}</button>
+        </div>
+      </div>`).join('');
+    html += `<div class="page-title" style="font-size:16px; margin-top:18px;">📋 ${scripts.length} SCRIPT</div>${rows}`;
+  } else {
+    html += emptyMsg('Chưa có script — chọn insight ở trên rồi bấm "Tạo script".');
+  }
+  content.innerHTML = html;
+}
+
+async function renderBatchInsightPicker(batchId) {
+  const res = await fetch('/api/daily/insight-sources');
+  const src = await res.json();
+  const rowLabel = (row) => row['Insight'] || Object.values(row).filter(v => typeof v === 'string').join(' — ');
+
+  const priorityHtml = (src.priority_insights || []).map(i =>
+    `<label style="display:block; font-size:12.5px; margin-bottom:4px;"><input type="checkbox" class="batch-insight-cb" value="${escapeHtml(i.insight)}"> ${mdInline(i.insight)}</label>`
+  ).join('') || '<div class="empty-state">Không có</div>';
+
+  const bankHtml = (src.insight_bank || []).map(section => `
+    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
+      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="batch-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
+    </details>`).join('');
+
+  const vocHtml = (src.voice_of_customer || []).map(section => `
+    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
+      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="batch-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
+    </details>`).join('');
+
+  return `<div class="card">
+    <div style="font-weight:600; margin-bottom:8px;">Chọn insight để tạo script (mỗi lần tạo tối đa ~10 insight/lượt để AI xử lý ổn định)</div>
+    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Ngân hàng Insight ưu tiên (8)</summary>${priorityHtml}</details>
+    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Insight Bank (180)</summary>${bankHtml}</details>
+    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Tiếng nói khách hàng</summary>${vocHtml}</details>
+    <button class="toggle-btn done" onclick="batchGenerateScripts('${batchId}', this)">⚡ Tạo script cho insight đã chọn (AI)</button>
+    <div id="batch-generate-err"></div>
+  </div>`;
+}
+
+async function batchGenerateScripts(batchId, btn) {
+  const boxes = [...document.querySelectorAll('.batch-insight-cb:checked')];
+  if (!boxes.length) { alert('Chọn ít nhất 1 insight trước khi tạo script.'); return; }
+  if (boxes.length > 10) { alert('Chọn tối đa 10 insight/lượt để AI xử lý ổn định — chọn ít lại rồi tạo tiếp đợt sau.'); return; }
+  const insights = boxes.map(cb => cb.value);
+  btn.textContent = `Đang tạo ${insights.length} script (gọi AI)…`; btn.disabled = true;
+  const res = await fetch(`/api/batches/${batchId}/generate`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({insights})});
+  const d = await res.json();
+  if (!d.ok) {
+    btn.textContent = '⚡ Tạo script cho insight đã chọn (AI)'; btn.disabled = false;
+    document.getElementById('batch-generate-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
+    return;
+  }
+  renderBatchDetail(batchId);
+}
+
+async function batchAdvanceStatus(batchId, scriptId, btn) {
+  btn.disabled = true;
+  const res = await fetch(`/api/batches/${batchId}/scripts/${scriptId}/status`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
+  const d = await res.json();
+  if (!d.ok) { alert('Lỗi: ' + d.error); btn.disabled = false; return; }
+  renderBatchDetail(batchId);
 }
 
 async function renderResearch() {
