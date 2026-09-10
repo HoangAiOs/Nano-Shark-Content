@@ -373,7 +373,7 @@ def set_insight_triage(num: str, status: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 1. Não Marketing — goal + ý tưởng do AI sinh (gọi thật qua webapp/ai_helper.py)
+# 1. Não Marketing — ghi chú goal kinh doanh (không gọi AI, chỉ lưu/đọc state)
 # ---------------------------------------------------------------------------
 
 
@@ -384,16 +384,6 @@ def get_goal() -> str:
 def set_goal(goal: str) -> None:
     state = load_state()
     state["goal"] = goal
-    save_state(state)
-
-
-def get_goal_ideas() -> list[str]:
-    return load_state().get("goal_ideas", [])
-
-
-def set_goal_ideas(ideas: list[str]) -> None:
-    state = load_state()
-    state["goal_ideas"] = ideas
     save_state(state)
 
 
@@ -425,21 +415,6 @@ def read_belief_map() -> list[dict]:
             if text:
                 groups[bucket].append(text)
     return [{"bucket": b, "items": items} for b, items in groups.items()]
-
-
-# ---------------------------------------------------------------------------
-# 6. Kiến tạo 1.000 video — bung 1 insight thành 10 góc nhìn (cache trong state)
-# ---------------------------------------------------------------------------
-
-
-def get_cached_angles(insight_num: str) -> list[str] | None:
-    return load_state().get("insight_angles", {}).get(insight_num)
-
-
-def set_cached_angles(insight_num: str, angles: list[str]) -> None:
-    state = load_state()
-    state.setdefault("insight_angles", {})[insight_num] = angles
-    save_state(state)
 
 
 # ---------------------------------------------------------------------------

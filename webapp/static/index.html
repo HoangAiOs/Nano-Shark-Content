@@ -160,12 +160,6 @@
     </div>
   </div>
 
-  <div class="nav-group-label">🎬 Batch Content Production</div>
-  <div class="nav-item" data-page="batch">Batch quay</div>
-
-  <div class="nav-group-label">Daily Content Production</div>
-  <div class="nav-item" data-page="daily">Sản xuất hôm nay</div>
-
   <div class="nav-group-label">🆕 Hệ thống Content Pillar</div>
   <div class="nav-item" data-page="pillars">Content Pillars (10)</div>
   <div class="nav-item" data-page="insightbank">Insight Bank (180)</div>
@@ -261,9 +255,6 @@ async function loadPage(page) {
   if (page === 'insightbank') return renderInsightBank();
   if (page === 'pillars') return renderPillars();
   if (page === 'wave1') return renderWave1();
-  if (page === 'daily') return renderDaily();
-  if (page === 'batch') return renderBatch();
-  if (page === 'batchDetail') return renderBatchDetail(window.__currentBatchId);
 }
 
 async function renderInsightBank() {
@@ -332,474 +323,6 @@ async function renderWave1() {
     </details>`;
   });
   content.innerHTML = html;
-}
-
-// --- 🎬 Daily Content Production ---------------------------------------------
-
-const DAILY_STATUS_LABELS = {
-  topic_selected: 'Đã chọn Topic — chưa tạo ý tưởng',
-  ideas_generated: 'Đã có 10 ý tưởng — chưa viết script',
-  draft: 'Đã có 10 script — chưa chấm điểm',
-  scored: 'Đã chấm điểm — chọn 1 script để quay',
-  selected: 'Đã chọn script — chờ quay',
-  recorded: 'Đã quay',
-  published: 'Đã đăng',
-  ads_running: 'Đang chạy Ads',
-  completed: 'Có kết quả',
-};
-function dailyStatusLabel(s) { return DAILY_STATUS_LABELS[s] || s; }
-
-let lastDailyDetail = null; // giữ lại detail (ideas/scripts/scores) đã fetch, dùng cho nút "Xem kịch bản"
-
-async function renderDaily() {
-  const [todayRes, histRes] = await Promise.all([
-    fetch('/api/daily/today'),
-    fetch('/api/daily/history?days=7'),
-  ]);
-  const todayData = await todayRes.json();
-  const history = await histRes.json();
-
-  let html = `<div class="page-title">🎬 Sản xuất hôm nay</div><div class="page-sub">Daily Content Production — chọn Pillar/Topic hôm nay (rule-based, không dùng AI để chọn), AI hỗ trợ tạo ý tưởng + script khi bạn bấm nút, bạn là người quyết định chọn script nào để quay.</div>`;
-  html += await renderDailyBody(todayData);
-  html += renderDailyHistory(history);
-  content.innerHTML = html;
-}
-
-async function renderDailyBody(data) {
-  if (!data.record) return await renderDailyNotStarted();
-
-  const record = data.record;
-  const detail = data.detail || {};
-  lastDailyDetail = detail;
-  let html = `<div class="card">
-    <div style="font-weight:600; margin-bottom:8px;">HÔM NAY — ${escapeHtml(record.date)}</div>
-    <div style="font-size:13px;"><strong>Pillar:</strong> ${escapeHtml(String(record.pillar_num))} &nbsp; <strong>Topic:</strong> #${escapeHtml(record.topic_num)}</div>
-    <div style="font-size:13px; margin-top:4px;"><strong>Insight:</strong> ${(record.insight_refs && record.insight_refs.length) ? record.insight_refs.map(mdInline).join('; ') : '<span style="color:var(--text-muted);">chưa chọn</span>'}</div>
-    <div style="margin-top:8px;"><span class="pill score">${escapeHtml(dailyStatusLabel(record.status))}</span></div>
-  </div>`;
-
-  if (record.status === 'topic_selected') {
-    html += await renderDailyInsightPicker(record);
-  }
-  html += renderDailyActionBar(record);
-  html += renderDailyIdeas(detail.ideas);
-  html += renderDailyScripts(detail.scripts);
-  html += renderDailyTop5(detail, record);
-  html += renderDailySelected(detail, record);
-  return html;
-}
-
-async function renderDailyNotStarted() {
-  const res = await fetch('/api/daily/suggest');
-  const s = await res.json();
-  if (s.error) {
-    return `<div class="card empty-state">${escapeHtml(s.error)}</div>`;
-  }
-  return `<div class="card">
-    <div style="font-weight:600; margin-bottom:6px;">Chưa bắt đầu sản xuất hôm nay</div>
-    <div style="font-size:12.5px; color:var(--text-secondary); margin-bottom:10px;">Gợi ý rule-based (không dùng AI để chọn) — ưu tiên topic chưa có script, pillar coverage thấp, chưa dùng gần đây:</div>
-    <div style="font-size:13px;"><strong>Pillar ${s.pillar_num}</strong> — ${mdInline(s.pillar_title)}</div>
-    <div style="font-size:13px;"><strong>Topic #${s.topic_num}</strong> — ${mdInline(s.topic_title)}</div>
-    <div style="font-size:12px; color:var(--text-secondary); margin-top:6px;">${mdInline(s.reason)}</div>
-    <button class="toggle-btn done" style="margin-top:10px;" onclick="startDailyProduction()">Bắt đầu với gợi ý này</button>
-  </div>`;
-}
-
-async function startDailyProduction(pillarNum, topicNum) {
-  const body = (pillarNum && topicNum) ? {pillar_num: pillarNum, topic_num: topicNum} : {};
-  const res = await fetch('/api/daily/start', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
-  const d = await res.json();
-  if (!d.ok) { alert('Lỗi: ' + d.error); return; }
-  renderDaily();
-}
-
-async function renderDailyInsightPicker(record) {
-  const res = await fetch('/api/daily/insight-sources');
-  const src = await res.json();
-
-  const rowLabel = (row) => row['Insight'] || Object.values(row).filter(v => typeof v === 'string').join(' — ');
-
-  const priorityHtml = (src.priority_insights || []).map(i =>
-    `<label style="display:block; font-size:12.5px; margin-bottom:4px;"><input type="checkbox" class="daily-insight-cb" value="${escapeHtml(i.insight)}"> ${mdInline(i.insight)}</label>`
-  ).join('') || '<div class="empty-state">Không có</div>';
-
-  const bankHtml = (src.insight_bank || []).map(section => `
-    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
-      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="daily-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
-    </details>`).join('');
-
-  const vocHtml = (src.voice_of_customer || []).map(section => `
-    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
-      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="daily-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
-    </details>`).join('');
-
-  return `<div class="card">
-    <div style="font-weight:600; margin-bottom:8px;">Chọn Insight liên quan (thủ công — Phase 1 chưa auto-match insight↔topic)</div>
-    <details open style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Ngân hàng Insight ưu tiên (8)</summary>${priorityHtml}</details>
-    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Insight Bank (180)</summary>${bankHtml}</details>
-    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Tiếng nói khách hàng</summary>${vocHtml}</details>
-    <button class="toggle-btn done" onclick="dailySaveInsights('${record.date}', this)">💾 Lưu insight đã chọn</button>
-    <div id="daily-insight-err"></div>
-  </div>`;
-}
-
-async function dailySaveInsights(date, btn) {
-  const refs = [...document.querySelectorAll('.daily-insight-cb:checked')].map(cb => cb.value);
-  if (!refs.length) { alert('Chọn ít nhất 1 insight trước khi lưu.'); return; }
-  btn.disabled = true; btn.textContent = 'Đang lưu…';
-  const res = await fetch(`/api/daily/${date}/insight`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({insight_refs: refs})});
-  const d = await res.json();
-  if (!d.ok) {
-    document.getElementById('daily-insight-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">Lỗi: ${escapeHtml(d.error)}</div>`;
-    btn.disabled = false; btn.textContent = '💾 Lưu insight đã chọn';
-    return;
-  }
-  renderDaily();
-}
-
-function renderDailyActionBar(record) {
-  let btn = '';
-  if (record.status === 'topic_selected') {
-    btn = `<button class="toggle-btn done" onclick="dailyGenerateIdeas('${record.date}', this)">⚡ Tạo 10 Ý tưởng (AI)</button>`;
-  } else if (record.status === 'ideas_generated') {
-    btn = `<button class="toggle-btn done" onclick="dailyGenerateScripts('${record.date}', this)">⚡ Tạo 10 Script (AI)</button>`;
-  } else if (record.status === 'draft') {
-    btn = `<button class="toggle-btn done" onclick="dailyScoreScripts('${record.date}', this)">⚡ Chấm điểm 10 Script (AI)</button>`;
-  }
-  if (!btn) return '';
-  return `<div class="card" style="margin-top:14px;">${btn}<div class="daily-action-err"></div></div>`;
-}
-
-async function dailyGenerateIdeas(date, btn) {
-  btn.textContent = 'Đang tạo (gọi AI)…'; btn.disabled = true;
-  const res = await fetch(`/api/daily/${date}/ideas`, {method:'POST'});
-  const d = await res.json();
-  if (!d.ok) {
-    btn.textContent = '⚡ Tạo 10 Ý tưởng (AI)'; btn.disabled = false;
-    btn.parentElement.querySelector('.daily-action-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
-    return;
-  }
-  renderDaily();
-}
-
-async function dailyGenerateScripts(date, btn) {
-  btn.textContent = 'Đang viết script (gọi AI)…'; btn.disabled = true;
-  const res = await fetch(`/api/daily/${date}/scripts`, {method:'POST'});
-  const d = await res.json();
-  if (!d.ok) {
-    btn.textContent = '⚡ Tạo 10 Script (AI)'; btn.disabled = false;
-    btn.parentElement.querySelector('.daily-action-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
-    return;
-  }
-  renderDaily();
-}
-
-async function dailyScoreScripts(date, btn) {
-  btn.textContent = 'Đang chấm điểm (gọi AI)…'; btn.disabled = true;
-  const res = await fetch(`/api/daily/${date}/score`, {method:'POST'});
-  const d = await res.json();
-  if (!d.ok) {
-    btn.textContent = '⚡ Chấm điểm 10 Script (AI)'; btn.disabled = false;
-    btn.parentElement.querySelector('.daily-action-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
-    return;
-  }
-  renderDaily();
-}
-
-function renderDailyIdeas(ideas) {
-  if (!ideas || !ideas.length) return '';
-  const items = ideas.map((idea, i) => `
-    <div class="card" style="margin-bottom:8px;">
-      <div style="font-weight:600;">${i+1}. ${mdInline(idea.name||'')}</div>
-      <div style="font-size:12.5px; color:var(--text-secondary); font-style:italic; margin:4px 0;">${mdInline(idea.hook||'')}</div>
-      <div style="font-size:12px;"><strong>Insight:</strong> ${mdInline(idea.insight_used||'')}</div>
-      <div style="font-size:12px;"><strong>Vấn đề:</strong> ${mdInline(idea.problem||'')}</div>
-      <div style="font-size:12px;"><strong>Góc tiếp cận:</strong> ${mdInline(idea.angle||'')} — <strong>Big idea:</strong> ${mdInline(idea.big_idea||'')}</div>
-      <div style="font-size:12px; color:var(--text-secondary);">${mdInline(idea.why||'')}</div>
-    </div>`).join('');
-  return `<div class="page-title" style="font-size:16px; margin-top:18px;">💡 10 Ý TƯỞNG</div>${items}`;
-}
-
-function _truncate(text, n) {
-  text = text || '';
-  return text.length > n ? text.slice(0, n).trim() + '…' : text;
-}
-
-function renderDailyScripts(scripts) {
-  if (!scripts || !scripts.length) return '';
-  const items = scripts.map(s => {
-    const loiThoai = _dailyScriptLoiThoai(s);
-    const footage = s.footage || [];
-    return `
-    <details class="card" style="margin-bottom:8px;">
-      <summary style="cursor:pointer; font-weight:600;">${escapeHtml(s.script_id)} — ${mdInline(_truncate(loiThoai, 70))}</summary>
-      <div style="margin-top:8px; font-size:13.5px; line-height:1.6; white-space:pre-wrap;">${mdInline(loiThoai)} <span style="color:var(--text-muted);">${escapeHtml(s.mandatory_warning||'')}</span></div>
-      ${footage.length ? `<div style="margin-top:8px; font-size:12px; color:var(--text-secondary);"><strong>🎥 Footage gợi ý:</strong> ${footage.map(f => escapeHtml(f)).join(' · ')}</div>` : ''}
-    </details>`;
-  }).join('');
-  return `<div class="page-title" style="font-size:16px; margin-top:18px;">📝 10 SCRIPT</div>${items}`;
-}
-
-function renderDailyTop5(detail, record) {
-  if (!detail.top5 || !detail.top5.length) return '';
-  const scoreById = Object.fromEntries((detail.scores||[]).map(s => [s.script_id, s]));
-  const scriptById = Object.fromEntries((detail.scripts||[]).map(s => [s.script_id, s]));
-  const medals = ['🥇','🥈','🥉','4.','5.'];
-  const items = detail.top5.map((sid, i) => {
-    const score = scoreById[sid] || {};
-    const script = scriptById[sid] || {};
-    const canSelect = record.status === 'scored';
-    return `<div class="card" style="margin-bottom:8px;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div>
-          <span class="pill score">${medals[i]||(i+1)}</span>
-          <span class="pill">${score.total ?? '—'}/100</span>
-          <div style="font-weight:600; margin-top:6px;">${escapeHtml(sid)} — ${mdInline(_truncate(_dailyScriptLoiThoai(script), 70))}</div>
-          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${mdInline(score.reason||'')}</div>
-        </div>
-        ${canSelect ? `<button class="toggle-btn done" onclick="dailySelectScript('${record.date}', '${sid}', this)">Chọn script này</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-  return `<div class="page-title" style="font-size:16px; margin-top:18px;">🏆 TOP 5</div>${items}`;
-}
-
-async function dailySelectScript(date, scriptId, btn) {
-  btn.textContent = 'Đang chọn…'; btn.disabled = true;
-  const res = await fetch(`/api/daily/${date}/select`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({script_id: scriptId})});
-  const d = await res.json();
-  if (!d.ok) { alert('Lỗi: ' + d.error); btn.textContent = 'Chọn script này'; btn.disabled = false; return; }
-  renderDaily();
-}
-
-function renderDailySelected(detail, record) {
-  if (!record.selected_script_id) return '';
-  const script = (detail.scripts||[]).find(s => s.script_id === record.selected_script_id);
-  const statusOrder = ['selected','recorded','published','ads_running','completed'];
-  const idx = statusOrder.indexOf(record.status);
-  const nextStatus = statusOrder[idx+1];
-  const nextLabel = {recorded:'✅ Đánh dấu đã quay', published:'✅ Đánh dấu đã đăng', ads_running:'✅ Đánh dấu đang chạy Ads', completed:'✅ Đánh dấu có kết quả'}[nextStatus];
-  return `<div class="page-title" style="font-size:16px; margin-top:18px;">🎯 SCRIPT ĐÃ CHỌN</div>
-  <div class="card">
-    <div style="font-weight:600;">${escapeHtml(record.selected_script_id)} — ${mdInline(script ? script.hook : '')}</div>
-    <div style="margin-top:8px;"><span class="pill score">${escapeHtml(dailyStatusLabel(record.status))}</span></div>
-    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="toggle-btn" onclick="viewDailyScript('${record.selected_script_id}')">📜 Xem kịch bản</button>
-      ${nextStatus ? `<button class="toggle-btn done" onclick="dailySetStatus('${record.date}', '${nextStatus}', this)">${nextLabel}</button>` : ''}
-    </div>
-  </div>`;
-}
-
-function _dailyScriptLoiThoai(script) {
-  // Script mới có "loi_thoai" (1 đoạn liền mạch). Script cũ (sinh trước khi đổi
-  // format) không có field này — ghép tạm từ các field cũ để không vỡ trang,
-  // không mất dữ liệu đã sinh trước đó.
-  if (script.loi_thoai) return script.loi_thoai;
-  const legacyParts = [script.hook, script.problem, script.agitate, script.explanation, script.solution, script.cta]
-    .filter(Boolean);
-  return legacyParts.join(' ');
-}
-
-function viewScriptModal(script) {
-  // Dùng chung cho Daily Production (viewDailyScript) và Batch Production —
-  // cùng 1 schema script {loi_thoai, footage, mechanism}.
-  if (!script) { alert('Không tìm thấy nội dung kịch bản — thử tải lại trang.'); return; }
-  const loiThoai = _dailyScriptLoiThoai(script);
-  const footage = script.footage || [];
-  const mechanism = script.mechanism || [];
-  document.getElementById('modal-body').innerHTML = `
-    <div class="page-title" style="font-size:16px;">🎙️ ${escapeHtml(script.script_id)}</div>
-    ${script.insight ? `<div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;"><strong>Insight:</strong> ${mdInline(script.insight)}</div>` : ''}
-    <div style="font-size:16px; line-height:1.75; white-space:pre-wrap; background:var(--accent-light); padding:16px; border-radius:10px; margin:8px 0 6px;">${mdInline(loiThoai)} <span style="color:var(--text-muted);">${escapeHtml(script.mandatory_warning||'')}</span></div>
-    <div style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">Đọc trực tiếp trước camera — không cần nhớ từng câu, cứ nói tự nhiên theo ý này.</div>
-    ${footage.length ? `
-    <div style="font-size:12.5px; color:var(--text-secondary); margin-bottom:14px;">
-      <strong>🎥 Footage gợi ý</strong> (chỉ để tham khảo, không bắt buộc):
-      <ul style="margin:6px 0 0; padding-left:18px;">
-        ${footage.map(f => `<li>${mdInline(f)}</li>`).join('')}
-      </ul>
-    </div>` : ''}
-    ${mechanism.length ? `
-    <div style="font-size:12.5px; color:var(--text-secondary);">
-      <strong>🧬 Mechanism</strong> (thành phần → vai trò → liên hệ tình trạng):
-      <ul style="margin:6px 0 0; padding-left:18px;">
-        ${mechanism.map(m => `<li><strong>${mdInline(m.ingredient||'')}</strong> — ${mdInline(m.role||'')}. <em>${mdInline(m.relation_to_problem||'')}</em></li>`).join('')}
-      </ul>
-    </div>` : ''}`;
-  document.getElementById('modal').classList.add('open');
-}
-
-function viewDailyScript(scriptId) {
-  const script = ((lastDailyDetail && lastDailyDetail.scripts) || []).find(s => s.script_id === scriptId);
-  viewScriptModal(script);
-}
-
-async function dailySetStatus(date, status, btn) {
-  btn.disabled = true;
-  const res = await fetch(`/api/daily/${date}/status`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status})});
-  const d = await res.json();
-  if (!d.ok) { alert('Lỗi: ' + d.error); btn.disabled = false; return; }
-  renderDaily();
-}
-
-function renderDailyHistory(history) {
-  if (!history.length) return '';
-  const rows = history.map(r => `<tr>
-    <td>${escapeHtml(r.date)}</td>
-    <td>Pillar ${escapeHtml(String(r.pillar_num))}</td>
-    <td>#${escapeHtml(r.topic_num)}</td>
-    <td>${escapeHtml(r.selected_script_id || '—')}</td>
-    <td>${escapeHtml(dailyStatusLabel(r.status))}</td>
-  </tr>`).join('');
-  return `<div class="page-title" style="font-size:16px; margin-top:18px;">📅 LỊCH SỬ (7 ngày gần nhất)</div>
-  <div class="card"><table><tr><th>Ngày</th><th>Pillar</th><th>Topic</th><th>Script</th><th>Trạng thái</th></tr>${rows}</table></div>`;
-}
-
-// --- 🎬 Batch Content Production --------------------------------------------
-// "Quay 1 lần, đủ content cả tháng" — song song với Daily Content Production,
-// không đụng content_calendar.json/content_map.json. 1 batch = N insight = N
-// script, tất cả sống song song (không có khái niệm "chọn 1/N").
-
-const BATCH_STATUS_LABELS = {
-  chua_quay: '⬜ Chưa quay',
-  da_quay: '🎥 Đã quay',
-  da_dung: '✂️ Đã dựng',
-  da_dang: '📤 Đã đăng',
-};
-function batchStatusLabel(s) { return BATCH_STATUS_LABELS[s] || s; }
-
-async function renderBatch() {
-  const res = await fetch('/api/batches');
-  const batches = await res.json();
-  let html = `<div class="page-title">🎬 Batch Content Production</div><div class="page-sub">Quay 1 lần cho nhiều insight cùng lúc — đủ content đăng cả tháng, tiết kiệm thời gian.</div>`;
-
-  html += `<div class="card">
-    <div style="font-weight:600; margin-bottom:8px;">Tạo batch mới</div>
-    <input id="new-batch-name" type="text" placeholder="Vd: Batch quay tháng 9" style="width:100%; max-width:360px; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-family:inherit; font-size:13px;">
-    <button class="toggle-btn done" style="margin-left:8px;" onclick="createBatch(this)">Tạo batch</button>
-    <div id="new-batch-err"></div>
-  </div>`;
-
-  if (!batches.length) {
-    html += emptyMsg('Chưa có batch nào — tạo batch đầu tiên ở trên.');
-  } else {
-    batches.forEach(b => {
-      const counts = b.status_counts || {};
-      const summary = Object.entries(BATCH_STATUS_LABELS).map(([k, label]) => `${label.split(' ')[0]} ${counts[k]||0}`).join('  ');
-      html += `<div class="card" style="cursor:pointer;" onclick="openBatch('${b.id}')">
-        <div style="font-weight:600;">${escapeHtml(b.name)} — ${b.script_count} video</div>
-        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${summary}</div>
-      </div>`;
-    });
-  }
-  content.innerHTML = html;
-}
-
-async function createBatch(btn) {
-  const name = document.getElementById('new-batch-name').value.trim();
-  if (!name) { alert('Nhập tên batch trước.'); return; }
-  btn.disabled = true;
-  const res = await fetch('/api/batches', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})});
-  const d = await res.json();
-  if (!d.ok) {
-    document.getElementById('new-batch-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">Lỗi: ${escapeHtml(d.error)}</div>`;
-    btn.disabled = false;
-    return;
-  }
-  openBatch(d.record.id);
-}
-
-function openBatch(batchId) {
-  window.__currentBatchId = batchId;
-  loadPage('batchDetail');
-}
-
-async function renderBatchDetail(batchId) {
-  if (!batchId) { renderBatch(); return; }
-  const res = await fetch(`/api/batches/${batchId}`);
-  const d = await res.json();
-  if (!d.ok) { content.innerHTML = emptyMsg('Lỗi: ' + escapeHtml(d.error)); return; }
-  window.__currentBatch = d.batch;
-  const batch = d.batch;
-  const scripts = batch.scripts || [];
-  const counts = {};
-  scripts.forEach(s => { counts[s.status] = (counts[s.status]||0) + 1; });
-
-  let html = `<div class="page-title">🎬 ${escapeHtml(batch.name)}</div><div class="page-sub">${scripts.length} video · ${Object.entries(BATCH_STATUS_LABELS).map(([k,l]) => `${l}: ${counts[k]||0}`).join(' · ')}</div>`;
-  html += `<button class="toggle-btn" onclick="renderBatch()">← Quay lại danh sách batch</button>`;
-
-  html += await renderBatchInsightPicker(batchId);
-
-  if (scripts.length) {
-    const rows = scripts.map((s, i) => `
-      <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px;">
-        <div style="min-width:0; flex:1;">
-          <span style="color:var(--text-muted); font-size:12px;">${String(i+1).padStart(2,'0')}.</span>
-          <span style="font-weight:600;">${mdInline(_truncate(s.insight || '', 70))}</span>
-        </div>
-        <div style="display:flex; gap:6px; flex-shrink:0;">
-          <button class="toggle-btn" onclick="viewScriptModal(window.__currentBatch.scripts.find(x=>x.script_id==='${s.script_id}'))">📜 Xem kịch bản</button>
-          <button class="toggle-btn ${s.status !== 'chua_quay' ? 'done' : ''}" onclick="batchAdvanceStatus('${batchId}', '${s.script_id}', this)">${batchStatusLabel(s.status)}</button>
-        </div>
-      </div>`).join('');
-    html += `<div class="page-title" style="font-size:16px; margin-top:18px;">📋 ${scripts.length} SCRIPT</div>${rows}`;
-  } else {
-    html += emptyMsg('Chưa có script — chọn insight ở trên rồi bấm "Tạo script".');
-  }
-  content.innerHTML = html;
-}
-
-async function renderBatchInsightPicker(batchId) {
-  const res = await fetch('/api/daily/insight-sources');
-  const src = await res.json();
-  const rowLabel = (row) => row['Insight'] || Object.values(row).filter(v => typeof v === 'string').join(' — ');
-
-  const priorityHtml = (src.priority_insights || []).map(i =>
-    `<label style="display:block; font-size:12.5px; margin-bottom:4px;"><input type="checkbox" class="batch-insight-cb" value="${escapeHtml(i.insight)}"> ${mdInline(i.insight)}</label>`
-  ).join('') || '<div class="empty-state">Không có</div>';
-
-  const bankHtml = (src.insight_bank || []).map(section => `
-    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
-      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="batch-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
-    </details>`).join('');
-
-  const vocHtml = (src.voice_of_customer || []).map(section => `
-    <details style="margin-bottom:6px;"><summary style="cursor:pointer; font-size:12.5px;">${escapeHtml(section.title)} (${section.rows.length})</summary>
-      ${section.rows.map(r => `<label style="display:block; font-size:12px; margin:4px 0 4px 14px;"><input type="checkbox" class="batch-insight-cb" value="${escapeHtml(rowLabel(r))}"> ${mdInline(rowLabel(r))}</label>`).join('')}
-    </details>`).join('');
-
-  return `<div class="card">
-    <div style="font-weight:600; margin-bottom:8px;">Chọn insight để tạo script (mỗi lần tạo tối đa ~10 insight/lượt để AI xử lý ổn định)</div>
-    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Ngân hàng Insight ưu tiên (8)</summary>${priorityHtml}</details>
-    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Insight Bank (180)</summary>${bankHtml}</details>
-    <details style="margin-bottom:8px;"><summary style="cursor:pointer; font-size:12.5px; font-weight:600;">Tiếng nói khách hàng</summary>${vocHtml}</details>
-    <button class="toggle-btn done" onclick="batchGenerateScripts('${batchId}', this)">⚡ Tạo script cho insight đã chọn (AI)</button>
-    <div id="batch-generate-err"></div>
-  </div>`;
-}
-
-async function batchGenerateScripts(batchId, btn) {
-  const boxes = [...document.querySelectorAll('.batch-insight-cb:checked')];
-  if (!boxes.length) { alert('Chọn ít nhất 1 insight trước khi tạo script.'); return; }
-  if (boxes.length > 10) { alert('Chọn tối đa 10 insight/lượt để AI xử lý ổn định — chọn ít lại rồi tạo tiếp đợt sau.'); return; }
-  const insights = boxes.map(cb => cb.value);
-  btn.textContent = `Đang tạo ${insights.length} script (gọi AI)…`; btn.disabled = true;
-  const res = await fetch(`/api/batches/${batchId}/generate`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({insights})});
-  const d = await res.json();
-  if (!d.ok) {
-    btn.textContent = '⚡ Tạo script cho insight đã chọn (AI)'; btn.disabled = false;
-    document.getElementById('batch-generate-err').innerHTML = `<div class="empty-state" style="color:#c0392b;">AI chưa khả dụng: ${escapeHtml(d.error)}</div>`;
-    return;
-  }
-  renderBatchDetail(batchId);
-}
-
-async function batchAdvanceStatus(batchId, scriptId, btn) {
-  btn.disabled = true;
-  const res = await fetch(`/api/batches/${batchId}/scripts/${scriptId}/status`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({})});
-  const d = await res.json();
-  if (!d.ok) { alert('Lỗi: ' + d.error); btn.disabled = false; return; }
-  renderBatchDetail(batchId);
 }
 
 async function renderResearch() {
@@ -923,41 +446,29 @@ function emptyMsg(msg) { return `<div class="card empty-state">${msg}</div>`; }
 // --- 1. Não Marketing ------------------------------------------------------
 
 async function renderGoal() {
-  const res = await fetch('/api/goal');
-  const d = await res.json();
+  const [goalRes, pillarsRes] = await Promise.all([fetch('/api/goal'), fetch('/api/content-pillars')]);
+  const d = await goalRes.json();
+  const pillars = await pillarsRes.json();
+  const pillarList = pillars.map(p => `<li style="margin-bottom:4px;"><a href="#" onclick="loadPage('pillars'); return false;">${escapeHtml(p.title)}</a> <span style="color:var(--text-secondary);">(${p.topics.length} chủ đề)</span></li>`).join('');
   content.innerHTML = `
     <div class="page-title">🎯 Não Marketing — Business Goal</div>
-    <div class="page-sub">Nhập mục tiêu kinh doanh hiện tại, AI (Claude Haiku, chi phí thấp) sẽ gợi ý 10 chủ đề video bám sát mục tiêu + insight ưu tiên đã có.</div>
+    <div class="page-sub">Ghi lại mục tiêu kinh doanh hiện tại để tự tham chiếu. Ý tưởng nội dung lấy từ Content Pillars / Insight Bank / Thư viện kịch bản đã có sẵn — không gọi AI để sinh ý tưởng mới.</div>
     <div class="card">
       <textarea id="goal-input" rows="4" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:13.5px;">${escapeHtml(d.goal)}</textarea>
-      <div style="margin-top:10px; display:flex; gap:8px;">
+      <div style="margin-top:10px;">
         <button class="toggle-btn" onclick="saveGoal()">💾 Lưu goal</button>
-        <button class="toggle-btn done" id="run-engine-btn" onclick="runObjectiveEngine()">⚡ Chạy Objective Engine (10 ý)</button>
       </div>
     </div>
-    <div class="card" id="goal-ideas-card">
-      <h3>Ý tưởng đã sinh</h3>
-      <div id="goal-ideas-list">${renderGoalIdeas(d.ideas)}</div>
+    <div class="card">
+      <h3>Nguồn ý tưởng có sẵn (không cần AI)</h3>
+      <ul style="padding-left:18px; margin:8px 0 0;">${pillarList}</ul>
+      <div style="margin-top:10px; font-size:12.5px;">Xem thêm <a href="#" onclick="loadPage('insightbank'); return false;">Insight Bank (180)</a> và <a href="#" onclick="loadPage('ideas'); return false;">Thư viện kịch bản</a>.</div>
     </div>
   `;
-}
-function renderGoalIdeas(ideas) {
-  if (!ideas || !ideas.length) return '<div class="empty-state">Chưa có — bấm "Chạy Objective Engine"</div>';
-  return '<ol>' + ideas.map(i => `<li style="margin-bottom:6px;">${mdInline(i)}</li>`).join('') + '</ol>';
 }
 async function saveGoal() {
   const goal = document.getElementById('goal-input').value;
   await fetch('/api/goal', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({goal})});
-}
-async function runObjectiveEngine() {
-  await saveGoal();
-  const btn = document.getElementById('run-engine-btn');
-  btn.textContent = 'Đang chạy…'; btn.disabled = true;
-  const res = await fetch('/api/objective-engine', {method:'POST'});
-  const d = await res.json();
-  btn.textContent = '⚡ Chạy Objective Engine (10 ý)'; btn.disabled = false;
-  if (!d.ok) { document.getElementById('goal-ideas-list').innerHTML = `<div class="empty-state">Lỗi: ${escapeHtml(d.error)}</div>`; return; }
-  document.getElementById('goal-ideas-list').innerHTML = renderGoalIdeas(d.ideas);
 }
 
 // --- 3. Belief Map ----------------------------------------------------------
@@ -1000,31 +511,23 @@ async function renderContentMap() {
 // --- 6. Kiến tạo 1.000 video --------------------------------------------------
 
 async function renderIdeation() {
-  const res = await fetch('/api/insights');
-  const rows = await res.json();
+  const [insightsRes, ideasRes] = await Promise.all([fetch('/api/insights'), fetch('/api/ideas-today')]);
+  const rows = await insightsRes.json();
+  const scripts = await ideasRes.json();
   if (!rows.length) { content.innerHTML = emptyMsg('Chưa có insight — chạy `agent filter-insights`'); return; }
-  let html = `<div class="page-title">🌱 Kiến tạo 1.000 video</div><div class="page-sub">Mỗi insight → bấm "Bung 10 góc nhìn" để AI (Haiku) sinh 10 ý tưởng góc tiếp cận khác nhau. Kết quả được cache lại, không sinh lại trừ khi xóa file data/web_state.json.<br><strong style="color:var(--warn, #b7791f);">Lưu ý: tính năng này cần Anthropic API credit — hiện tài khoản đã hết credit nên nút "Bung 10 góc nhìn" sẽ báo lỗi cho tới khi nạp lại.</strong> Trong lúc chờ, xem <a href="#" onclick="loadPage('wave1'); return false;">Wave 1 — Chi tiết</a>: 5 chủ đề đã được viết tay đầy đủ 60 mục mỗi chủ đề, không phụ thuộc API.</div>`;
+  let html = `<div class="page-title">🌱 Kiến tạo 1.000 video</div><div class="page-sub">Mỗi insight ↔ kịch bản đã viết sẵn trong Thư viện kịch bản (không gọi AI để sinh thêm góc nhìn mới) — xem thêm <a href="#" onclick="loadPage('wave1'); return false;">Wave 1 — Chi tiết</a> (60 mục/chủ đề đã viết tay) và <a href="#" onclick="loadPage('insightbank'); return false;">Insight Bank</a> để có thêm góc tiếp cận.</div>`;
   rows.forEach(r => {
+    const matched = scripts.filter(s => (s.insight || '').includes(`#${r.num}`));
+    const list = matched.length
+      ? '<ul style="padding-left:18px; margin:8px 0 0;">' + matched.map(s => `<li style="margin-bottom:4px;"><a href="#" onclick="loadPage('ideas'); return false;">${escapeHtml(s.script_id)} — ${mdInline(s.name || s.hook || '')}</a></li>`).join('') + '</ul>'
+      : '<div class="empty-state">Chưa có kịch bản nào khai thác insight này.</div>';
     html += `
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div style="font-weight:600;">#${r.num} — ${mdInline(r.insight)}</div>
-        <button class="toggle-btn" onclick="expandAngles('${r.num}', this)">🔀 Bung 10 góc nhìn</button>
-      </div>
-      <div id="angles-${r.num}" style="margin-top:8px;"></div>
+      <div style="font-weight:600;">#${r.num} — ${mdInline(r.insight)}</div>
+      ${list}
     </div>`;
   });
   content.innerHTML = html;
-}
-async function expandAngles(num, btn) {
-  btn.textContent = 'Đang sinh…'; btn.disabled = true;
-  const res = await fetch(`/api/insights/${num}/expand-angles`, {method:'POST'});
-  const d = await res.json();
-  btn.textContent = '🔀 Bung 10 góc nhìn'; btn.disabled = false;
-  const target = document.getElementById(`angles-${num}`);
-  if (!d.ok) { target.innerHTML = `<div class="empty-state">Lỗi: ${escapeHtml(d.error)}</div>`; return; }
-  target.innerHTML = '<ol style="padding-left:18px; font-size:12.5px;">' + d.angles.map(a => `<li style="margin-bottom:4px;">${mdInline(a)}</li>`).join('') + '</ol>' +
-    (d.cached ? '<div style="font-size:11px; color:var(--text-muted);">(lấy từ cache)</div>' : '');
 }
 
 // --- 10. Upload video ---------------------------------------------------------

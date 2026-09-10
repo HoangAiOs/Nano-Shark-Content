@@ -5,7 +5,7 @@
 "Một cánh cửa dùng nhiều năm không tra dầu sẽ kêu, rồi kẹt, rồi phải thay bản lề. Khớp của anh chị cũng đang trải qua đúng quá trình đó — chỉ là không ai giải thích rõ."
 
 ## Vấn đề
-Nhiều người nghĩ thoái hóa khớp là do một biến cố đột ngột — một cú té, một lần vác nặng. Nhưng thực tế đó là quá trình tích lũy âm thầm qua nhiều năm: từ sau tuổi 40, lượng dịch khớp tự nhiên bắt đầu giảm mạnh, sụn khớp dần mòn đi như bản lề cửa thiếu dầu bôi trơn qua thời gian sử dụng.
+Nhiều người nghĩ thoái hóa khớp là do một biến cố đột ngột — một cú té, một lần vác nặng. Nhưng thực tế đó là quá trình tích lũy âm thầm qua nhiều năm: lượng collagen tự nhiên trong cơ thể đã bắt đầu giảm dần từ khoảng tuổi 25, và theo thống kê của Hội Cơ Xương khớp Việt Nam, khoảng 30% người trên 35 tuổi đã có dấu hiệu thoái hóa khớp — tỷ lệ này tăng lên 60% ở người trên 65 tuổi. Sụn khớp dần mòn đi như bản lề cửa thiếu dầu bôi trơn qua thời gian sử dụng.
 
 ## Giải pháp
 Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — giống như việc tra dầu định kỳ cho bản lề, cung cấp đều đặn dưỡng chất giúp khớp duy trì sự trơn tru, làm chậm quá trình mòn tự nhiên này.

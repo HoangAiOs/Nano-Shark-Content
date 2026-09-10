@@ -8,7 +8,7 @@
 Khi so sánh giá trên mạng, nhiều người chỉ nhìn vào con số mà không biết mình đang so sánh những sản phẩm rất khác nhau về thành phần, nguồn gốc và công nghệ — dẫn tới cảm giác "sao sản phẩm này đắt vậy".
 
 ## Giải pháp
-Một hộp Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — chứa tới 6 thành phần khác nhau (glucosamine, sụn cá mập, hyaluronic acid, MSM, collagen type 2 cùng các dưỡng chất khác) trong một sản phẩm duy nhất, thay vì phải mua riêng lẻ 6 loại khác nhau để có đủ các dưỡng chất tương đương.
+Một hộp Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — chứa tới 6 thành phần khác nhau, mỗi thành phần một vai trò riêng không thể thay thế cho nhau: Chondroitin giữ nước cho sụn, Glucosamine là nguyên liệu tái tạo, Hyaluronic Acid bôi trơn khớp, Collagen là khung chịu lực của sụn, MSM hỗ trợ giảm viêm, Canxi + D3 giữ đốt sống chắc khỏe — trong một sản phẩm duy nhất, thay vì phải mua riêng lẻ 6 loại khác nhau để có đủ các dưỡng chất tương đương.
 
 ## Bằng chứng
 Nếu tính riêng từng loại — glucosamine riêng, sụn cá mập riêng, hyaluronic acid riêng... — tổng chi phí mua đủ 6 loại thường cao hơn nhiều so với giá một hộp sản phẩm đã kết hợp sẵn, chưa kể sự bất tiện khi phải uống nhiều loại viên mỗi ngày.

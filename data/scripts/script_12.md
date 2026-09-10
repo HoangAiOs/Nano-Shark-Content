@@ -11,7 +11,7 @@ Rất nhiều người nghĩ uống canxi là đủ để bảo vệ xương kh�
 Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — với đủ 6 thành phần dành riêng cho sụn khớp (không chỉ canxi), giúp phục hồi đúng bộ phận đang thiếu dưỡng chất. Công nghệ nano giúp hấp thu tối ưu, đặc biệt quan trọng vì sụn khớp không có mạch máu, cần dưỡng chất đến được đúng nơi mới có tác dụng.
 
 ## Bằng chứng
-Nhiều khách hàng từng chia sẻ: uống canxi đều đặn nhiều năm nhưng khớp gối vẫn kêu, vẫn đau khi ngồi xuống đứng lên — cho tới khi chuyển sang bổ sung đúng nhóm dưỡng chất cho sụn mới thấy cải thiện rõ rệt trong vài tuần. Cơ chế 6 thành phần trong 1 giúp phục hồi toàn diện: glucosamine + chondroitin phục hồi lớp sụn, hyaluronic acid cấp chất nhờn, collagen type 2 tái tạo cấu trúc sụn, MSM kháng viêm tự nhiên, canxi + D3 mới thực sự chắc xương.
+Nhiều khách hàng từng chia sẻ: uống canxi đều đặn nhiều năm nhưng khớp gối vẫn kêu, vẫn đau khi ngồi xuống đứng lên — cho tới khi chuyển sang bổ sung đúng nhóm dưỡng chất cho sụn mới thấy cải thiện rõ rệt trong vài tuần. Cơ chế 6 thành phần trong 1 giúp phục hồi toàn diện: glucosamine + chondroitin phục hồi lớp sụn, hyaluronic acid cấp chất nhờn, collagen type 2 tái tạo cấu trúc sụn, MSM kháng viêm tự nhiên, canxi + D3 mới thực sự chắc xương — riêng phần canxi còn có thêm CPP (chiết xuất từ sữa) giúp cơ thể hấp thu canxi hiệu quả hơn, vì thông thường cơ thể người trưởng thành chỉ giữ lại được một phần nhỏ lượng canxi ăn vào.
 
 ## CTA
 Nếu anh chị cũng đang chỉ uống canxi mà khớp vẫn đau, hãy để lại tên và số điện thoại để được tư vấn đúng nhóm dưỡng chất mình đang thiếu.

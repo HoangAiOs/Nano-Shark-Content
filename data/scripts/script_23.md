@@ -5,7 +5,7 @@
 "Công việc buộc phải tiếp khách, bia rượu là chuyện khó tránh. Nhưng ít ai biết, những cuộc nhậu đó đang ảnh hưởng tới cả khớp lẫn đường ruột cùng lúc."
 
 ## Vấn đề
-Dân văn phòng, đặc biệt người thường xuyên phải tiếp khách, vừa chịu tác động từ việc ngồi nhiều (thoái hóa cột sống, cổ, cổ tay sớm hơn), vừa chịu ảnh hưởng từ bia rượu lên niêm mạc đường ruột — trong khi đây chính là nơi hấp thu phần lớn dưỡng chất nuôi khớp.
+Dân văn phòng, đặc biệt người thường xuyên phải tiếp khách, vừa chịu tác động từ việc ngồi nhiều (đĩa đệm cột sống chịu áp lực kéo dài, dễ mất nước và thoái hóa sớm hơn), vừa chịu ảnh hưởng từ bia rượu lên niêm mạc đường ruột — trong khi đây chính là nơi hấp thu phần lớn dưỡng chất nuôi khớp.
 
 ## Giải pháp
 Kết hợp Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — cùng các dưỡng chất hỗ trợ tiêu hóa giúp bảo vệ đường ruột trước tác động của bia rượu, để dưỡng chất đưa vào cơ thể được hấp thu hiệu quả hơn thay vì bị ảnh hưởng bởi tình trạng viêm, tổn thương niêm mạc.

@@ -25,9 +25,9 @@ PERSISTENT_DIR = Path(os.environ.get("PERSISTENT_DATA_DIR") or DATA_DIR)
 
 MARKER_FILE = PERSISTENT_DIR / ".migrated"
 
-# Đúng 5 mục data động — KHÔNG thêm bất kỳ file tĩnh nào khác vào đây.
-_SEED_FILES = ["content_calendar.json", "web_state.json", "content_map.json"]
-_SEED_DIRS = ["daily_production", "video_uploads"]
+# Đúng vài mục data động — KHÔNG thêm bất kỳ file tĩnh nào khác vào đây.
+_SEED_FILES = ["web_state.json", "content_map.json"]
+_SEED_DIRS = ["video_uploads"]
 
 VN_TZ = timezone(timedelta(hours=7))
 
