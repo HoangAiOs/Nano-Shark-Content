@@ -108,7 +108,7 @@ lực 2024-2027, xác nhận toàn bộ quy trình sản xuất tuân thủ quy 
 > vấn 1:1 (Zalo/inbox), không đưa vào video quảng cáo công khai, được đánh dấu rõ
 > **[CHỈ NỘI BỘ]**.
 
-### 6.1. Giải phẫu: Đĩa đệm cột sống KHÁC sụn khớp gối
+### 5.1. Giải phẫu: Đĩa đệm cột sống KHÁC sụn khớp gối
 
 | Tiêu chí | Khớp gối | Cột sống (đĩa đệm) |
 |---|---|---|
@@ -129,7 +129,19 @@ nhất); (2) Thoát vị — vòng xơ nứt, nhân nhầy lồi ra, tê bì/đa
 **Quan trọng cho tư vấn:** khi khách nói "đau cột sống", hỏi ngay: đau ở giữa cột hay
 hai bên? Có lan xuống tay/chân không? — để biết tầng nào đang có vấn đề.
 
-### 6.2. Tại sao công nghệ Nano quan trọng HƠN với cột sống so với khớp gối
+### 5.2. Tại sao công nghệ Nano quan trọng HƠN với cột sống so với khớp gối
+
+> ⚠️ **[CHỈ NỘI BỘ — CẦN XÁC MINH TRƯỚC KHI DÙNG CÔNG KHAI]** Các con số cụ thể
+> trong mục này (10-20% / 80-90% / gấp 4-8 lần / "< 200 nano") chỉ xuất hiện trong
+> tài liệu đào tạo sale nội bộ ("Sụn Nano & Cột Sống", "Đào Tạo Sụn Cá Mập"), KHÔNG
+> xuất hiện trong hồ sơ pháp lý chính thức (bằng sáng chế, Certificate of Analysis,
+> GMP, Giấy công bố sản phẩm, Giấy xác nhận nội dung quảng cáo). Đây có thể là số
+> liệu minh họa/ẩn dụ bán hàng chưa được kiểm chứng độc lập cho riêng sản phẩm này —
+> **KHÔNG dùng các con số % cụ thể này trong kịch bản video quảng cáo công khai**
+> (rủi ro hậu kiểm quảng cáo) cho tới khi xác minh lại với nhà cung cấp/đội kỹ
+> thuật. Dùng được trong tư vấn nội bộ 1:1 như một cách giải thích dễ hiểu, không
+> phải con số cam kết. (Phát hiện 10/09/2026, rà soát lại 27 kịch bản đã gỡ số liệu
+> này khỏi #14, #17, #25 — 3 kịch bản duy nhất từng dùng trực tiếp.)
 
 Đĩa đệm gần như không có mạch máu — kém hơn cả sụn khớp (vốn đã rất ít mạch máu).
 Dưỡng chất chỉ vào được bằng cách khuếch tán thụ động qua các tấm sụn đầu đốt sống,
@@ -148,7 +160,7 @@ qua được cửa, 80% nước đổ ra ngoài trước khi vào được bên 
 chia dưỡng chất thành hàng triệu hạt siêu nhỏ, len lỏi qua mọi ngóc ngách — lượng
 đến đích tăng 4-8 lần dù bỏ ra cùng một số tiền.
 
-### 6.3. Cơ chế từng thành phần (dùng cho phần "Giải pháp" — giải thích dễ hiểu)
+### 5.3. Cơ chế từng thành phần (dùng cho phần "Giải pháp" — giải thích dễ hiểu)
 
 | Thành phần | Vai trò khoa học | Ẩn dụ dễ hiểu |
 |---|---|---|
@@ -165,7 +177,7 @@ chia dưỡng chất thành hàng triệu hạt siêu nhỏ, len lỏi qua mọi
 *(Ghi chú: bảng hàm lượng chính thức mỗi viên vẫn theo Mục 3 — đây là bảng giải
 thích CƠ CHẾ, không phải hàm lượng.)*
 
-### 6.4. Phác đồ sử dụng theo giai đoạn (đúng theo tài liệu đào tạo)
+### 5.4. Phác đồ sử dụng theo giai đoạn (đúng theo tài liệu đào tạo)
 
 - **Tháng 1-6 (giai đoạn tấn công):** 5 viên/ngày — mục tiêu giảm đau, giảm viêm,
   nuôi dưỡng và hỗ trợ tái tạo sụn, phục hồi vận động.
@@ -173,7 +185,7 @@ thích CƠ CHẾ, không phải hàm lượng.)*
   khớp, ngăn ngừa thoái hóa tiến triển, giữ vận động linh hoạt lâu dài.
 - Uống đều đặn mỗi ngày để đạt hiệu quả tối ưu — không phải sản phẩm dùng ngắt quãng.
 
-### 6.5. Khung chi phí tham chiếu (dùng để giải thích giá trị, KHÔNG dùng để so sánh y tế trực tiếp)
+### 5.5. Khung chi phí tham chiếu (dùng để giải thích giá trị, KHÔNG dùng để so sánh y tế trực tiếp)
 
 Có thể dùng để giúp người xem tự đối chiếu giá trị — trình bày dưới dạng thông tin
 tham khảo chi phí sinh hoạt phổ biến, không khẳng định "thay thế" hay "hiệu quả
@@ -190,7 +202,7 @@ tương đương" các phương pháp y tế:
 một ly cà phê, giúp giảm cảm giác "đắt" — đúng tinh thần Mục 1 (không vượt phạm vi
 công dụng đã duyệt).
 
-### 6.6. Nhóm khách hàng mới — mở rộng ngoài nhóm đã có trong testimonial
+### 5.6. Nhóm khách hàng mới — mở rộng ngoài nhóm đã có trong testimonial
 
 Tài liệu đào tạo xác định thêm các nhóm khách hàng trẻ hơn, đúng với đối tượng mục
 tiêu "trên 30 tuổi" nhưng CHƯA được khai thác nhiều trong 24 kịch bản hiện tại (vốn
@@ -207,7 +219,7 @@ chủ yếu dựa trên testimonial người lớn tuổi ở tỉnh):
 5. **Người 55+ đã có gai cột sống:** gai xương hình thành do đốt sống cọ nhau, cần
    bảo vệ phần sụn/đĩa đệm còn lại để không tiến triển thêm.
 
-### 6.7. An toàn & lưu ý sử dụng bổ sung (theo tài liệu kỹ thuật thành phần)
+### 5.7. An toàn & lưu ý sử dụng bổ sung (theo tài liệu kỹ thuật thành phần)
 
 - Liều Glucosamine an toàn tham chiếu: 1.500mg/ngày.
 - Thận trọng: người có bệnh tim mạch/tăng huyết áp; người tiểu đường (glucosamine
@@ -224,7 +236,7 @@ chủ yếu dựa trên testimonial người lớn tuổi ở tỉnh):
   chống chỉ định (tránh kịch bản quá dài/nặng nề), nhưng đội tư vấn 1:1 cần nắm để
   trả lời đúng khi khách hỏi.
 
-### 6.9. Giải phẫu khớp cơ bản & thống kê tỷ lệ mắc (nguồn: "Bộ tài liệu sản phẩm sụn cá mập Nano Shark Cartilage")
+### 5.8. Giải phẫu khớp cơ bản & thống kê tỷ lệ mắc (nguồn: "Bộ tài liệu sản phẩm sụn cá mập Nano Shark Cartilage")
 
 **Cấu tạo một khớp** gồm: sụn (mô đệm mềm, trơn, đàn hồi ở đầu xương — giảm ma
 sát), bao khớp (2 lớp: màng hoạt dịch + màng bọc khớp), dịch khớp (chất lỏng
@@ -259,7 +271,7 @@ nói chung chung "đau khớp", "thoái hóa khớp" — **không dùng tên "vi
 thấp" hay "gout"** như thể sản phẩm hỗ trợ được nhóm bệnh này, trừ phi có bằng
 chứng/giấy phép rõ ràng.
 
-### 6.10. Thành phần — bổ sung số liệu khoa học (không thay thế bảng hàm lượng Mục 3)
+### 5.9. Thành phần — bổ sung số liệu khoa học (không thay thế bảng hàm lượng Mục 3)
 
 - **Chondroitin Sulfate:** chiếm tới **40% trọng lượng sụn khô** và **70-80%
   chất nhờn trong sụn tươi** — cơ thể không tự tổng hợp trực tiếp được chất này,
@@ -280,7 +292,7 @@ vuốt mèo, BCAA... — xem file gốc "Bộ tài liệu sản phẩm sụn cá
 Cartilage.docx". Đây là nghiên cứu ở cấp độ NGUYÊN LIỆU, không phải nghiên cứu
 lâm sàng trên chính sản phẩm hoàn chỉnh — xem lưu ý ở Mục 6.11 trước khi dùng.)*
 
-### 6.11. [CHỈ NỘI BỘ — không đưa vào kịch bản video công khai]
+### 5.10. [CHỈ NỘI BỘ — không đưa vào kịch bản video công khai]
 
 - **Trích dẫn nghiên cứu lâm sàng cấp độ nguyên liệu** (vd nghiên cứu PubMed về
   MSM giảm đau khớp gối, nghiên cứu NIH về cây vuốt mèo giảm TNF-alpha...): đây
@@ -299,7 +311,7 @@ lâm sàng trên chính sản phẩm hoàn chỉnh — xem lưu ý ở Mục 6.1
   đội tư vấn hiểu bối cảnh và trả lời đúng khi khách hỏi, KHÔNG đưa nguyên văn
   vào kịch bản vì đây là thông tin y khoa chuyên sâu ngoài phạm vi TPCN.
 
-### 6.8. [CHỈ NỘI BỘ — không đưa vào kịch bản video công khai]
+### 5.11. [CHỈ NỘI BỘ — không đưa vào kịch bản video công khai]
 
 Các phần sau trong tài liệu đào tạo chỉ dùng cho đội sale tư vấn trực tiếp
 (Zalo/Facebook inbox 1:1), KHÔNG phù hợp đưa vào kịch bản video quảng cáo công khai
