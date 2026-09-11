@@ -52,7 +52,7 @@
 | 3 | "Khớp kêu là chuyện già rồi phải chịu" | Từ chấp nhận thành chủ động phòng ngừa | "Không sao, ai già cũng vậy" | Là dấu hiệu sớm có thể can thiệp, không nên bỏ qua | Khai thác góc "hành động sớm" |
 | 4 | "Chích giảm đau/hút dịch là chữa khỏi" | Từ "giải pháp cuối" thành "chỉ là tạm thời" | "Chích 1 mũi là yên tâm nhiều tháng" | Chỉ giảm triệu chứng, không phục hồi cấu trúc sụn | Case thật: Cô Xong đau lại chỉ sau 5 ngày |
 | 5 | "Glucosamine nào cũng như nhau" | Từ "rẻ hay đắt cũng vậy" thành "công nghệ quyết định hiệu quả" | "Cứ có glucosamine trên nhãn là được" | Khác biệt về nguồn gốc, công nghệ hấp thu tạo ra kết quả khác hẳn | Đã có sẵn video "cùng uống glucosamine người hiệu quả người không" |
-| 6 | "Nano chỉ là chiêu marketing" | Từ hoài nghi thành hiểu cơ chế thật | "Nghe 'nano' là thấy như quảng cáo thổi phồng" | Nano tăng hấp thu thực chất, đặc biệt với người lớn tuổi | Giải thích bằng số liệu hấp thu 80-90% vs 30-40% |
+| 6 | "Nano chỉ là chiêu marketing" | Từ hoài nghi thành hiểu cơ chế thật | "Nghe 'nano' là thấy như quảng cáo thổi phồng" | Nano tăng hấp thu thực chất, đặc biệt với người lớn tuổi | Giải thích bằng bằng sáng chế số 3248170 và collagen hấp thụ nhanh hơn 1,5 lần (nghiên cứu đối chứng) |
 | 7 | "Giá cao là lừa đảo" | Từ nghi ngờ giá thành hiểu giá trị đằng sau | "Giá cao chắc là chặt chém" | Giá phản ánh GMP, bằng sáng chế, nguyên liệu thật | Liên kết trực tiếp insight rào cản giá |
 | 8 | "Đau khớp là bệnh của người già" | Từ loại trừ bản thân thành nhận diện nguy cơ sớm | "Mình còn trẻ, chưa cần quan tâm" | Dân văn phòng, người ít vận động cũng có nguy cơ cao | Mở rộng tệp khách hàng trẻ hơn |
 | 9 | "Uống là hết đau ngay như thuốc" | Từ kỳ vọng sai thành kỳ vọng đúng, tránh bỏ cuộc sớm | "3 ngày không đỡ là sản phẩm dở" | Đây là thực phẩm bổ sung, cần thời gian để phục hồi thật | Set kỳ vọng ngay từ đầu — giảm tỷ lệ bỏ giữa chừng |
@@ -83,7 +83,7 @@
 
 | # | Chủ đề | Mục tiêu thay đổi nhận thức | Khách hàng đang nghĩ gì | Điều tôi muốn họ hiểu | Điểm khác biệt |
 |---|---|---|---|---|---|
-| 1 | Công nghệ nano giúp hấp thu 80-90% | Từ mơ hồ về "nano" thành hiểu lợi ích cụ thể | "Nano nghe hiện đại nhưng không biết khác gì" | Người lớn tuổi hấp thu kém, nano giải quyết đúng vấn đề đó | Số liệu cụ thể, dễ so sánh (80-90% vs 30-40%) |
+| 1 | Collagen phân tử nhỏ hấp thụ nhanh hơn 1,5 lần | Từ mơ hồ về "nano" thành hiểu lợi ích cụ thể | "Nano nghe hiện đại nhưng không biết khác gì" | Người lớn tuổi hấp thu kém, collagen phân tử nhỏ trong sản phẩm giải quyết đúng vấn đề đó | Số liệu có nguồn: nghiên cứu đối chứng J. Agric. Food Chem. 2007, 55, 1532-1535 |
 | 2 | 6 thành phần trong 1 | Từ "phải mua nhiều loại" thành "1 sản phẩm đủ dùng" | "Muốn đủ chất phải mua nhiều loại, tốn kém" | 1 hộp tương đương 6 loại riêng lẻ cộng lại | Phép so sánh "đi du lịch chỉ cần đem 1 lọ" dễ nhớ |
 | 3 | Bằng sáng chế Nhật Bản số 3248170 | Từ không quan tâm giấy tờ thành hiểu đây là bằng chứng thật | "Chắc công ty nào cũng tự nhận có bằng sáng chế" | Có số bằng sáng chế cụ thể, kiểm chứng được | Đưa số liệu xác thực, mời tra cứu |
 | 4 | Vì sao hàng nội địa Nhật khác hàng xuất khẩu | Từ không phân biệt được thành phân biệt rõ 2 loại | "Cứ có chữ Nhật Bản trên bao bì là như nhau" | Hàng nội địa phải đạt chuẩn khắt khe nhất vì bán cho chính người Nhật | Case thật: "sản xuất cho người Nhật dùng nên phải hấp thu được" |
