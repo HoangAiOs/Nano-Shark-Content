@@ -8,7 +8,7 @@
 Khi bị đau khớp, phản xạ tự nhiên của nhiều người là hạn chế vận động, sợ đi lại làm đau thêm. Nhưng thực tế ngược lại: bất động lâu ngày làm khớp cứng nhanh hơn, còn vận động đúng cách — đặc biệt là đi bộ nhanh — lại kích thích cơ thể tự tiết chất nhờn tự nhiên cho khớp, giống như "bơm dầu" cho một cỗ máy lâu ngày không hoạt động.
 
 ## Giải pháp
-Đi bộ nhanh 30 phút mỗi ngày (không phải chạy bộ — chạy tạo áp lực lớn hơn lên khớp gối) giúp kích thích tiết dịch khớp tự nhiên. Kết hợp với Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — để cung cấp đủ nguyên liệu cho quá trình phục hồi diễn ra khi vận động, thay vì chỉ dựa vào 1 trong 2 yếu tố.
+Đi bộ nhanh 30 phút mỗi ngày (không phải chạy bộ — chạy tạo áp lực lớn hơn lên khớp gối) giúp kích thích tiết dịch khớp tự nhiên. Kết hợp với Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp, trong đó Hyaluronic Acid hỗ trợ giữ ẩm và độ nhớt cho dịch khớp — để cung cấp đủ nguyên liệu cho quá trình phục hồi khi vận động, thay vì chỉ dựa vào 1 trong 2 yếu tố.
 
 ## Bằng chứng
 Nhiều khách hàng chia sẻ: sau khi vừa dùng sản phẩm đều đặn vừa duy trì đi bộ mỗi ngày, tốc độ cải thiện nhanh hơn rõ rệt so với chỉ uống mà không vận động — đi lại linh hoạt hơn, ít cứng khớp buổi sáng hơn. Ngược lại, một số trường hợp chỉ nằm nghỉ hoàn toàn khi đau lại thấy khớp cứng thêm sau một thời gian.

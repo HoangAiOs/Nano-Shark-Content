@@ -8,7 +8,7 @@
 Rất nhiều người đàn ông trong nhà âm thầm chịu đau, không muốn vợ con lo lắng, không muốn bị coi là yếu. Họ giấu bệnh, chỉ đến khi cơn đau ảnh hưởng tới giấc ngủ, tới công việc, mới miễn cưỡng nói ra. Và thường thì, người đi tìm giải pháp lại chính là vợ, là con — những người thương họ đủ để chủ động tìm hiểu thay.
 
 ## Giải pháp
-Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — một lựa chọn nhẹ nhàng để bắt đầu, không cần thuyết phục người thân đi khám ngay, không cần thay đổi lớn trong sinh hoạt, chỉ là một bước nhỏ để hỗ trợ khớp mỗi ngày.
+Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — một lựa chọn nhẹ nhàng để bắt đầu. Glucosamine (từ cua tuyết đỏ Nhật Bản) và sụn cá mập (bằng sáng chế số 3248170) hỗ trợ tái tạo mô sụn, Hyaluronic Acid giúp khớp chuyển động trơn tru hơn — không cần thuyết phục người thân đi khám ngay, chỉ là một bước nhỏ hỗ trợ khớp mỗi ngày.
 
 ## Bằng chứng
 Chị Lan (Quảng Trị) kể lại việc phát hiện chồng giấu bệnh: *"Em cứ nghĩ là đau ít. Nhưng mà ông về... ông nói đi trở... tôi bị đến trở, tôi đau chiều khóc nội luôn."* Chị chủ động mua giúp chồng, và sau khi dùng: *"Anh đã sử dụng 3 hộp sụn nano... thì qua quá trình trải nghiệm với sản phẩm thì anh đã cải thiện được trên 60% rồi... Hiện giờ thì anh đi đứng anh làm việc lại rất là tốt rồi, rất là bình thường luôn."*

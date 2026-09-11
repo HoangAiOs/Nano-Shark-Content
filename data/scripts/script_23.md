@@ -8,7 +8,7 @@
 Dân văn phòng, đặc biệt người thường xuyên phải tiếp khách, vừa chịu tác động từ việc ngồi nhiều (đĩa đệm cột sống chịu áp lực kéo dài, dễ mất nước và thoái hóa sớm hơn), vừa chịu ảnh hưởng từ bia rượu lên niêm mạc đường ruột — trong khi đây chính là nơi hấp thu phần lớn dưỡng chất nuôi khớp.
 
 ## Giải pháp
-Kết hợp Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — cùng lợi khuẩn acid lactic (Lactobacillus plantarum, mức công bố tối thiểu 24 tỷ CFU mỗi 5 viên) hỗ trợ đường ruột trước tác động của bia rượu, để dưỡng chất đưa vào cơ thể được hấp thu hiệu quả hơn thay vì bị ảnh hưởng bởi tình trạng viêm, tổn thương niêm mạc.
+Kết hợp Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — cùng bột nano vi khuẩn acid lactic (Lactobacillus plantarum, tối thiểu 24 tỷ CFU/5 viên) hỗ trợ hệ tiêu hóa trước tác động của bia rượu lên niêm mạc đường ruột, để dưỡng chất đưa vào cơ thể được hấp thu hiệu quả hơn.
 
 ## Bằng chứng
 Anh Vũ, nhân viên văn phòng, chia sẻ: "Lúc trước ngồi nhiều văn phòng... xương khớp nó cũng hơi lụt một ít" — và xác nhận khi kết hợp hỗ trợ tiêu hóa cùng sụn khớp, tình trạng dù có đi nhậu trở lại cũng chỉ ảnh hưởng nhẹ, hồi phục nhanh hơn nhiều so với trước.

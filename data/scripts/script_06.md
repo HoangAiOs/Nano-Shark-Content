@@ -8,7 +8,7 @@
 Với nhiều người 50, 60, 70 tuổi, nỗi sợ lớn nhất không chỉ là bệnh tật mà là cảm giác trở thành gánh nặng — phải nhờ con cháu chăm sóc, đưa đi khám, lo từng bữa ăn giấc ngủ. Đây là nỗi sợ âm thầm, ít ai nói ra, nhưng lại là động lực rất lớn khiến người lớn tuổi muốn tự chăm sóc bản thân càng lâu càng tốt.
 
 ## Giải pháp
-Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — giúp khớp được nuôi dưỡng, hỗ trợ vận động linh hoạt hơn theo thời gian, một phần trong hành trình giữ gìn khả năng tự chủ trong sinh hoạt hàng ngày.
+Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp. Hyaluronic Acid đóng vai trò như một dạng "dầu bôi trơn" tự nhiên giúp khớp chuyển động trơn tru hơn; glucosamine (từ cua tuyết đỏ Nhật Bản) và sụn cá mập (bằng sáng chế số 3248170) hỗ trợ tái tạo và giữ ẩm mô sụn — phối hợp theo 5 cơ chế để khớp được nuôi dưỡng từ bên trong, một phần trong hành trình giữ gìn khả năng tự chủ trong sinh hoạt hàng ngày.
 
 ## Bằng chứng
 Cô Xong (Cam Ranh) chia sẻ nỗi lòng này rất thật: *"Lớn mình, giờ mình, lớn tuổi rồi mình phải làm phiền con cháu."* Sau khi tình trạng cải thiện: *"Cô rất là vui... bởi vì cô không cần phải phụ thuộc vào con mình nữa."* Cô Chính (Quảng Nam), từng không tự mặc áo hay chải đầu được vì viêm khớp vai, sau hơn 3 tháng: *"Bây giờ ta được [giơ tay được]... chải đầu được rồi... tự mặc áo với tự chải tóc được rồi."*

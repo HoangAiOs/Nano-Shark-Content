@@ -8,7 +8,7 @@
 Trên thị trường thực phẩm bổ sung, các cụm từ như "công nghệ độc quyền", "bằng sáng chế" bị lạm dụng tới mức nhiều người không còn tin — vì phần lớn chỉ là lời tự quảng cáo, không có gì để kiểm chứng.
 
 ## Giải pháp
-Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — sản xuất theo công nghệ đã được cấp bằng sáng chế Nhật Bản số 3248170, một con số cụ thể, có thể tra cứu, không phải lời tự nhận suông.
+Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — sản xuất theo công nghệ đã được cấp bằng sáng chế Nhật Bản số 3248170 (cấp ngày 21/1/2002). Sáng chế này giải quyết một vấn đề thật: canxi carbonat dùng đơn thuần để phòng ngừa loãng xương thường hấp thu kém, phần lớn bị đào thải. Nhà sáng chế phát hiện rằng khi phối hợp phức hợp protein chondroitin sulfat (chiết xuất từ sụn cá mập bằng phương pháp enzyme) với canxi theo tỷ lệ khoảng 40 phần phức hợp trên 3 phần canxi, khả năng hấp thu canxi được cải thiện rõ rệt so với dùng canxi đơn thuần.
 
 ## Bằng chứng
 Khác với nhiều sản phẩm chỉ nói "đã được nghiên cứu", đây là bằng chứng có thể kiểm tra được — cùng với chứng nhận GMP Nhật Bản (số hiệu 21-00297) và Certificate of Analysis cho từng lô sản xuất, tạo thành một chuỗi bằng chứng minh bạch từ khâu sản xuất tới khâu kiểm định.

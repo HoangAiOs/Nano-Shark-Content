@@ -8,7 +8,7 @@
 Nhiều người nghĩ thoái hóa khớp là do một biến cố đột ngột — một cú té, một lần vác nặng. Nhưng thực tế đó là quá trình tích lũy âm thầm qua nhiều năm: lượng collagen tự nhiên trong cơ thể đã bắt đầu giảm dần từ khoảng tuổi 25, và theo thống kê của Hội Cơ Xương khớp Việt Nam, khoảng 30% người trên 35 tuổi đã có dấu hiệu thoái hóa khớp — tỷ lệ này tăng lên 60% ở người trên 65 tuổi. Sụn khớp dần mòn đi như bản lề cửa thiếu dầu bôi trơn qua thời gian sử dụng.
 
 ## Giải pháp
-Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — giống như việc tra dầu định kỳ cho bản lề, cung cấp đều đặn dưỡng chất giúp khớp duy trì sự trơn tru, làm chậm quá trình mòn tự nhiên này.
+Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — giống việc tra dầu định kỳ cho bản lề. Glucosamine (từ cua tuyết đỏ Nhật Bản) là nguyên liệu để cơ thể tái tạo sụn, còn Chondroitin từ sụn cá mập (bằng sáng chế số 3248170) hỗ trợ giữ nước cho mô sụn, làm chậm quá trình mòn tự nhiên này.
 
 ## Bằng chứng
 Cơ chế này lý giải vì sao nhiều khách hàng cần sử dụng liên tục 6-12 tháng mới thấy cải thiện rõ rệt và bền vững — vì đây là quá trình bồi đắp lại dần dần, không phải phép màu tức thời, giống như bản lề cần được tra dầu đều đặn chứ không phải tra một lần là xong mãi mãi.
