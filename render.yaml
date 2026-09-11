@@ -1,6 +1,8 @@
 services:
   - type: web
     name: nano-shark-content-os
+    domains:
+      - brand.huuhoangdilim.com
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt
