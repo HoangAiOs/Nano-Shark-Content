@@ -55,6 +55,13 @@ TPBVSK tại Việt Nam.
 Thành phần khác: chất độn (Dextrin, maltose khử, crystalline cellulose), chất
 chống đông vón (Calcium stearate, silicon dioxide), vỏ nang (HPMC).
 
+**Lợi khuẩn — 2 con số khác nhau, không mâu thuẫn:** 6 tỷ CFU/viên ở bảng trên là
+hàm lượng nguyên liệu đưa vào; **mức công bố tối thiểu với Cục An Toàn Thực Phẩm
+(theo Giấy công bố sản phẩm) là 24 tỷ CFU/5 viên/ngày** — tức mức cam kết còn lại
+tối thiểu trong suốt hạn dùng, thường thấp hơn hàm lượng ban đầu do hao hụt tự
+nhiên của lợi khuẩn theo thời gian. Dùng con số 24 tỷ CFU/5 viên khi cần trích dẫn
+"mức công bố chính thức"; dùng 6 tỷ CFU/viên khi nói về hàm lượng nguyên liệu.
+
 **Dạng bào chế:** viên nang cứng, 420mg/viên. **Đóng gói:** lọ 150 viên/hộp.
 **Hạn dùng:** 2 năm kể từ ngày sản xuất (thực tế: shelf life 36 tháng theo COA).
 **Đối tượng sử dụng:** người trưởng thành. **Cách dùng:** uống 5 viên/ngày với
@@ -172,7 +179,7 @@ chia dưỡng chất thành hàng triệu hạt siêu nhỏ, len lỏi qua mọi
 | Canxi (vỏ sò) + Vitamin D3 | Giữ đốt sống/xương vững chắc, giảm nguy cơ lún đốt sống → đĩa đệm/sụn đỡ bị chèn ép thêm | "Nền móng xương" |
 | BCAA (Leucine, Isoleucine, Valine) | 3 axit amin thiết yếu, hỗ trợ tổng hợp protein cơ bắp quanh khớp, giảm đau nhức cơ, hạn chế mất cơ | Hỗ trợ "khung cơ" nâng đỡ khớp |
 | CPP (Casein Phosphopeptide) | Chiết xuất từ sữa, tăng cường hấp thu canxi — cơ thể người trưởng thành chỉ giữ lại 4-8% canxi tiêu hóa nếu không có chất hỗ trợ | Chìa khóa giúp canxi "vào được" xương |
-| Lợi khuẩn acid lactic (Lactobacillus plantarum) | Bảo vệ niêm mạc dạ dày — quan trọng vì thuốc giảm đau/kháng viêm Tây y thường ức chế lớp nhầy bảo vệ dạ dày, dùng lâu dài dễ viêm loét | Giải thích vì sao ít gây khó chịu dạ dày hơn thuốc tây |
+| Lợi khuẩn acid lactic (Lactobacillus plantarum, mức công bố tối thiểu 24 tỷ CFU/5 viên) | Bảo vệ niêm mạc dạ dày — quan trọng vì thuốc giảm đau/kháng viêm Tây y thường ức chế lớp nhầy bảo vệ dạ dày, dùng lâu dài dễ viêm loét | Giải thích vì sao ít gây khó chịu dạ dày hơn thuốc tây |
 
 *(Ghi chú: bảng hàm lượng chính thức mỗi viên vẫn theo Mục 3 — đây là bảng giải
 thích CƠ CHẾ, không phải hàm lượng.)*
