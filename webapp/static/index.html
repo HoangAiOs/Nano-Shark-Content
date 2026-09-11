@@ -174,6 +174,7 @@
   <div class="nav-group-label">Sản xuất nội dung</div>
   <div class="nav-item" data-page="insights">Ngân hàng Insight (8)</div>
   <div class="nav-item" data-page="ideas">Thư viện kịch bản</div>
+  <div class="nav-item" data-page="originalscripts">Kịch bản gốc</div>
   <div class="nav-item" data-page="portfolio">Cân đối danh mục</div>
   <div class="nav-item" data-page="contentmap">Bản đồ nội dung</div>
   <div class="nav-item" data-page="ideation">Kiến tạo 1.000 video</div>
@@ -244,6 +245,7 @@ async function loadPage(page) {
   if (page === 'voc') return renderVoC();
   if (page === 'insights') return renderInsights();
   if (page === 'ideas') return renderIdeas();
+  if (page === 'originalscripts') return renderOriginalScripts();
   if (page === 'portfolio') return renderPortfolio();
   if (page === 'goal') return renderGoal();
   if (page === 'belief') return renderBeliefMap();
@@ -424,6 +426,37 @@ async function viewScript(scriptId) {
   document.getElementById('modal').classList.add('open');
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+async function renderOriginalScripts() {
+  const res = await fetch('/api/original-scripts');
+  const rows = await res.json();
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có data/raw_research.json'); return; }
+  let html = `<div class="page-title">🎙️ Kịch bản gốc</div><div class="page-sub">${rows.length} video quảng cáo/giáo dục nội bộ của BS Sơn — nguyên văn 100% đã đăng thật (khác với "Thư viện kịch bản" là 27 kịch bản MỚI viết lại từ insight). Chỉ để tham khảo, không có tick "đã quay".</div>`;
+  rows.forEach(r => {
+    html += `
+    <div class="idea-card">
+      <div class="top-row">
+        <div>
+          <div class="name">${mdInline(r.title)}</div>
+          <div class="hook">${mdInline(r.preview)}…</div>
+          <div style="font-size:12px; color:var(--text-muted);">${escapeHtml(r.date)}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+          <button class="toggle-btn" onclick="viewOriginalScript('${r.id}')">Xem kịch bản</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  content.innerHTML = html;
+}
+
+async function viewOriginalScript(scriptId) {
+  const res = await fetch(`/api/original-scripts/${scriptId}`);
+  const d = await res.json();
+  document.getElementById('modal-body').innerHTML = `<h3 style="margin-top:0;">${escapeHtml(d.title)}</h3><pre class="script-detail"></pre>`;
+  document.querySelector('#modal-body pre').textContent = d.content;
+  document.getElementById('modal').classList.add('open');
+}
 
 async function renderPortfolio() {
   const res = await fetch('/api/portfolio');

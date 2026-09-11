@@ -52,6 +52,15 @@ async def api_research(request):
     return JSONResponse(dr.read_research_summary())
 
 
+async def api_original_scripts(request):
+    return JSONResponse(dr.read_original_scripts())
+
+
+async def api_original_script_detail(request):
+    script_id = request.path_params["script_id"]
+    return JSONResponse(dr.read_original_script_detail(script_id))
+
+
 async def api_voice_of_customer(request):
     return JSONResponse(dr.read_voice_of_customer())
 
@@ -177,6 +186,8 @@ app = Starlette(
         Route("/", index),
         Route("/api/overview", api_overview),
         Route("/api/research", api_research),
+        Route("/api/original-scripts", api_original_scripts),
+        Route("/api/original-scripts/{script_id}", api_original_script_detail),
         Route("/api/voice-of-customer", api_voice_of_customer),
         Route("/api/insight-bank", api_insight_bank),
         Route("/api/content-pillars", api_content_pillars),

@@ -196,6 +196,46 @@ def read_research_summary() -> dict:
     return {"total": len(records), "by_source_type": by_type, "by_platform": by_platform}
 
 
+def _load_original_scripts() -> list[dict]:
+    """48 video quảng cáo/giáo dục nội bộ của BS Sơn (nguyên văn 100%, KHÔNG chỉnh sửa).
+
+    Lọc từ raw_research.json theo author == "BS Sơn" — loại 21 bản testimonial
+    khách hàng (author khác). Không có id gốc trong dữ liệu nên dùng thứ tự xuất
+    hiện trong file làm id ổn định (1..48).
+    """
+    raw = _read(DATA_DIR / "raw_research.json")
+    if not raw:
+        return []
+    records = json.loads(raw)
+    out = []
+    for i, r in enumerate(records):
+        if r.get("author") == "BS Sơn":
+            out.append(
+                {
+                    "id": str(len(out) + 1),
+                    "title": r.get("title", ""),
+                    "date": r.get("date", ""),
+                    "content": r.get("content", ""),
+                }
+            )
+    return out
+
+
+def read_original_scripts() -> list[dict]:
+    """Danh sách rút gọn (không kèm toàn văn) cho trang danh sách."""
+    return [
+        {"id": s["id"], "title": s["title"], "date": s["date"], "preview": s["content"][:160]}
+        for s in _load_original_scripts()
+    ]
+
+
+def read_original_script_detail(script_id: str) -> dict:
+    for s in _load_original_scripts():
+        if s["id"] == script_id:
+            return s
+    return {"id": script_id, "title": "", "date": "", "content": ""}
+
+
 def read_priority_insights() -> list[dict]:
     text = _read(DATA_DIR / "priority_insights.md")
     if not text:
