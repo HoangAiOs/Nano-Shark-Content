@@ -197,34 +197,39 @@ def read_research_summary() -> dict:
 
 
 def _load_original_scripts() -> list[dict]:
-    """48 video quảng cáo/giáo dục nội bộ của BS Sơn (nguyên văn 100%, KHÔNG chỉnh sửa).
-
-    Lọc từ raw_research.json theo author == "BS Sơn" — loại 21 bản testimonial
-    khách hàng (author khác). Không có id gốc trong dữ liệu nên dùng thứ tự xuất
-    hiện trong file làm id ổn định (1..48).
+    """48 video quảng cáo/giáo dục nội bộ của BS Sơn, đã phân đoạn theo bố cục
+    Hook/Vấn đề/Giải pháp/Bằng chứng/CTA — nội dung mỗi phần là nguyên văn 100%
+    cắt từ transcript gốc (data/raw_research.json), chỉ "Insight chính" là câu
+    tóm tắt viết mới. Xem data/original_scripts_segments.json (không đụng tới
+    raw_research.json).
     """
-    raw = _read(DATA_DIR / "raw_research.json")
+    raw = _read(DATA_DIR / "original_scripts_segments.json")
     if not raw:
         return []
-    records = json.loads(raw)
-    out = []
-    for i, r in enumerate(records):
-        if r.get("author") == "BS Sơn":
-            out.append(
-                {
-                    "id": str(len(out) + 1),
-                    "title": r.get("title", ""),
-                    "date": r.get("date", ""),
-                    "content": r.get("content", ""),
-                }
-            )
-    return out
+    return json.loads(raw)
+
+
+def _original_script_markdown(s: dict) -> str:
+    return (
+        f"## Insight chính\n{s.get('insight', '')}\n\n"
+        f"## Hook\n{s.get('hook', '')}\n\n"
+        f"## Vấn đề\n{s.get('van_de', '')}\n\n"
+        f"## Giải pháp\n{s.get('giai_phap', '')}\n\n"
+        f"## Bằng chứng\n{s.get('bang_chung', '')}\n\n"
+        f"## CTA\n{s.get('cta', '')}"
+    )
 
 
 def read_original_scripts() -> list[dict]:
     """Danh sách rút gọn (không kèm toàn văn) cho trang danh sách."""
     return [
-        {"id": s["id"], "title": s["title"], "date": s["date"], "preview": s["content"][:160]}
+        {
+            "id": s["id"],
+            "title": s["title"],
+            "date": s.get("date", ""),
+            "preview": s.get("insight", ""),
+            "kho_phan_doan": s.get("kho_phan_doan", False),
+        }
         for s in _load_original_scripts()
     ]
 
@@ -232,7 +237,14 @@ def read_original_scripts() -> list[dict]:
 def read_original_script_detail(script_id: str) -> dict:
     for s in _load_original_scripts():
         if s["id"] == script_id:
-            return s
+            return {
+                "id": s["id"],
+                "title": s["title"],
+                "date": s.get("date", ""),
+                "content": _original_script_markdown(s),
+                "kho_phan_doan": s.get("kho_phan_doan", False),
+                "ghi_chu": s.get("ghi_chu", ""),
+            }
     return {"id": script_id, "title": "", "date": "", "content": ""}
 
 
