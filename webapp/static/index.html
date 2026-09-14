@@ -427,26 +427,43 @@ async function viewScript(scriptId) {
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
-async function renderOriginalScripts() {
-  const res = await fetch('/api/original-scripts');
-  const rows = await res.json();
-  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có data/original_scripts_segments.json'); return; }
-  const khoCount = rows.filter(r => r.kho_phan_doan).length;
-  let html = `<div class="page-title">🎙️ Kịch bản gốc</div><div class="page-sub">${rows.length} video quảng cáo/giáo dục nội bộ của BS Sơn — đã đăng thật, phân đoạn theo Hook/Vấn đề/Giải pháp/Bằng chứng/CTA nhưng nội dung mỗi phần giữ nguyên văn 100% (chỉ "Insight chính" là tóm tắt viết mới). Khác với "Thư viện kịch bản" (27 kịch bản MỚI viết lại từ insight). Chỉ để tham khảo, không có tick "đã quay". ${khoCount ? `<strong>${khoCount} video</strong> có ranh giới phân đoạn không rõ ràng, đã gắn nhãn ⚠️ để rà soát lại.` : ''}</div>`;
-  rows.forEach(r => {
-    html += `
+function originalScriptCardHtml(r) {
+  return `
     <div class="idea-card">
       <div class="top-row">
         <div>
           <div class="name">${mdInline(r.title)} ${r.kho_phan_doan ? '<span class="pill" style="background:#4a3a1e; color:#e0b866;">⚠️ Cần rà soát</span>' : ''}</div>
           <div class="hook">${mdInline(r.preview)}</div>
-          <div style="font-size:12px; color:var(--text-muted);">${escapeHtml(r.date)}</div>
         </div>
         <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
           <button class="toggle-btn" onclick="viewOriginalScript('${r.id}')">Xem kịch bản</button>
         </div>
       </div>
     </div>`;
+}
+
+async function renderOriginalScripts() {
+  const res = await fetch('/api/original-scripts');
+  const rows = await res.json();
+  if (!rows.length) { content.innerHTML = emptyMsg('Chưa có data/original_scripts_segments.json'); return; }
+  const khoCount = rows.filter(r => r.kho_phan_doan).length;
+  let html = `<div class="page-title">🎙️ Kịch bản gốc</div><div class="page-sub">${rows.length} video quảng cáo/giáo dục nội bộ của BS Sơn — đã đăng thật, phân đoạn theo Hook/Vấn đề/Giải pháp/Bằng chứng/CTA nhưng nội dung mỗi phần giữ nguyên văn 100% (chỉ "Insight chính" là tóm tắt viết mới). Khác với "Thư viện kịch bản" (27 kịch bản MỚI viết lại từ insight). Chỉ để tham khảo, không có tick "đã quay". ${khoCount ? `<strong>${khoCount} video</strong> có ranh giới phân đoạn không rõ ràng, đã gắn nhãn ⚠️ để rà soát lại.` : ''}</div>`;
+
+  const groups = {};
+  rows.forEach(r => {
+    const key = (r.date || '').trim() || 'Chưa rõ năm';
+    (groups[key] = groups[key] || []).push(r);
+  });
+  const years = Object.keys(groups).filter(k => k !== 'Chưa rõ năm').sort();
+  if (groups['Chưa rõ năm']) years.push('Chưa rõ năm');
+
+  years.forEach(year => {
+    const items = groups[year];
+    html += `
+    <details class="card" open style="margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600; font-size:15px;">📁 ${escapeHtml(year)} <span style="color:var(--text-secondary); font-weight:400;">(${items.length} video)</span></summary>
+      <div style="margin-top:10px;">${items.map(originalScriptCardHtml).join('')}</div>
+    </details>`;
   });
   content.innerHTML = html;
 }
