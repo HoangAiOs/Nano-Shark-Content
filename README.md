@@ -1,7 +1,7 @@
 # Nano Shark Cartilage — Content Research & Ad Script Agent
 
 Agent tự động hóa quy trình nghiên cứu insight khách hàng và viết kịch bản video
-quảng cáo Facebook cho sản phẩm **Nano Premium Shark Cartilage** (thực phẩm bảo vệ
+quảng cáo Facebook cho sản phẩm **Nano Sụn Cá Mập Nhật Bản Premium** (thực phẩm bảo vệ
 sức khỏe xương khớp), dành cho nhóm khách hàng **trên 30 tuổi đang gặp vấn đề đau
 nhức xương khớp**.
 

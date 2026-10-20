@@ -1,4 +1,4 @@
-# Voice of Customer — Nano Premium Shark Cartilage
+# Voice of Customer — Nano Sụn Cá Mập Nhật Bản Premium
 
 > **Nguồn:** 69 bản ghi thật (`data/raw_research.json`) — 21 video phản hồi khách hàng
 > gốc + 48 video "BS Sơn" (quảng cáo/giáo dục nội bộ, gồm cả testimonial dựng lại và

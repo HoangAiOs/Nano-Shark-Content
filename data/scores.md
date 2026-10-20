@@ -1,6 +1,6 @@
 # Bảng điểm kịch bản
 
-> Đối tượng chấm: 24 kịch bản video quảng cáo Nano Premium Shark Cartilage trong
+> Đối tượng chấm: 24 kịch bản video quảng cáo Nano Sụn Cá Mập Nhật Bản Premium trong
 > `data/scripts/`, viết dựa trên 69 bản ghi thật (21 video khách hàng + 48 video BS Sơn)
 > và hệ thống 10 Content Pillar (không dùng dữ liệu tìm kiếm công khai).
 

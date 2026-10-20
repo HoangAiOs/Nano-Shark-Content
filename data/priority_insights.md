@@ -1,4 +1,4 @@
-# Insight Ưu Tiên — Nano Premium Shark Cartilage
+# Insight Ưu Tiên — Nano Sụn Cá Mập Nhật Bản Premium
 
 > **Nguồn:** chấm điểm từ `data/voice_of_customer.md`, tổng hợp từ 69 bản ghi thật
 > (21 video khách hàng gốc + 48 video BS Sơn) — không dùng dữ liệu tìm kiếm công khai.

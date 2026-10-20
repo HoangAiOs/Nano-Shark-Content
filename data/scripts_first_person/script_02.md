@@ -9,7 +9,7 @@
 Tôi hiểu vì sao cô chú sợ. Gần như khách hàng nào tìm đến tôi cũng từng thấy quảng cáo "sụn cá mập Nhật", "glucosamine Nhật" tràn lan, và cũng từng nghe chuyện người quen mua nhầm hàng giả, hàng trôi nổi, uống vào không thấy đỡ, mất cả tiền lẫn hy vọng. Nỗi sợ này khiến nhiều người thấy sản phẩm tốt cũng không dám mua, để rồi tiếp tục chịu đau thêm nhiều tháng, nhiều năm chỉ vì chần chừ.
 
 ## Giải pháp
-Sản phẩm của tôi — Nano Premium Shark Cartilage — được sản xuất trực tiếp tại nhà máy AFC-HD AMS Life Science (Shizuoka, Nhật Bản), tôi nhập chính ngạch, không qua trung gian không rõ nguồn gốc. Sản phẩm bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp, với glucosamine chiết xuất từ cua tuyết đỏ Tottori và sụn cá mập có bằng sáng chế số 3248170.
+Sản phẩm của tôi — Nano Sụn Cá Mập Nhật Bản Premium — được sản xuất trực tiếp tại nhà máy AFC-HD AMS Life Science (Shizuoka, Nhật Bản), tôi nhập chính ngạch, không qua trung gian không rõ nguồn gốc. Sản phẩm bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp, với glucosamine chiết xuất từ cua tuyết đỏ Tottori và sụn cá mập có bằng sáng chế số 3248170.
 
 ## Bằng chứng
 Tôi có 3 cách để cô chú tự kiểm chứng, không phải chỉ nghe tôi nói: (1) Chứng nhận GMP Nhật Bản số 21-00297, còn hiệu lực tới 2027 — tôi sẽ đưa cho cô chú xem. (2) Certificate of Analysis kiểm định độc lập: không nhiễm khuẩn, đúng hàm lượng công bố. (3) Cô chú có thể nhận hàng rồi mới thanh toán — không cần chuyển khoản trước một đồng nào cho tôi. Cô Dung ở Gò Vấp từng nói thẳng với tôi nỗi lo của cô trước khi mua: *"Trời, nghi chứ. Sợ hàng giả, nhất là sợ hàng giả."* Cô vẫn quyết định thử, và sau 3 tháng cô báo lại: *"Nó bớt được 70-80% nữa đó."*

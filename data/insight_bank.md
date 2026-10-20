@@ -1,4 +1,4 @@
-# Customer Insight Bank — Nano Premium Shark Cartilage
+# Customer Insight Bank — Nano Sụn Cá Mập Nhật Bản Premium
 
 > Nguồn: 21 video phản hồi khách hàng thật (`data/voice_of_customer_raw/`, transcribe từ Drive nội
 > bộ) + loạt video "BS Sơn" giáo dục/phá hiểu lầm. Câu có `*` cuối dòng là trích/diễn giải sát

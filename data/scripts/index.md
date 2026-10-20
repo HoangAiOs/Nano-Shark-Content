@@ -1,4 +1,4 @@
-# Danh mục 27 kịch bản video quảng cáo Facebook — Nano Premium Shark Cartilage
+# Danh mục 27 kịch bản video quảng cáo Facebook — Nano Sụn Cá Mập Nhật Bản Premium
 
 > Dựa trên 8 insight ưu tiên (`data/priority_insights.md`) + hệ thống Content Pillars
 > (`data/content_pillars.md`), tổng hợp từ 69 bản ghi thật (21 video khách hàng + 48

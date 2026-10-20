@@ -1,4 +1,6 @@
-# Tài liệu tham chiếu sản phẩm — Nano Premium Shark Cartilage
+# Tài liệu tham chiếu sản phẩm — Nano Sụn Cá Mập Nhật Bản Premium
+
+> **Tên gọi:** dùng "Nano Sụn Cá Mập Nhật Bản Premium" trong kịch bản/quảng cáo. Tên đăng ký chính thức trên Giấy công bố, GMP, COA là "NANO Premium SHARK CARTILAGE" — giữ nguyên tên đăng ký khi trích/đưa hình giấy tờ gốc.
 
 > Nguồn: hồ sơ pháp lý + kỹ thuật thật do công ty cung cấp (Giấy công bố sản phẩm,
 > Giấy xác nhận nội dung quảng cáo, Certificate of Analysis, GMP, Thông tin sản
@@ -200,7 +202,7 @@ tương đương" các phương pháp y tế:
 
 | Khoản chi | Chi phí phổ biến | Ghi chú |
 |---|---|---|
-| Nano Premium Shark Cartilage | 1.990.000đ/hộp/tháng | ~66.000đ/ngày (giai đoạn 5 viên) |
+| Nano Sụn Cá Mập Nhật Bản Premium | 1.990.000đ/hộp/tháng | ~66.000đ/ngày (giai đoạn 5 viên) |
 | Vật lý trị liệu | 100.000-200.000đ/buổi | Cần 2-3 buổi/tuần để duy trì |
 | Tiêm giảm đau tại phòng khám | 500.000đ-1.500.000đ/lần | Tác dụng ngắn (đã có trong VoC thật) |
 
@@ -304,7 +306,7 @@ lâm sàng trên chính sản phẩm hoàn chỉnh — xem lưu ý ở Mục 6.1
 - **Trích dẫn nghiên cứu lâm sàng cấp độ nguyên liệu** (vd nghiên cứu PubMed về
   MSM giảm đau khớp gối, nghiên cứu NIH về cây vuốt mèo giảm TNF-alpha...): đây
   là nghiên cứu trên TỪNG THÀNH PHẦN riêng lẻ, KHÔNG phải nghiên cứu lâm sàng
-  trên chính sản phẩm Nano Premium Shark Cartilage hoàn chỉnh. Không được trình
+  trên chính sản phẩm Nano Sụn Cá Mập Nhật Bản Premium hoàn chỉnh. Không được trình
   bày trong kịch bản công khai theo cách khiến người xem hiểu nhầm là "sản phẩm
   đã được nghiên cứu lâm sàng chứng minh hiệu quả" — đây là hành vi quảng cáo
   vượt quá công dụng đã duyệt. Chỉ dùng làm tài liệu tham khảo nội bộ/trả lời

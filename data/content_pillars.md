@@ -1,4 +1,4 @@
-# Content Pillars — Nano Premium Shark Cartilage
+# Content Pillars — Nano Sụn Cá Mập Nhật Bản Premium
 
 > 10 pillar nhóm từ 180 insight trong `insight_bank.md`, mỗi pillar 10 chủ đề lớn.
 > Persona chính: người 50-80 tuổi trực tiếp đau khớp. Nền tảng chính: Facebook.

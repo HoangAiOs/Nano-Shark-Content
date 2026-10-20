@@ -6,7 +6,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 SCRIPTS_DIR = DATA_DIR / "scripts"
 
-PRODUCT_NAME = "Nano Premium Shark Cartilage"
+PRODUCT_NAME = "Nano Sụn Cá Mập Nhật Bản Premium"
 PRODUCT_URL = "https://nichieiasia.com/products/thuc-pham-bao-ve-suc-khoe-nano-premium-shark-cartilage"
 TARGET_AUDIENCE = "Người trên 30 tuổi đang gặp vấn đề đau nhức xương khớp"
 

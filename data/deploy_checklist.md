@@ -1,4 +1,4 @@
-# Checklist Deploy Kịch Bản — Nano Premium Shark Cartilage
+# Checklist Deploy Kịch Bản — Nano Sụn Cá Mập Nhật Bản Premium
 
 > Cập nhật tay file này khi từng kịch bản đi qua các bước. Xem chi tiết kịch bản
 > tại `data/scripts/script_XX.md`, điểm số/lý do chọn tại `data/scores.md`.
