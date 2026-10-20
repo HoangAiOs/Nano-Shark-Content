@@ -8,7 +8,7 @@
 Trước tháng 10/2025, ông Diệp bị đau lưng, đau nhức khớp kéo dài, đã dùng nhiều loại thuốc nhưng không khỏi. Khi đi khám, bệnh viện chỉ định mổ — nhưng ông ngại mổ nên chưa quyết định, sống chung với cơn đau và sự lo lắng.
 
 ## Giải pháp
-Được cháu tặng cho sản phẩm sụn nano cá mập Nhật Bản — Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — ông bắt đầu dùng thử trước khi quyết định mổ.
+Được cháu tặng cho sản phẩm Nano Sụn Cá Mập Nhật Bản Premium, ông bắt đầu dùng thử trước khi quyết định mổ.
 
 ## Bằng chứng
 Nguyên văn lời ông Diệp: uống chai đầu tiên, ông cảm thấy cải thiện được khoảng 20-30%; uống tiếp chai thứ hai, cải thiện tới khoảng 80%. Hiện tại ở tuổi 80, ông đã có thể đi thể dục, đi biển, vận động thoải mái hơn nhiều so với trước. Đúng với phác đồ khuyến nghị — giai đoạn đầu dùng liều cao hơn (5 viên/ngày) để hỗ trợ tối đa, sau đó có thể giảm liều duy trì khi tình trạng đã cải thiện.

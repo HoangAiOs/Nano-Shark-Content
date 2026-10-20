@@ -8,7 +8,7 @@
 Rất nhiều người ngại mua thực phẩm bổ sung online vì từng nghe, hoặc từng trải qua, chuyện chuyển khoản trước rồi không nhận được hàng, hoặc nhận hàng không đúng như quảng cáo — nỗi sợ này khiến nhiều người bỏ qua sản phẩm dù thực sự cần.
 
 ## Giải pháp
-Với Nano Premium Shark Cartilage — bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — anh chị chỉ cần để lại tên và số điện thoại, nhận hàng tận nơi rồi mới thanh toán (COD). Không cần chuyển khoản trước, không cần tin tưởng mù quáng.
+Với Nano Sụn Cá Mập Nhật Bản Premium, anh chị chỉ cần để lại tên và số điện thoại, nhận hàng tận nơi rồi mới thanh toán (COD). Không cần chuyển khoản trước, không cần tin tưởng mù quáng.
 
 ## Bằng chứng
 Đây là chính sách áp dụng cho mọi đơn hàng, không phải chỉ với khách hàng quen hay đơn hàng lớn — giúp anh chị có thể yên tâm dùng thử mà không phải đặt cược trước bất kỳ khoản tiền nào.

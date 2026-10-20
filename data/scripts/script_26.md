@@ -8,7 +8,7 @@
 Khi nghe giá một hộp gần 2 triệu đồng, phản xạ đầu tiên của nhiều người là thấy "đắt" — nhất là khi so với những lọ thực phẩm chức năng vài trăm nghìn trên mạng. Nhưng nếu chỉ nhìn vào con số tổng mà không tính theo thời gian sử dụng thực tế, rất dễ đánh giá sai giá trị.
 
 ## Giải pháp
-Một hộp Nano Premium Shark Cartilage dùng đủ 1 tháng (giai đoạn đầu 5 viên/ngày). Chia ra: khoảng 66.000 đồng mỗi ngày — đúng bằng 2 ly cà phê buổi sáng. Khác biệt là ly cà phê uống xong là hết, còn đây là dưỡng chất được bổ sung đều đặn cho khớp mỗi ngày, tích lũy theo thời gian. Từ tháng thứ 7 trở đi, liều duy trì giảm còn 3 viên/ngày — chi phí mỗi ngày còn thấp hơn nữa.
+Một hộp Nano Sụn Cá Mập Nhật Bản Premium dùng đủ 1 tháng (giai đoạn đầu 5 viên/ngày). Chia ra: khoảng 66.000 đồng mỗi ngày — đúng bằng 2 ly cà phê buổi sáng. Khác biệt là ly cà phê uống xong là hết, còn đây là dưỡng chất được bổ sung đều đặn cho khớp mỗi ngày, tích lũy theo thời gian. Từ tháng thứ 7 trở đi, liều duy trì giảm còn 3 viên/ngày — chi phí mỗi ngày còn thấp hơn nữa.
 
 ## Bằng chứng
 Nhìn theo cách chia nhỏ chi phí sinh hoạt hàng ngày, nhiều khoản chi quen thuộc — một ly cà phê, một bữa trà sữa, một gói thuốc lá — cũng ở khoảng chi phí tương đương hoặc hơn, nhưng không mang lại giá trị tích lũy lâu dài cho sức khỏe. Đây là góc nhìn để mỗi người tự cân nhắc, không phải lời khẳng định về hiệu quả y tế.

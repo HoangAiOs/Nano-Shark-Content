@@ -8,7 +8,7 @@
 Khi đau khớp, phản ứng phổ biến nhất là dùng thuốc kháng viêm giảm đau — dùng đúng chỉ định trong thời gian ngắn thì an toàn, nhưng nhiều người tự ý dùng kéo dài nhiều năm vì nghĩ "bác sĩ từng kê thì chắc uống hoài cũng được".
 
 ## Giải pháp
-Nano Premium Shark Cartilage bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp — là thực phẩm bảo vệ sức khỏe hướng tới hỗ trợ khớp từ dưỡng chất tự nhiên, không phải thuốc kháng viêm hóa học. Sản phẩm chứa bột nano vi khuẩn acid lactic, cung cấp tối thiểu 24 tỷ CFU Lactobacillus plantarum mỗi 5 viên (mức công bố với Cục An Toàn Thực Phẩm) — trong khi phần lớn thuốc giảm đau/kháng viêm thường ức chế lớp nhầy bảo vệ niêm mạc dạ dày khi dùng kéo dài, lợi khuẩn này hỗ trợ hệ tiêu hóa theo hướng ngược lại.
+Nano Sụn Cá Mập Nhật Bản Premium là thực phẩm bảo vệ sức khỏe hướng tới hỗ trợ khớp từ dưỡng chất tự nhiên, không phải thuốc kháng viêm hóa học. Sản phẩm chứa bột nano vi khuẩn acid lactic, cung cấp tối thiểu 24 tỷ CFU Lactobacillus plantarum mỗi 5 viên (mức công bố với Cục An Toàn Thực Phẩm) — trong khi phần lớn thuốc giảm đau/kháng viêm thường ức chế lớp nhầy bảo vệ niêm mạc dạ dày khi dùng kéo dài, lợi khuẩn này hỗ trợ hệ tiêu hóa theo hướng ngược lại.
 
 ## Bằng chứng
 Bác Tĩnh (T8/2025) chia sẻ nguyên văn: "Bác đã bị xuống huyết, dạ dày, viêm rồi... viêm bờ cong, viêm hang vị... gì nó cũng bị hết dạ dày của bác" — hậu quả sau nhiều năm dùng thuốc giảm đau kháng viêm để đối phó với cơn đau khớp kéo dài.
