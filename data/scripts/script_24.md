@@ -8,7 +8,20 @@
 Khi so sánh giá trên mạng, nhiều người chỉ nhìn vào con số mà không biết mình đang so sánh những sản phẩm rất khác nhau về thành phần, nguồn gốc và công nghệ — dẫn tới cảm giác "sao sản phẩm này đắt vậy".
 
 ## Giải pháp
-Một hộp Nano Sụn Cá Mập Nhật Bản Premium chứa tới 6 thành phần khác nhau, mỗi thành phần một vai trò riêng không thể thay thế cho nhau: Chondroitin giữ nước cho sụn, Glucosamine là nguyên liệu tái tạo, Hyaluronic Acid bôi trơn khớp, Collagen là khung chịu lực của sụn, MSM hỗ trợ giảm viêm, Canxi + D3 giữ đốt sống chắc khỏe — trong một sản phẩm duy nhất, thay vì phải mua riêng lẻ 6 loại khác nhau để có đủ các dưỡng chất tương đương. Riêng sụn cá mập và glucosamine cũng không phải nguyên liệu phổ biến: sụn cá mập chiết xuất theo công nghệ có bằng sáng chế riêng (số 3248170), còn glucosamine lấy từ cua tuyết đỏ Nhật Bản — loại hải sản chỉ đánh bắt được khoảng 4 tháng mỗi năm, 1kg cua chỉ cho ra 10g glucosamine — nên không thể có giá ngang với glucosamine chiết từ vỏ tôm cua phế phẩm thông thường.
+Một hộp Nano Sụn Cá Mập Nhật Bản Premium chứa tới 6 thành phần khác nhau, mỗi thành phần một vai trò riêng không thể thay thế cho nhau:
+- Chondroitin giữ nước cho sụn
+- Glucosamine là nguyên liệu tái tạo
+- Hyaluronic Acid bôi trơn khớp
+- Collagen là khung chịu lực của sụn
+- MSM hỗ trợ giảm viêm
+- Canxi + D3 giữ đốt sống chắc khỏe
+
+Tất cả trong một sản phẩm duy nhất, thay vì phải mua riêng lẻ 6 loại khác nhau để có đủ các dưỡng chất tương đương.
+
+Riêng sụn cá mập và glucosamine cũng không phải nguyên liệu phổ biến:
+- Sụn cá mập chiết xuất theo công nghệ có bằng sáng chế riêng (số 3248170)
+- Glucosamine lấy từ cua tuyết đỏ Nhật Bản — loại hải sản chỉ đánh bắt được khoảng 4 tháng mỗi năm, 1kg cua chỉ cho ra 10g glucosamine
+- Nên không thể có giá ngang với glucosamine chiết từ vỏ tôm cua phế phẩm thông thường
 
 ## Bằng chứng
 Nếu tính riêng từng loại — glucosamine riêng, sụn cá mập riêng, hyaluronic acid riêng... — tổng chi phí mua đủ 6 loại thường cao hơn nhiều so với giá một hộp sản phẩm đã kết hợp sẵn, chưa kể sự bất tiện khi phải uống nhiều loại viên mỗi ngày.

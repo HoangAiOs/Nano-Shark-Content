@@ -8,7 +8,19 @@
 Với nhiều người 50, 60, 70 tuổi, nỗi sợ lớn nhất không chỉ là bệnh tật mà là cảm giác trở thành gánh nặng — phải nhờ con cháu chăm sóc, đưa đi khám, lo từng bữa ăn giấc ngủ. Đây là nỗi sợ âm thầm, ít ai nói ra, nhưng lại là động lực rất lớn khiến người lớn tuổi muốn tự chăm sóc bản thân càng lâu càng tốt.
 
 ## Giải pháp
-Trong Nano Sụn Cá Mập Nhật Bản Premium, Hyaluronic Acid đóng vai trò như một dạng "dầu bôi trơn" tự nhiên giúp khớp chuyển động trơn tru hơn; glucosamine (từ cua tuyết đỏ Nhật Bản) và sụn cá mập (bằng sáng chế số 3248170) hỗ trợ tái tạo và giữ ẩm mô sụn — phối hợp theo 5 cơ chế để khớp được nuôi dưỡng từ bên trong, một phần trong hành trình giữ gìn khả năng tự chủ trong sinh hoạt hàng ngày.
+Trong Nano Sụn Cá Mập Nhật Bản Premium, 5 cơ chế phối hợp để khớp được nuôi dưỡng từ bên trong — một phần trong hành trình giữ gìn khả năng tự chủ trong sinh hoạt hàng ngày. Mỗi cơ chế có thành phần riêng đảm nhiệm:
+- Hỗ trợ tái tạo sụn
+  - Glucosamine (từ cua tuyết đỏ Nhật Bản) — nguyên liệu để cơ thể tái tạo sụn
+  - Collagen cá (collagen type II) — khung chịu lực của sụn
+- Giảm viêm
+  - MSM (Methylsulfonyl Methane) — hợp chất lưu huỳnh tự nhiên có trong sụn và cơ
+- Giữ ẩm mô sụn
+  - Sụn cá mập (bằng sáng chế số 3248170) — hỗ trợ tái tạo và giữ ẩm mô sụn
+- Tăng kết dính xương-canxi
+  - Canxi + Vitamin D3 — giữ xương chắc khỏe
+  - CPP (Casein Phosphopeptide) — hỗ trợ cơ thể hấp thu canxi
+- Giúp khớp chuyển động trơn tru hơn
+  - Hyaluronic Acid — như một dạng "dầu bôi trơn" tự nhiên
 
 ## Bằng chứng
 Cô Xong (Cam Ranh) chia sẻ nỗi lòng này rất thật: *"Lớn mình, giờ mình, lớn tuổi rồi mình phải làm phiền con cháu."* Sau khi tình trạng cải thiện: *"Cô rất là vui... bởi vì cô không cần phải phụ thuộc vào con mình nữa."* Cô Chính (Quảng Nam), từng không tự mặc áo hay chải đầu được vì viêm khớp vai, sau hơn 3 tháng: *"Bây giờ ta được [giơ tay được]... chải đầu được rồi... tự mặc áo với tự chải tóc được rồi."*

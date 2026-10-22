@@ -8,7 +8,9 @@
 Dân văn phòng, đặc biệt người thường xuyên phải tiếp khách, vừa chịu tác động từ việc ngồi nhiều (đĩa đệm cột sống chịu áp lực kéo dài, dễ mất nước và thoái hóa sớm hơn), vừa chịu ảnh hưởng từ bia rượu lên niêm mạc đường ruột — trong khi đây chính là nơi hấp thu phần lớn dưỡng chất nuôi khớp.
 
 ## Giải pháp
-Kết hợp Nano Sụn Cá Mập Nhật Bản Premium cùng bột nano vi khuẩn acid lactic (Lactobacillus plantarum, tối thiểu 24 tỷ CFU/5 viên) hỗ trợ hệ tiêu hóa trước tác động của bia rượu lên niêm mạc đường ruột, để dưỡng chất đưa vào cơ thể được hấp thu hiệu quả hơn.
+Kết hợp Nano Sụn Cá Mập Nhật Bản Premium cùng bột nano vi khuẩn acid lactic (Lactobacillus plantarum, tối thiểu 24 tỷ CFU/5 viên):
+- Hỗ trợ hệ tiêu hóa trước tác động của bia rượu lên niêm mạc đường ruột
+- Để dưỡng chất đưa vào cơ thể được hấp thu hiệu quả hơn
 
 ## Bằng chứng
 Anh Vũ, nhân viên văn phòng, chia sẻ: "Lúc trước ngồi nhiều văn phòng... xương khớp nó cũng hơi lụt một ít" — và xác nhận khi kết hợp hỗ trợ tiêu hóa cùng sụn khớp, tình trạng dù có đi nhậu trở lại cũng chỉ ảnh hưởng nhẹ, hồi phục nhanh hơn nhiều so với trước.

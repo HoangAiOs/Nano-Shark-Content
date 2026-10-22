@@ -8,7 +8,9 @@
 Đối diện với một tình trạng khớp kéo dài, không ít người né tránh tìm hiểu giải pháp không phải vì không muốn khỏi, mà vì sợ chi phí điều trị lớn — đặc biệt khi nghĩ tới viễn cảnh phải mổ, phải điều trị lâu dài. Nỗi lo tài chính này thường bị giấu kín, ít ai nói thẳng ra.
 
 ## Giải pháp
-Nano Sụn Cá Mập Nhật Bản Premium là một lựa chọn với chi phí hợp lý hơn để thử trước, không đòi hỏi anh chị phải đưa ra quyết định tài chính lớn ngay từ đầu — được tư vấn cụ thể theo tình trạng và khả năng của từng người trước khi quyết định.
+Nano Sụn Cá Mập Nhật Bản Premium là một lựa chọn với chi phí hợp lý hơn để thử trước:
+- Không đòi hỏi anh chị phải đưa ra quyết định tài chính lớn ngay từ đầu
+- Được tư vấn cụ thể theo tình trạng và khả năng của từng người trước khi quyết định
 
 ## Bằng chứng
 Với chính sách nhận hàng rồi mới thanh toán (COD), anh chị có thể yên tâm dùng thử trước khi cân nhắc các chi phí tiếp theo — không phải đặt cược một khoản tiền lớn ngay từ lần đầu tiên.
