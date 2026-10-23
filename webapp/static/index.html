@@ -472,8 +472,26 @@ async function viewOriginalScript(scriptId) {
   const res = await fetch(`/api/original-scripts/${scriptId}`);
   const d = await res.json();
   const warn = d.kho_phan_doan ? `<div style="background:#4a3a1e; color:#e0b866; padding:8px 12px; border-radius:6px; font-size:12.5px; margin-bottom:10px;">⚠️ Ranh giới phân đoạn không hoàn toàn rõ ràng ở video này. ${escapeHtml(d.ghi_chu || '')}</div>` : '';
-  document.getElementById('modal-body').innerHTML = `<h3 style="margin-top:0;">${escapeHtml(d.title)}</h3>${warn}<pre class="script-detail"></pre>`;
-  document.querySelector('#modal-body pre').textContent = d.content;
+  const toggle = d.has_clean
+    ? `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:12.5px; color:var(--text-muted);"><button class="toggle-btn" id="orig-toggle">Xem bản thô</button><span id="orig-label">Đang xem bản đã hiệu đính — chỗ tô vàng [?…?] là chưa chắc, cần nghe lại video.</span></div>`
+    : `<div style="margin-bottom:10px; font-size:12.5px; color:var(--text-muted);">Video này chưa được hiệu đính — đang hiện bản chuyển giọng nói tự động.</div>`;
+  document.getElementById('modal-body').innerHTML = `<h3 style="margin-top:0;">${escapeHtml(d.title)}</h3>${warn}${toggle}<pre class="script-detail"></pre>`;
+  const pre = document.querySelector('#modal-body pre');
+  const show = (text) => {
+    pre.innerHTML = escapeHtml(text).replace(/\[\?(.*?)\?\]/g, '<mark style="background:#f5d76e; color:#222; padding:0 2px; border-radius:3px;">[?$1?]</mark>');
+  };
+  show(d.content);
+  if (d.has_clean) {
+    let raw = false;
+    document.getElementById('orig-toggle').onclick = () => {
+      raw = !raw;
+      show(raw ? d.content_raw : d.content);
+      document.getElementById('orig-toggle').textContent = raw ? 'Xem bản đã sửa' : 'Xem bản thô';
+      document.getElementById('orig-label').textContent = raw
+        ? 'Đang xem bản thô (chuyển giọng nói tự động) để đối chiếu.'
+        : 'Đang xem bản đã hiệu đính — chỗ tô vàng [?…?] là chưa chắc, cần nghe lại video.';
+    };
+  }
   document.getElementById('modal').classList.add('open');
 }
 

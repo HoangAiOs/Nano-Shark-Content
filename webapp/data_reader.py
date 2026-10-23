@@ -237,11 +237,15 @@ def read_original_scripts() -> list[dict]:
 def read_original_script_detail(script_id: str) -> dict:
     for s in _load_original_scripts():
         if s["id"] == script_id:
+            clean = s.get("clean")
+            raw = _original_script_markdown(s)
             return {
                 "id": s["id"],
                 "title": s["title"],
                 "date": s.get("date", ""),
-                "content": _original_script_markdown(s),
+                "content": _original_script_markdown({**s, **clean}) if clean else raw,
+                "content_raw": raw,
+                "has_clean": bool(clean),
                 "kho_phan_doan": s.get("kho_phan_doan", False),
                 "ghi_chu": s.get("ghi_chu", ""),
             }
