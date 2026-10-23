@@ -1,4 +1,4 @@
-# Danh mục 27 kịch bản video quảng cáo Facebook — Nano Sụn Cá Mập Nhật Bản Premium
+# Danh mục 34 kịch bản video quảng cáo Facebook — Nano Sụn Cá Mập Nhật Bản Premium
 
 > Dựa trên 8 insight ưu tiên (`data/priority_insights.md`) + hệ thống Content Pillars
 > (`data/content_pillars.md`), tổng hợp từ 69 bản ghi thật (21 video khách hàng + 48
@@ -27,6 +27,13 @@
 > cảnh báo chi tiết ở `product_reference.md` mục 5.2. #01, #08, #11, #12 được rà
 > soát lại — không chứa số liệu này (chỉ dùng thông tin bằng sáng chế 3248170 đã có
 > nguồn từ trước), nên giữ nguyên.
+> Kịch bản #28-34 (cập nhật 23/10/2026) lấp các chủ đề Pillar còn trống mà tài liệu
+> đủ căn cứ để viết: kỳ vọng thời gian (#28), chân giò vs collagen type 2 (#29), Certificate
+> of Analysis (#30), Giấy xác nhận quảng cáo — "chỉ nói đúng một câu" (#31), dùng cùng
+> thuốc bác sĩ kê (#32), đau về đêm (#33), nỗi ngại đi tiệc vì dáng đi (#34). Bằng chứng
+> chỉ dùng giấy tờ/số liệu đã có trong `product_reference.md` và thống kê từ video phản hồi;
+> KHÔNG gắn trích dẫn nguyên văn của khách có tên vì transcript tự động còn nhiễu và chưa
+> xác nhận người nói/đồng ý sử dụng. Các kịch bản mới chưa có điểm số /40.
 
 | # | Tên kịch bản | Insight chính | Hook (rút gọn) | File |
 |---|---|---|---|---|
@@ -57,8 +64,15 @@
 | 25 | Cúi đầu nhìn điện thoại 8 tiếng mỗi ngày — cổ bạn đang chịu áp lực gấp 3 lần | Mới — Cơ chế cột sống, nhóm khách văn phòng/lái xe | "Bạn có biết: khi cúi đầu 60 độ nhìn màn hình, cổ của bạn đang chịu áp lực gấp 3 lần bình thường..." | [script_25.md](script_25.md) |
 | 26 | 66 nghìn một ngày — bằng đúng 2 ly cà phê sáng | Mới + #7 kết hợp — Định vị giá theo chi phí/ngày | "1.990.000 đồng nghe có vẻ nhiều. Nhưng chia ra mỗi ngày — bạn có biết là bao nhiêu không?" | [script_26.md](script_26.md) |
 | 27 | Cứ 10 người trên 35 tuổi, 3 người đang thoái hóa khớp mà không biết | Mới — Thống kê tỷ lệ mắc thật + #8 kết hợp | "Cứ 10 người Việt Nam trên 35 tuổi, có 3 người đang bị thoái hóa khớp..." | [script_27.md](script_27.md) |
+| 28 | Nghe người ta nói "10 ngày là hết đau" — sự thật về thời gian cho khớp | Pillar 3+4+10 — Hiểu lầm "uống là hết đau ngay", bỏ cuộc quá sớm | "Nghe người ta nói uống 10 ngày là hết đau — nếu anh chị cũng từng tin như vậy, video này dành cho anh chị." | [script_28.md](script_28.md) |
+| 29 | Ăn chân giò bổ khớp? — Đúng một nửa | Pillar 3+5 — Hiểu lầm chân giò = đủ collagen; collagen type 1 vs type 2 | "Ăn gì bổ nấy — ăn chân giò thì bổ khớp. Câu này chỉ đúng một nửa." | [script_29.md](script_29.md) |
+| 30 | Tờ giấy kiểm nghiệm từng lô — anh chị nên biết cách hỏi | Pillar 6 — Niềm tin: Certificate of Analysis | "Trước khi uống bất kỳ thực phẩm chức năng nào, hãy hỏi một câu: 'Cho tôi xem tờ kiểm nghiệm của lô này.'" | [script_30.md](script_30.md) |
+| 31 | Vì sao chúng tôi chỉ dám nói đúng một câu? | Pillar 6+4 — Niềm tin: Giấy xác nhận nội dung quảng cáo | "Thực phẩm bảo vệ sức khỏe mà hứa 'chữa khỏi', 'hết đau trong vài ngày' — anh chị nên hỏi ngay giấy xác nhận nội dung quảng cáo." | [script_31.md](script_31.md) |
+| 32 | Đang uống thuốc bác sĩ kê — có nên tự ngưng để dùng sản phẩm này? | Pillar 10 — FAQ: dùng cùng thuốc tây, tác dụng phụ | "Câu trả lời cho 'Có nên ngưng thuốc bác sĩ kê để uống sản phẩm này không?' chỉ có một chữ: Không." | [script_32.md](script_32.md) |
+| 33 | Đêm nằm không xoay trở được — đừng coi đó là chuyện bình thường | Pillar 1 — Dấu hiệu nhận biết: đau về đêm | "Đêm nằm xuống mà không tìm được tư thế nào để yên — anh chị có từng như vậy?" | [script_33.md](script_33.md) |
+| 34 | Ngại đi đám cưới, đám tiệc vì dáng đi cà nhắc | Pillar 7 — Cảm xúc: ngại ra ngoài vì dáng đi (mới) | "Có những người từ chối đi đám cưới của chính người thân — không phải vì bận, mà vì ngại bước đi của mình." | [script_34.md](script_34.md) |
 
-**Lưu ý bắt buộc áp dụng cho cả 27 kịch bản:**
+**Lưu ý bắt buộc áp dụng cho cả 34 kịch bản:**
 - Câu công dụng chỉ được nói đúng: *"Bổ sung glucosamin và bột chiết xuất sụn cá mập hỗ trợ tốt cho khớp"* — không cam kết "chữa khỏi".
 - Mọi kịch bản kết thúc bằng: *"Thực phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh."*
 - Trích dẫn khách hàng là nguyên văn thật từ transcript, nghe lại video gốc trước khi lồng tiếng/phụ đề chính thức vì transcript tự động vẫn còn nhiễu chính tả ở một số chỗ.
