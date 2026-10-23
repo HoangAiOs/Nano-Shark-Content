@@ -437,18 +437,63 @@ function originalScriptCardHtml(r) {
         </div>
         <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
           <button class="toggle-btn" onclick="viewOriginalScript('${r.id}')">Xem kịch bản</button>
+          <button class="toggle-btn ${r.quay_xong ? 'done' : ''}" onclick="toggleOriginalQuay('${r.id}', this)">${r.quay_xong ? '✅ Đã quay' : '○ Chưa quay'}</button>
         </div>
       </div>
     </div>`;
 }
 
+let originalRows = [];
+let originalFilter = 'all';
+
 async function renderOriginalScripts() {
   const res = await fetch('/api/original-scripts');
-  const rows = await res.json();
+  originalRows = await res.json();
+  const rows = originalRows;
   if (!rows.length) { content.innerHTML = emptyMsg('Chưa có data/original_scripts_segments.json'); return; }
   const khoCount = rows.filter(r => r.kho_phan_doan).length;
-  let html = `<div class="page-title">🎙️ Kịch bản gốc</div><div class="page-sub">${rows.length} video quảng cáo/giáo dục nội bộ của BS Sơn — đã đăng thật, phân đoạn theo Hook/Vấn đề/Giải pháp/Bằng chứng/CTA nhưng nội dung mỗi phần giữ nguyên văn 100% (chỉ "Insight chính" là tóm tắt viết mới). Khác với "Thư viện kịch bản" (27 kịch bản MỚI viết lại từ insight). Chỉ để tham khảo, không có tick "đã quay". ${khoCount ? `<strong>${khoCount} video</strong> có ranh giới phân đoạn không rõ ràng, đã gắn nhãn ⚠️ để rà soát lại.` : ''}</div>`;
+  let html = `<div class="page-title">🎙️ Kịch bản gốc</div><div class="page-sub">${rows.length} video quảng cáo/giáo dục nội bộ của BS Sơn — đã đăng thật, phân đoạn theo Hook/Vấn đề/Giải pháp/Bằng chứng/CTA nhưng nội dung mỗi phần giữ nguyên văn 100% (chỉ "Insight chính" là tóm tắt viết mới). Khác với "Thư viện kịch bản" (27 kịch bản MỚI viết lại từ insight). Tick "đã quay" khi quay lại xong. ${khoCount ? `<strong>${khoCount} video</strong> có ranh giới phân đoạn không rõ ràng, đã gắn nhãn ⚠️ để rà soát lại.` : ''}</div>
+  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+    <button class="toggle-btn" data-ofilter="all" onclick="setOriginalFilter('all')">Tất cả</button>
+    <button class="toggle-btn" data-ofilter="chua" onclick="setOriginalFilter('chua')">Chưa quay</button>
+    <button class="toggle-btn" data-ofilter="da" onclick="setOriginalFilter('da')">Đã quay</button>
+    <span id="orig-quay-count" style="font-size:13px; color:var(--text-muted);"></span>
+  </div>
+  <div id="orig-list"></div>`;
+  content.innerHTML = html;
+  renderOriginalList();
+}
 
+function setOriginalFilter(f) {
+  originalFilter = f;
+  renderOriginalList();
+}
+
+async function toggleOriginalQuay(scriptId, btn) {
+  const res = await fetch(`/api/original-scripts/${scriptId}/toggle-quay`, {method:'POST'});
+  const d = await res.json();
+  if (!d.ok) return;
+  const row = originalRows.find(r => r.id === scriptId);
+  if (row) row.quay_xong = d.quay_xong;
+  btn.textContent = d.quay_xong ? '✅ Đã quay' : '○ Chưa quay';
+  btn.classList.toggle('done', d.quay_xong);
+  updateOriginalCount();
+}
+
+function updateOriginalCount() {
+  const el = document.getElementById('orig-quay-count');
+  if (el) el.textContent = `${originalRows.filter(r => r.quay_xong).length}/${originalRows.length} đã quay`;
+}
+
+function renderOriginalList() {
+  document.querySelectorAll('[data-ofilter]').forEach(b => b.classList.toggle('done', b.dataset.ofilter === originalFilter));
+  updateOriginalCount();
+  const rows = originalRows.filter(r => originalFilter === 'all' || (originalFilter === 'da') === !!r.quay_xong);
+  if (!rows.length) {
+    document.getElementById('orig-list').innerHTML = emptyMsg(originalFilter === 'da' ? 'Chưa có video nào được tick đã quay.' : `Đã quay hết ${originalRows.length} video.`);
+    return;
+  }
+  let html = '';
   const groups = {};
   rows.forEach(r => {
     const key = (r.date || '').trim() || 'Chưa rõ năm';
@@ -465,7 +510,7 @@ async function renderOriginalScripts() {
       <div style="margin-top:10px;">${items.map(originalScriptCardHtml).join('')}</div>
     </details>`;
   });
-  content.innerHTML = html;
+  document.getElementById('orig-list').innerHTML = html;
 }
 
 async function viewOriginalScript(scriptId) {

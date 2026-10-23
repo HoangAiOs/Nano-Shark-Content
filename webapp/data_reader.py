@@ -222,6 +222,7 @@ def _original_script_markdown(s: dict) -> str:
 
 def read_original_scripts() -> list[dict]:
     """Danh sách rút gọn (không kèm toàn văn) cho trang danh sách."""
+    quay_status = load_state().get("original_quay_status", {})
     return [
         {
             "id": s["id"],
@@ -229,6 +230,7 @@ def read_original_scripts() -> list[dict]:
             "date": s.get("date", ""),
             "preview": s.get("insight", ""),
             "kho_phan_doan": s.get("kho_phan_doan", False),
+            "quay_xong": quay_status.get(s["id"], False),
         }
         for s in _load_original_scripts()
     ]
@@ -418,6 +420,17 @@ def toggle_quay(script_id: str) -> bool:
     state = load_state()
     current = state.setdefault("quay_status", {}).get(script_id, False)
     state["quay_status"][script_id] = not current
+    save_state(state)
+    return not current
+
+
+def toggle_original_quay(script_id: str) -> bool | None:
+    """Tick 'đã quay' cho 48 Kịch bản gốc — key riêng, không lẫn quay_status của Thư viện kịch bản."""
+    if script_id not in {s["id"] for s in _load_original_scripts()}:
+        return None
+    state = load_state()
+    current = state.setdefault("original_quay_status", {}).get(script_id, False)
+    state["original_quay_status"][script_id] = not current
     save_state(state)
     return not current
 

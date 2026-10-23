@@ -61,6 +61,14 @@ async def api_original_script_detail(request):
     return JSONResponse(dr.read_original_script_detail(script_id))
 
 
+async def api_toggle_original_quay(request):
+    script_id = request.path_params["script_id"]
+    new_status = dr.toggle_original_quay(script_id)
+    if new_status is None:
+        return JSONResponse({"ok": False, "error": "Không có kịch bản gốc này"}, status_code=404)
+    return JSONResponse({"ok": True, "script_id": script_id, "quay_xong": new_status})
+
+
 async def api_voice_of_customer(request):
     return JSONResponse(dr.read_voice_of_customer())
 
@@ -188,6 +196,7 @@ app = Starlette(
         Route("/api/research", api_research),
         Route("/api/original-scripts", api_original_scripts),
         Route("/api/original-scripts/{script_id}", api_original_script_detail),
+        Route("/api/original-scripts/{script_id}/toggle-quay", api_toggle_original_quay, methods=["POST"]),
         Route("/api/voice-of-customer", api_voice_of_customer),
         Route("/api/insight-bank", api_insight_bank),
         Route("/api/content-pillars", api_content_pillars),
