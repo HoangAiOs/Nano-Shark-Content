@@ -169,6 +169,7 @@
   <div class="nav-item" data-page="goal">Não Marketing</div>
   <div class="nav-item" data-page="research">Research</div>
   <div class="nav-item" data-page="voc">Tiếng nói khách hàng</div>
+  <div class="nav-item" data-page="inbox">Insight từ Inbox</div>
   <div class="nav-item" data-page="belief">Belief Map</div>
 
   <div class="nav-group-label">Sản xuất nội dung</div>
@@ -243,6 +244,7 @@ async function loadPage(page) {
   content.innerHTML = '<div class="empty-state">Đang tải…</div>';
   if (page === 'research') return renderResearch();
   if (page === 'voc') return renderVoC();
+  if (page === 'inbox') return renderInbox();
   if (page === 'insights') return renderInsights();
   if (page === 'ideas') return renderIdeas();
   if (page === 'originalscripts') return renderOriginalScripts();
@@ -643,6 +645,262 @@ async function renderIdeation() {
     </div>`;
   });
   content.innerHTML = html;
+}
+
+// --- Insight từ Inbox (tin nhắn khách thật — chỉ đọc được sau đăng nhập) ---------
+
+const INBOX_WARN = 'Chưa được khách đồng ý dùng tên và câu chuyện — không đưa vào video';
+const INBOX_INPUT = 'border:1px solid var(--border); border-radius:8px; padding:7px 9px; font-family:inherit; font-size:13px;';
+let inboxData = {items: [], groups: [], consent_values: [], library_scripts: {}};
+let inboxFilter = {group: '', consent: ''};
+
+function escAttr(s) { return escapeHtml(String(s ?? '')).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function todayIso() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+function consentPill(v) {
+  const style = v === 'Đã đồng ý' ? '' : v === 'Từ chối' ? 'background:#fde8e6; color:#c0392b;' : 'background:#fff4e0; color:#a5690a;';
+  return `<span class="pill" style="${style}">${escapeHtml(v)}</span>`;
+}
+function groupOptionsHtml() { return inboxData.groups.map(g => `<option value="${escAttr(g)}"></option>`).join(''); }
+function consentSelectHtml(id, value) {
+  return `<select id="${id}" class="status-select" style="font-size:13px; padding:6px;">${inboxData.consent_values.map(v => `<option ${v === value ? 'selected' : ''}>${escapeHtml(v)}</option>`).join('')}</select>`;
+}
+
+async function renderInbox() {
+  const res = await fetch('/api/inbox');
+  inboxData = await res.json();
+  content.innerHTML = `
+    <div class="page-title">📥 Insight từ Inbox</div>
+    <div class="page-sub">Tin nhắn khách thật từ page — dùng tên thật, nhưng <strong>chỉ đưa vào kịch bản khi khách "Đã đồng ý"</strong>. Đây là thông tin sức khoẻ của người thật: lưu riêng trên server (persistent disk), không đưa lên Git, chỉ xem được khi đăng nhập. Không gọi AI — "Tạo kịch bản" chỉ tạo khung trống để viết tiếp.</div>
+    <datalist id="inbox-groups">${groupOptionsHtml()}</datalist>
+    <details class="card" id="inbox-add-card">
+      <summary style="cursor:pointer; font-weight:600;">➕ Thêm 1 insight</summary>
+      <div class="grid-2" style="margin-top:12px;">
+        <label style="font-size:12.5px;">Tên khách (thật) *<br><input id="ib-ten" style="${INBOX_INPUT} width:100%;"></label>
+        <div style="display:flex; gap:10px;">
+          <label style="font-size:12.5px; flex:0 0 90px;">Tuổi<br><input id="ib-tuoi" style="${INBOX_INPUT} width:100%;"></label>
+          <label style="font-size:12.5px; flex:1;">Tỉnh/thành<br><input id="ib-tinh" style="${INBOX_INPUT} width:100%;"></label>
+        </div>
+        <label style="font-size:12.5px;">Nhóm insight (chọn hoặc nhập)<br><input id="ib-nhom" list="inbox-groups" style="${INBOX_INPUT} width:100%;"></label>
+        <label style="font-size:12.5px;">Ngày nhận tin<br><input id="ib-ngay" type="date" value="${todayIso()}" style="${INBOX_INPUT} width:100%;"></label>
+      </div>
+      <label style="font-size:12.5px; display:block; margin-top:10px;">Tin nhắn gốc * (dán nguyên văn, không sửa)<br><textarea id="ib-tin" rows="4" style="${INBOX_INPUT} width:100%;"></textarea></label>
+      <div class="grid-2" style="margin-top:10px;">
+        <label style="font-size:12.5px;">Đồng ý sử dụng<br>${consentSelectHtml('ib-dongy', 'Chưa hỏi')}</label>
+        <label style="font-size:12.5px;">Ghi chú cách xác nhận<br><input id="ib-ghichu" placeholder="vd: khách nhắn đồng ý ngày …/có ảnh chụp" style="${INBOX_INPUT} width:100%;"></label>
+      </div>
+      <div style="margin-top:10px;"><button class="toggle-btn done" onclick="inboxAddOne()">💾 Lưu insight</button> <span id="ib-status" style="font-size:12.5px; color:var(--text-secondary);"></span></div>
+    </details>
+    <details class="card">
+      <summary style="cursor:pointer; font-weight:600;">📋 Dán nhiều tin nhắn một lúc</summary>
+      <div style="font-size:12.5px; color:var(--text-secondary); margin:10px 0;">
+        Mỗi tin một <strong>khối</strong>, các khối cách nhau bằng <strong>một dòng trống</strong>:<br>
+        • Khối nhiều dòng: dòng đầu là <code>Tên khách | tuổi | tỉnh</code> (tuổi, tỉnh có thể bỏ), các dòng sau là tin nhắn nguyên văn.<br>
+        • Khối 1 dòng: <code>Tên khách | tin nhắn</code>.<br>
+        Nhóm, ngày nhận và trạng thái đồng ý bên dưới áp dụng chung cho cả lô (mặc định "Chưa hỏi"), sửa riêng từng tin sau.
+      </div>
+      <textarea id="ib-bulk" rows="8" style="${INBOX_INPUT} width:100%;" placeholder="Cô Lan | 62 | Đồng Nai&#10;Cô uống glucosamine 2 năm rồi mà gối vẫn đau…&#10;&#10;Chú Ba | sợ mổ quá con ơi, bác sĩ bảo thay khớp"></textarea>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:flex-end;">
+        <label style="font-size:12.5px;">Nhóm chung<br><input id="ib-bulk-nhom" list="inbox-groups" style="${INBOX_INPUT}"></label>
+        <label style="font-size:12.5px;">Ngày nhận<br><input id="ib-bulk-ngay" type="date" value="${todayIso()}" style="${INBOX_INPUT}"></label>
+        <label style="font-size:12.5px;">Đồng ý<br>${consentSelectHtml('ib-bulk-dongy', 'Chưa hỏi')}</label>
+        <button class="toggle-btn" onclick="inboxBulkPreview()">👀 Xem trước</button>
+      </div>
+      <div id="ib-bulk-preview" style="margin-top:12px;"></div>
+    </details>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:6px 0 14px;">
+      <select id="ib-filter-group" class="status-select" style="font-size:13px; padding:6px;" onchange="inboxFilter.group=this.value; renderInboxList()">
+        <option value="">Tất cả nhóm</option>${inboxData.groups.map(g => `<option value="${escAttr(g)}" ${g === inboxFilter.group ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
+      </select>
+      ${['', ...inboxData.consent_values].map(v => `<button class="toggle-btn" data-ibconsent="${escAttr(v)}" onclick="inboxFilter.consent=this.dataset.ibconsent; renderInboxList()">${v || 'Mọi trạng thái'}</button>`).join('')}
+      <span id="ib-count" style="font-size:13px; color:var(--text-muted);"></span>
+    </div>
+    <div id="ib-list"></div>`;
+  renderInboxList();
+}
+
+function inboxCardHtml(r) {
+  const who = [r.tuoi ? `${escapeHtml(r.tuoi)} tuổi` : '', escapeHtml(r.tinh_thanh || '')].filter(Boolean).join(' · ');
+  const ok = r.dong_y === 'Đã đồng ý';
+  const links = (r.kich_ban_lien_ket || []).map(id => {
+    const name = inboxData.library_scripts[id];
+    return name
+      ? `<a href="#" onclick="viewScript('${escAttr(id)}'); return false;" class="pill" title="${escAttr(name)}">#${escapeHtml(id)}</a>`
+      : `<span class="pill gray" title="Không có trong Thư viện kịch bản">#${escapeHtml(id)}?</span>`;
+  }).join(' ');
+  const imgs = (r.bang_chung_anh || []).map(n => `<a href="/api/inbox/evidence/${escAttr(n)}" target="_blank" rel="noopener">🖼️ ảnh</a>`).join(' ');
+  const evidence = [r.bang_chung_link ? `<a href="${escAttr(r.bang_chung_link)}" target="_blank" rel="noopener noreferrer">🔗 link</a>` : '', imgs].filter(Boolean).join(' ');
+  return `
+    <div class="idea-card">
+      <div class="top-row">
+        <div style="min-width:0; flex:1;">
+          <div class="name">${escapeHtml(r.ten_khach)} <span style="font-weight:400; color:var(--text-muted); font-size:12.5px;">${who ? '· ' + who : ''} · ${escapeHtml(r.ngay_nhan || 'chưa ghi ngày')} · ${escapeHtml(r.id)}</span></div>
+          <div class="meta" style="margin:6px 0;">${r.nhom_insight ? `<span class="pill gray">${escapeHtml(r.nhom_insight)}</span>` : ''} ${consentPill(r.dong_y)}</div>
+          <div style="white-space:pre-wrap; font-size:13px; background:var(--bg); border-radius:8px; padding:8px 10px; max-height:180px; overflow-y:auto;">${escapeHtml(r.tin_nhan_goc)}</div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:6px;">
+            Xác nhận: ${escapeHtml(r.ghi_chu_xac_nhan || '—')} ${evidence ? '· Bằng chứng: ' + evidence : ''}<br>
+            Kịch bản đã tạo: ${links || '—'}
+          </div>
+          ${ok ? '' : `<div style="font-size:12px; color:#c0392b; margin-top:6px;">⚠️ ${INBOX_WARN}</div>`}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex:0 0 auto;">
+          <button class="toggle-btn ${ok ? 'done' : ''}" ${ok ? '' : `disabled style="opacity:.45; cursor:not-allowed;" title="${escAttr(INBOX_WARN)}"`} onclick="inboxCreateSkeleton('${escAttr(r.id)}')">📝 Tạo kịch bản từ insight này</button>
+          ${ok && r.khung_kich_ban ? `<button class="toggle-btn" onclick="inboxViewSkeleton('${escAttr(r.id)}')">Xem khung đã tạo</button>` : ''}
+          <button class="toggle-btn" onclick="inboxEdit('${escAttr(r.id)}')">✏️ Sửa / đồng ý</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderInboxList() {
+  document.querySelectorAll('[data-ibconsent]').forEach(b => b.classList.toggle('done', b.dataset.ibconsent === inboxFilter.consent));
+  const all = inboxData.items;
+  const rows = all.filter(r => (!inboxFilter.group || r.nhom_insight === inboxFilter.group) && (!inboxFilter.consent || r.dong_y === inboxFilter.consent))
+                  .sort((a, b) => (b.ngay_nhan || '').localeCompare(a.ngay_nhan || '') || b.id.localeCompare(a.id));
+  const okCount = all.filter(r => r.dong_y === 'Đã đồng ý').length;
+  document.getElementById('ib-count').textContent = `${rows.length}/${all.length} insight · ${okCount} đã đồng ý`;
+  document.getElementById('ib-list').innerHTML = rows.length ? rows.map(inboxCardHtml).join('')
+    : emptyMsg(all.length ? 'Không có insight nào khớp bộ lọc.' : 'Chưa có insight nào — thêm ở trên.');
+}
+
+async function inboxPost(url, payload) {
+  const res = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload || {})});
+  return res.json();
+}
+
+async function inboxAddOne() {
+  const v = id => document.getElementById(id).value;
+  const item = {ten_khach: v('ib-ten'), tuoi: v('ib-tuoi'), tinh_thanh: v('ib-tinh'), nhom_insight: v('ib-nhom'),
+                ngay_nhan: v('ib-ngay'), tin_nhan_goc: v('ib-tin'), dong_y: v('ib-dongy'), ghi_chu_xac_nhan: v('ib-ghichu')};
+  const d = await inboxPost('/api/inbox', {items: [item]});
+  if (!d.ok) { document.getElementById('ib-status').textContent = 'Lỗi: ' + d.error; return; }
+  await renderInbox();
+}
+
+function parseInboxBulk(text) {
+  const blocks = text.replace(/\r\n/g, '\n').split(/\n\s*\n/).map(b => b.replace(/^\n+|\s+$/g, '')).filter(b => b.trim());
+  return blocks.map(b => {
+    const lines = b.split('\n');
+    if (lines.length === 1) {
+      const i = lines[0].indexOf('|');
+      if (i < 0) return {error: 'Thiếu "Tên khách |" ở đầu dòng', raw: b};
+      return {ten_khach: lines[0].slice(0, i).trim(), tin_nhan_goc: lines[0].slice(i + 1).trim()};
+    }
+    const [ten, tuoi, tinh] = lines[0].split('|').map(s => s.trim());
+    return {ten_khach: ten || '', tuoi: tuoi || '', tinh_thanh: tinh || '', tin_nhan_goc: lines.slice(1).join('\n')};
+  }).map(r => r.error ? r : (!r.ten_khach ? {...r, error: 'Thiếu tên khách'} : !r.tin_nhan_goc.trim() ? {...r, error: 'Thiếu tin nhắn'} : r));
+}
+
+let inboxBulkItems = [];
+function inboxBulkPreview() {
+  const parsed = parseInboxBulk(document.getElementById('ib-bulk').value);
+  const common = {nhom_insight: document.getElementById('ib-bulk-nhom').value, ngay_nhan: document.getElementById('ib-bulk-ngay').value,
+                  dong_y: document.getElementById('ib-bulk-dongy').value};
+  inboxBulkItems = parsed.filter(p => !p.error).map(p => ({...common, ...p}));
+  const bad = parsed.filter(p => p.error);
+  const box = document.getElementById('ib-bulk-preview');
+  if (!parsed.length) { box.innerHTML = emptyMsg('Chưa dán tin nhắn nào.'); return; }
+  box.innerHTML = `
+    <table><tr><th>Tên</th><th>Tuổi</th><th>Tỉnh</th><th>Tin nhắn gốc</th></tr>
+      ${parsed.map(p => p.error
+        ? `<tr><td colspan="4" style="color:#c0392b;">⚠️ ${escapeHtml(p.error)}: <span style="white-space:pre-wrap;">${escapeHtml(p.raw || p.tin_nhan_goc || p.ten_khach)}</span></td></tr>`
+        : `<tr><td>${escapeHtml(p.ten_khach)}</td><td>${escapeHtml(p.tuoi || '')}</td><td>${escapeHtml(p.tinh_thanh || '')}</td><td style="white-space:pre-wrap;">${escapeHtml(p.tin_nhan_goc)}</td></tr>`).join('')}
+    </table>
+    <div style="margin-top:10px;">
+      <button class="toggle-btn done" ${inboxBulkItems.length ? '' : 'disabled'} onclick="inboxBulkSave()">💾 Lưu ${inboxBulkItems.length} insight</button>
+      ${bad.length ? `<span style="font-size:12.5px; color:#c0392b;"> ${bad.length} khối lỗi sẽ bị bỏ qua — sửa rồi bấm Xem trước lại.</span>` : ''}
+      <span id="ib-bulk-status" style="font-size:12.5px;"></span>
+    </div>`;
+}
+async function inboxBulkSave() {
+  const d = await inboxPost('/api/inbox', {items: inboxBulkItems});
+  if (!d.ok) { document.getElementById('ib-bulk-status').textContent = ' Lỗi: ' + d.error; return; }
+  await renderInbox();
+}
+
+function inboxEdit(id) {
+  const r = inboxData.items.find(x => x.id === id);
+  const field = (label, key, extra = '') => `<label style="font-size:12.5px;">${label}<br><input id="ie-${key}" value="${escAttr(r[key] || '')}" ${extra} style="${INBOX_INPUT} width:100%;"></label>`;
+  document.getElementById('modal-body').innerHTML = `
+    <h3 style="margin:0 0 12px;">Sửa insight ${escapeHtml(r.id)}</h3>
+    <div class="grid-2">
+      ${field('Tên khách (thật) *', 'ten_khach')}
+      <div style="display:flex; gap:10px;"><div style="flex:0 0 90px;">${field('Tuổi', 'tuoi')}</div><div style="flex:1;">${field('Tỉnh/thành', 'tinh_thanh')}</div></div>
+      ${field('Nhóm insight', 'nhom_insight', 'list="inbox-groups"')}
+      ${field('Ngày nhận tin', 'ngay_nhan', 'type="date"')}
+    </div>
+    <label style="font-size:12.5px; display:block; margin-top:10px;">Tin nhắn gốc * (nguyên văn — chỉ sửa nếu dán nhầm)<br><textarea id="ie-tin_nhan_goc" rows="5" style="${INBOX_INPUT} width:100%;">${escapeHtml(r.tin_nhan_goc)}</textarea></label>
+    <div class="card" style="margin-top:12px; background:var(--bg);">
+      <h3>Đồng ý sử dụng</h3>
+      <div class="grid-2">
+        <label style="font-size:12.5px;">Trạng thái<br>${consentSelectHtml('ie-dong_y', r.dong_y)}</label>
+        ${field('Ghi chú cách xác nhận', 'ghi_chu_xac_nhan', 'placeholder="vd: khách nhắn đồng ý ngày …/có ảnh chụp"')}
+      </div>
+      <div style="margin-top:10px;">${field('Link bằng chứng (nếu có)', 'bang_chung_link', 'placeholder="https://…"')}</div>
+      <div style="margin-top:10px; font-size:12.5px;">Ảnh bằng chứng: ${(r.bang_chung_anh || []).map(n => `<a href="/api/inbox/evidence/${escAttr(n)}" target="_blank" rel="noopener">🖼️ ${escapeHtml(n)}</a>`).join(' ') || '—'}
+        <div style="margin-top:6px;"><input type="file" id="ie-anh" accept="image/*"> <button class="toggle-btn" onclick="inboxUploadEvidence('${escAttr(r.id)}')">Tải ảnh lên</button></div>
+      </div>
+    </div>
+    ${field('Kịch bản đã tạo từ insight này — số trong Thư viện kịch bản (vd: 35, 36)', 'kich_ban_lien_ket_txt')}
+    <div style="margin-top:14px; display:flex; justify-content:space-between; gap:10px; align-items:center;">
+      <div><button class="toggle-btn done" onclick="inboxSaveEdit('${escAttr(r.id)}')">💾 Lưu</button> <span id="ie-status" style="font-size:12.5px; color:#c0392b;"></span></div>
+      <button class="toggle-btn" style="color:#c0392b;" onclick="inboxDelete('${escAttr(r.id)}')">🗑️ Xoá insight</button>
+    </div>`;
+  document.getElementById('ie-kich_ban_lien_ket_txt').value = (r.kich_ban_lien_ket || []).join(', ');
+  document.getElementById('modal').classList.add('open');
+}
+async function inboxSaveEdit(id) {
+  const v = k => document.getElementById('ie-' + k).value;
+  const payload = {};
+  ['ten_khach', 'tuoi', 'tinh_thanh', 'nhom_insight', 'ngay_nhan', 'tin_nhan_goc', 'dong_y', 'ghi_chu_xac_nhan', 'bang_chung_link'].forEach(k => payload[k] = v(k));
+  payload.kich_ban_lien_ket = v('kich_ban_lien_ket_txt');
+  const d = await inboxPost(`/api/inbox/${encodeURIComponent(id)}`, payload);
+  if (!d.ok) { document.getElementById('ie-status').textContent = 'Lỗi: ' + d.error; return; }
+  closeModal();
+  await renderInbox();
+}
+async function inboxUploadEvidence(id) {
+  const input = document.getElementById('ie-anh');
+  if (!input.files.length) return;
+  const fd = new FormData();
+  fd.append('file', input.files[0]);
+  const d = await (await fetch(`/api/inbox/${encodeURIComponent(id)}/evidence`, {method: 'POST', body: fd})).json();
+  if (!d.ok) { document.getElementById('ie-status').textContent = 'Lỗi: ' + d.error; return; }
+  const idx = inboxData.items.findIndex(x => x.id === id);
+  inboxData.items[idx] = d.item;
+  inboxEdit(id);
+}
+async function inboxDelete(id) {
+  if (!confirm(`Xoá hẳn insight ${id} (kèm ảnh bằng chứng)? Không khôi phục được.`)) return;
+  const d = await inboxPost(`/api/inbox/${encodeURIComponent(id)}/delete`);
+  if (!d.ok) { document.getElementById('ie-status').textContent = 'Lỗi: ' + d.error; return; }
+  closeModal();
+  await renderInbox();
+}
+
+async function inboxCreateSkeleton(id) {
+  const r = inboxData.items.find(x => x.id === id);
+  if (r.dong_y !== 'Đã đồng ý') { alert(INBOX_WARN); return; }
+  if (r.khung_kich_ban && !confirm('Insight này đã có khung kịch bản. Tạo lại sẽ ghi đè khung cũ (phần đã viết tiếp trong app sẽ mất). Tiếp tục?')) return;
+  const d = await inboxPost(`/api/inbox/${encodeURIComponent(id)}/skeleton`);
+  if (!d.ok) { alert(d.error); return; }
+  inboxData.items[inboxData.items.findIndex(x => x.id === id)] = d.item;
+  renderInboxList();
+  inboxViewSkeleton(id);
+}
+function inboxViewSkeleton(id) {
+  const r = inboxData.items.find(x => x.id === id);
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px; font-size:12.5px; color:var(--text-muted);">
+      <button class="toggle-btn done" id="ib-copy">📋 Sao chép khung</button>
+      <span>Dán vào chat với Claude hoặc tự viết tiếp. Khi đã thành kịch bản trong Thư viện, ghi số kịch bản vào "Sửa / đồng ý".</span>
+    </div>
+    <pre class="script-detail"></pre>`;
+  document.querySelector('#modal-body pre').textContent = r.khung_kich_ban;
+  document.getElementById('ib-copy').onclick = async e => {
+    await navigator.clipboard.writeText(r.khung_kich_ban);
+    e.target.textContent = '✅ Đã sao chép';
+  };
+  document.getElementById('modal').classList.add('open');
 }
 
 // --- 10. Upload video ---------------------------------------------------------

@@ -7,3 +7,7 @@ __pycache__/
 # Video gốc quá lớn (28GB+) — không đưa lên git/hosting, chỉ cần transcript đã trích
 data/raw_videos/
 data/video_uploads/
+
+# Insight từ Inbox — tin nhắn khách thật (tên thật + sức khoẻ). Repo public → KHÔNG BAO GIỜ commit.
+# Trên Render dữ liệu nằm ở persistent disk ($PERSISTENT_DATA_DIR/inbox/).
+data/inbox/

@@ -32,6 +32,7 @@ persistent_storage.bootstrap_persistent_data()
 
 from webapp import auth  # noqa: E402
 from webapp import data_reader as dr  # noqa: E402
+from webapp import inbox_store  # noqa: E402
 
 SESSION_SECRET = os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
 if not os.environ.get("SESSION_SECRET"):
@@ -176,6 +177,81 @@ async def api_toggle_publish(request):
 async def api_ads_autopilot(request):
     return JSONResponse(dr.read_ads_autopilot())
 
+# --- Insight từ Inbox (tin nhắn khách thật — chỉ sau đăng nhập, không cache) ---
+
+_NO_STORE = {"Cache-Control": "no-store"}
+
+
+def _inbox_json(data, status_code=200):
+    return JSONResponse(data, status_code=status_code, headers=_NO_STORE)
+
+
+async def api_inbox_list(request):
+    data = inbox_store.list_insights()
+    data["library_scripts"] = {r["script_id"]: r["name"] for r in dr.read_ideas_today()}
+    return _inbox_json(data)
+
+
+async def api_inbox_add(request):
+    body = await request.json()
+    entries = body.get("items") if isinstance(body, dict) else None
+    try:
+        added = inbox_store.add_insights(entries or [])
+    except inbox_store.InboxError as e:
+        return _inbox_json({"ok": False, "error": str(e)}, 400)
+    return _inbox_json({"ok": True, "added": added})
+
+
+async def api_inbox_update(request):
+    insight_id = request.path_params["insight_id"]
+    try:
+        rec = inbox_store.update_insight(insight_id, await request.json())
+    except inbox_store.InboxError as e:
+        return _inbox_json({"ok": False, "error": str(e)}, 400)
+    except KeyError:
+        return _inbox_json({"ok": False, "error": "Không có insight này"}, 404)
+    return _inbox_json({"ok": True, "item": rec})
+
+
+async def api_inbox_delete(request):
+    try:
+        inbox_store.delete_insight(request.path_params["insight_id"])
+    except KeyError:
+        return _inbox_json({"ok": False, "error": "Không có insight này"}, 404)
+    return _inbox_json({"ok": True})
+
+
+async def api_inbox_skeleton(request):
+    try:
+        rec = inbox_store.create_skeleton(request.path_params["insight_id"])
+    except PermissionError as e:
+        return _inbox_json({"ok": False, "error": str(e)}, 403)
+    except KeyError:
+        return _inbox_json({"ok": False, "error": "Không có insight này"}, 404)
+    return _inbox_json({"ok": True, "item": rec})
+
+
+async def api_inbox_evidence_upload(request):
+    form = await request.form()
+    upload = form.get("file")
+    if upload is None:
+        return _inbox_json({"ok": False, "error": "Chưa chọn ảnh"}, 400)
+    try:
+        rec = inbox_store.save_evidence(request.path_params["insight_id"], upload.filename, await upload.read())
+    except inbox_store.InboxError as e:
+        return _inbox_json({"ok": False, "error": str(e)}, 400)
+    except KeyError:
+        return _inbox_json({"ok": False, "error": "Không có insight này"}, 404)
+    return _inbox_json({"ok": True, "item": rec})
+
+
+async def api_inbox_evidence_file(request):
+    path = inbox_store.evidence_path(request.path_params["name"])
+    if path is None:
+        return _inbox_json({"ok": False, "error": "Không có ảnh này"}, 404)
+    return FileResponse(path, headers={"Cache-Control": "private, no-store"})
+
+
 async def index(request):
     # no-store: index.html thay đổi khá thường xuyên trong lúc phát triển dashboard —
     # tránh trình duyệt lỡ giữ bản cache cũ khi bấm quay lại/mở lại tab.
@@ -198,6 +274,13 @@ app = Starlette(
         Route("/api/original-scripts/{script_id}", api_original_script_detail),
         Route("/api/original-scripts/{script_id}/toggle-quay", api_toggle_original_quay, methods=["POST"]),
         Route("/api/voice-of-customer", api_voice_of_customer),
+        Route("/api/inbox", api_inbox_list),
+        Route("/api/inbox", api_inbox_add, methods=["POST"]),
+        Route("/api/inbox/evidence/{name}", api_inbox_evidence_file),
+        Route("/api/inbox/{insight_id}", api_inbox_update, methods=["POST"]),
+        Route("/api/inbox/{insight_id}/delete", api_inbox_delete, methods=["POST"]),
+        Route("/api/inbox/{insight_id}/skeleton", api_inbox_skeleton, methods=["POST"]),
+        Route("/api/inbox/{insight_id}/evidence", api_inbox_evidence_upload, methods=["POST"]),
         Route("/api/insight-bank", api_insight_bank),
         Route("/api/content-pillars", api_content_pillars),
         Route("/api/content-wave1", api_content_wave1),
