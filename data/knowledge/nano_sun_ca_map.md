@@ -23,6 +23,16 @@
 - Không dùng cho người mẫn cảm với thành phần.
 - Hạn chế với người dị ứng, phụ nữ mang thai, người đang điều trị bệnh (nên tham khảo ý kiến trước khi dùng).
 
+## Công dụng được phép dùng trong kịch bản (nguồn: file đào tạo — Thông tin sản phẩm)
+Luôn diễn đạt theo hướng "hỗ trợ":
+- Hỗ trợ tái tạo và sửa chữa sụn.
+- Hỗ trợ giảm đau, kháng viêm (MSM, cây móng mèo).
+- Hỗ trợ giữ độ ẩm cho sụn, ngăn chặn sự phân huỷ mô sụn.
+- Hỗ trợ tăng kết dính giữa xương và canxi, giảm tình trạng khô khớp.
+- Hỗ trợ giữ chất lỏng và độ ẩm của sụn, giúp chuyển động trơn tru hơn.
+- Hỗ trợ cơ bắp hoạt động linh hoạt (BCAA).
+- Không có công dụng nào về tê, tê bì, tê buốt hay chèn ép thần kinh.
+
 ## Công thức 5 hướng hỗ trợ
 1. Tái tạo/sửa chữa sụn.
 2. Giảm đau, kháng viêm.
