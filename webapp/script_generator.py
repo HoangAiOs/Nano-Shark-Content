@@ -37,8 +37,8 @@ NO_KEY_MESSAGE = (
 # Từ/cụm cấm trong kịch bản (so khớp không phân biệt hoa thường, bỏ qua câu cảnh báo bắt buộc).
 FORBIDDEN = [
     "chữa khỏi", "chữa trị", "chữa bệnh", "trị bệnh", "trị dứt", "đặc trị", "điều trị", "dứt điểm",
-    "hết hẳn", "khỏi hẳn", "khỏi bệnh", "hết bệnh", "khỏi đau", "hết đau", "hết tê", "hết chèn ép",
-    "hết thoát vị", "đảm bảo", "cam kết", "thay thế thuốc", "thay thuốc", "không cần mổ", "khỏi mổ",
+    "hết hẳn", "khỏi hẳn", "khỏi bệnh", "hết bệnh", "khỏi đau", "hết đau", "hết tê",
+    "hết thoát vị", "giảm chèn ép", "bớt chèn ép", "đỡ chèn ép", "hết chèn ép", "đảm bảo", "cam kết", "thay thế thuốc", "thay thuốc", "không cần mổ", "khỏi mổ",
     "tránh mổ", "thay cho mổ", "thay mổ", "thần dược", "100%", "chắc chắn", "sẽ hết",
 ]
 # Câu mẫu cũ đã bỏ theo yêu cầu (31/10/2026) — còn xuất hiện thì báo đỏ để sinh lại.
@@ -86,7 +86,7 @@ HARD_RULES = f"""QUY TẮC CỨNG (vi phạm bất kỳ điều nào là kịch 
 8. Câu hỏi khách hỏi mà KNOWLEDGE BASE không có dữ liệu (ví dụ "có tăng cân không", tác dụng phụ, tương tác thuốc, liệu trình theo bệnh lý, chính sách giao hàng/thanh toán chưa ghi): KHÔNG trả lời đoán. Chèn đúng dấu [THIẾU THÔNG TIN: <mô tả ngắn>] vào chỗ đó, và liệt kê mỗi mục vào trường thieu_thong_tin.
 9. Không dùng các từ: {", ".join(FORBIDDEN)}. Chỉ nhắc "người đang điều trị bệnh nên tham khảo ý kiến trước khi dùng" khi cần, đúng như khuyến cáo trên nhãn.
 10. Chỉ dùng con số có trong KNOWLEDGE BASE hoặc trong tin nhắn/hồ sơ của khách, và không phải hàm lượng.
-11. Mục Cơ chế bệnh: CHỈ lấy từ mục "Cơ chế (nguồn: file đào tạo)" trong KNOWLEDGE BASE, diễn đạt lại bằng lời đời thường, chỉ nêu ý phù hợp triệu chứng khách. Tình trạng cần giải thích cơ chế mà KNOWLEDGE BASE không có (thoát vị đĩa đệm, đau thần kinh toạ, tê bì do chèn ép…) thì KHÔNG tự bịa cơ chế y khoa: chỉ nói phần liên quan tới sụn, khớp, độ ẩm, chất nhầy, rồi đặt [THIẾU THÔNG TIN: cơ chế … cho tình trạng này] ở chỗ còn thiếu. Không chẩn đoán cho khách, không nói chắc "cô bị X là do Y"; dùng "thường", "một trong những lý do", "khi … thì có thể …".
+11. Mục Cơ chế bệnh: CHỈ lấy từ mục "Cơ chế (nguồn: file đào tạo)" trong KNOWLEDGE BASE, diễn đạt lại bằng lời đời thường, chỉ nêu ý phù hợp triệu chứng khách. Với thoát vị đĩa đệm / tê bì do chèn ép: được giải thích vì sao bị (nhân nhầy lồi ra chèn dây thần kinh…) theo đúng mục "Cột sống, thoát vị đĩa đệm, tê bì do chèn ép", nhưng tuyệt đối không nói sản phẩm giảm/hết chèn ép, đưa nhân nhầy trở lại hay giảm tê — chỉ dẫn sang việc bổ sung nguyên liệu cho sụn/đĩa đệm. Tình trạng cần giải thích cơ chế mà KNOWLEDGE BASE vẫn không có thì KHÔNG tự bịa cơ chế y khoa: chỉ nói phần liên quan tới sụn, khớp, độ ẩm, chất nhầy, rồi đặt [THIẾU THÔNG TIN: cơ chế … cho tình trạng này] ở chỗ còn thiếu. Không chẩn đoán cho khách, không nói chắc "cô bị X là do Y"; dùng "thường", "một trong những lý do", "khi … thì có thể …".
 12. Không tự viết câu cảnh báo bắt buộc và câu "{RESULT_NOTE}" — hệ thống tự gắn."""
 
 TASK = """VIỆC CẦN LÀM: viết 1 kịch bản video ngắn để BS Sơn quay, đọc lên quay được ngay, dựa trên đúng một khách đã đồng ý cho dùng tên và câu chuyện.

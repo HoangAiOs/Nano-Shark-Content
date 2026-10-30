@@ -42,7 +42,17 @@ Nguồn DUY NHẤT cho mục "Cơ chế bệnh" trong kịch bản. Diễn đạ
 - Collagen type 2 là thành phần chính của sụn và chất kết dính giữa xương và canxi; thiếu thì sụn kém bền, khớp khô.
 - Canxi cần được hấp thu tốt để liên kết với xương (bằng sáng chế chondroitin–canxi).
 - Viêm quanh khớp góp phần gây đau (MSM, cây móng mèo hỗ trợ giảm viêm).
-- CHƯA CÓ: cơ chế thoát vị đĩa đệm, đau thần kinh toạ, tê bì do chèn ép thần kinh.
+
+### Cột sống, thoát vị đĩa đệm, tê bì do chèn ép
+Nguồn: hocsanpham.dilisupplement.com — "Sụn Cá Mập Nhật Bản (Sụn Nano)", mục "Điểm mấu chốt: Cột sống ≠ Khớp gối", "Nguyên nhân", "Cơ chế giải pháp" (truy cập 31/10/2026). Bỏ các con số phần trăm của trang đào tạo — không đưa vào kịch bản.
+- Cột sống khác khớp gối: khớp gối chủ yếu là sụn và dịch khớp (vấn đề chính: sụn mòn, dịch cạn — hay đau gối, lục cục); đĩa đệm cột sống gồm nhân nhầy ở giữa và vòng xơ collagen bao quanh (vấn đề chính: đĩa đệm mất nước, thoát vị — hay tê bì tay/chân, đau lan).
+- Đĩa đệm thoát vị thường do ngồi nhiều, cúi sai tư thế, nâng vật nặng đột ngột → vòng xơ nứt, nhân nhầy lồi ra chèn vào dây thần kinh → tê bì, đau lan.
+- Sụn và đĩa đệm mòn âm thầm, không đau khi đang mòn — đến khi đau là đã mòn đáng kể.
+- Sụn và đĩa đệm gần như không có mạch máu: dưỡng chất chỉ vào được bằng cách khuếch tán khi vận động, và chỉ khuếch tán được những gì đang có sẵn trong máu — vì vậy cần bổ sung nguyên liệu qua đường uống.
+- Đĩa đệm còn ít mạch máu hơn cả sụn khớp, nên phân tử nhỏ (công nghệ nano) là lợi thế.
+- Chưa tê thường là giai đoạn sớm; đã tê tay/chân thường là giai đoạn nặng hơn.
+- Giới hạn: phần này chỉ để GIẢI THÍCH vì sao khách bị. Không có công dụng nào về giảm tê, giảm chèn ép, hay đưa nhân nhầy trở lại — không được nói sản phẩm làm những việc đó.
+- CHƯA CÓ: cơ chế riêng của đau thần kinh toạ (ngoài ý chèn ép thần kinh ở trên).
 
 ## Công thức 5 hướng hỗ trợ
 1. Tái tạo/sửa chữa sụn.
