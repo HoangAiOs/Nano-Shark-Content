@@ -670,7 +670,8 @@ async function renderInbox() {
   inboxData = await res.json();
   content.innerHTML = `
     <div class="page-title">📥 Insight từ Inbox</div>
-    <div class="page-sub">Tin nhắn khách thật từ page — dùng tên thật, nhưng <strong>chỉ đưa vào kịch bản khi khách "Đã đồng ý"</strong>. Đây là thông tin sức khoẻ của người thật: lưu riêng trên server (persistent disk), không đưa lên Git, chỉ xem được khi đăng nhập. Không gọi AI — "Tạo kịch bản" chỉ tạo khung trống để viết tiếp.</div>
+    <div class="page-sub">Tin nhắn khách thật từ page — dùng tên thật, nhưng <strong>chỉ đưa vào kịch bản khi khách "Đã đồng ý"</strong>. Đây là thông tin sức khoẻ của người thật: lưu riêng trên server (persistent disk), không đưa lên Git, chỉ xem được khi đăng nhập. "Tạo kịch bản" gọi Claude API từ server (ngoại lệ duy nhất của app) để viết kịch bản hoàn chỉnh từ tin nhắn + knowledge base sản phẩm, tự quét từ cấm, rồi lưu vào Thư viện kịch bản với số tiếp theo.</div>
+    ${inboxData.has_api_key ? '' : `<div class="card" style="border-color:#e0b866; background:#fff8e6; font-size:13px;">⚠️ <strong>Server chưa có ANTHROPIC_API_KEY</strong> nên nút "Tạo kịch bản" chưa chạy được. Thêm key: dashboard.render.com → service <code>nano-shark-content-os</code> → <strong>Environment</strong> → Add Environment Variable: Key <code>ANTHROPIC_API_KEY</code>, Value = key lấy ở platform.claude.com → API Keys → Save Changes (Render tự deploy lại ~2–3 phút).</div>`}
     <datalist id="inbox-groups">${groupOptionsHtml()}</datalist>
     <details class="card" id="inbox-add-card">
       <summary style="cursor:pointer; font-weight:600;">➕ Thêm 1 insight</summary>
@@ -719,6 +720,9 @@ async function renderInbox() {
 }
 
 function inboxCardHtml(r) {
+  const sinh = r.sinh || {};
+  const busy = sinh.trang_thai === 'dang_sinh';
+  const hasScript = !!(r.kich_ban_so && sinh.trang_thai !== 'dang_sinh' && (sinh.luc || sinh.check));
   const who = [r.tuoi ? `${escapeHtml(r.tuoi)} tuổi` : '', escapeHtml(r.tinh_thanh || '')].filter(Boolean).join(' · ');
   const ok = r.dong_y === 'Đã đồng ý';
   const links = (r.kich_ban_lien_ket || []).map(id => {
@@ -740,11 +744,14 @@ function inboxCardHtml(r) {
             Xác nhận: ${escapeHtml(r.ghi_chu_xac_nhan || '—')} ${evidence ? '· Bằng chứng: ' + evidence : ''}<br>
             Kịch bản đã tạo: ${links || '—'}
           </div>
-          ${ok ? '' : `<div style="font-size:12px; color:#c0392b; margin-top:6px;">⚠️ ${INBOX_WARN}</div>`}
+          ${ok ? '' : `<div style="font-size:12px; color:#c0392b; margin-top:6px;">⚠️ ${INBOX_WARN}${r.kich_ban_so ? ` — kịch bản #${escapeHtml(r.kich_ban_so)} đã bị ẩn khỏi Thư viện.` : ''}</div>`}
+          ${ok ? inboxGenStatusHtml(r) : ''}
         </div>
         <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex:0 0 auto;">
-          <button class="toggle-btn ${ok ? 'done' : ''}" ${ok ? '' : `disabled style="opacity:.45; cursor:not-allowed;" title="${escAttr(INBOX_WARN)}"`} onclick="inboxCreateSkeleton('${escAttr(r.id)}')">📝 Tạo kịch bản từ insight này</button>
-          ${ok && r.khung_kich_ban ? `<button class="toggle-btn" onclick="inboxViewSkeleton('${escAttr(r.id)}')">Xem khung đã tạo</button>` : ''}
+          ${busy ? `<button class="toggle-btn" disabled style="opacity:.6;">⏳ Đang viết kịch bản…</button>`
+            : `<button class="toggle-btn ${ok && !hasScript ? 'done' : ''}" ${ok ? '' : `disabled style="opacity:.45; cursor:not-allowed;" title="${escAttr(INBOX_WARN)}"`} onclick="inboxGenerate('${escAttr(r.id)}')">${hasScript ? '🔄 Sinh lại' : '📝 Tạo kịch bản từ insight này'}</button>`}
+          ${ok && hasScript ? `<button class="toggle-btn done" onclick="inboxViewScript('${escAttr(r.id)}')">Xem kịch bản #${escapeHtml(r.kich_ban_so)}</button>` : ''}
+          ${ok && !hasScript && r.khung_kich_ban ? `<button class="toggle-btn" onclick="inboxViewOldSkeleton('${escAttr(r.id)}')">Xem khung cũ</button>` : ''}
           <button class="toggle-btn" onclick="inboxEdit('${escAttr(r.id)}')">✏️ Sửa / đồng ý</button>
         </div>
       </div>
@@ -760,6 +767,7 @@ function renderInboxList() {
   document.getElementById('ib-count').textContent = `${rows.length}/${all.length} insight · ${okCount} đã đồng ý`;
   document.getElementById('ib-list').innerHTML = rows.length ? rows.map(inboxCardHtml).join('')
     : emptyMsg(all.length ? 'Không có insight nào khớp bộ lọc.' : 'Chưa có insight nào — thêm ở trên.');
+  inboxSchedulePoll();
 }
 
 async function inboxPost(url, payload) {
@@ -877,29 +885,90 @@ async function inboxDelete(id) {
   await renderInbox();
 }
 
-async function inboxCreateSkeleton(id) {
+function inboxGenStatusHtml(r) {
+  const sinh = r.sinh || {};
+  if (sinh.trang_thai === 'dang_sinh') return `<div style="font-size:12px; color:var(--text-secondary); margin-top:6px;">⏳ Claude đang viết kịch bản #${escapeHtml(r.kich_ban_so || '')} (thường 30–120 giây)…</div>`;
+  if (sinh.trang_thai === 'loi') return `<div style="font-size:12px; color:#c0392b; margin-top:6px;">❌ ${escapeHtml(sinh.loi)}</div>`;
+  const c = sinh.check;
+  if (!c) return '';
+  const bits = [];
+  if (c.vi_pham.length || c.so_la.length) bits.push(`<span style="color:#c0392b;">🔴 Còn vi phạm: ${escapeHtml([...c.vi_pham, ...c.so_la.map(n => 'số lạ ' + n)].join(', '))} — sửa tay trước khi quay</span>`);
+  else bits.push('<span style="color:var(--accent);">✅ Không có từ cấm / số lạ</span>');
+  if (c.thieu_thong_tin.length) bits.push(`<span style="color:#a5690a;">🟡 ${c.thieu_thong_tin.length} chỗ [THIẾU THÔNG TIN]</span>`);
+  if (c.can_nhac.length) bits.push(`<span style="color:#a5690a;">🟠 Cân nhắc khi quảng cáo: ${escapeHtml(c.can_nhac.join(', '))}</span>`);
+  return `<div style="font-size:12px; margin-top:6px;">Kịch bản #${escapeHtml(r.kich_ban_so)} · ${bits.join(' · ')}${sinh.sua_tay ? ' · đã sửa tay' : ''}</div>`;
+}
+
+let inboxPollTimer = null;
+function inboxSchedulePoll() {
+  clearTimeout(inboxPollTimer);
+  if (!inboxData.items.some(r => (r.sinh || {}).trang_thai === 'dang_sinh')) return;
+  inboxPollTimer = setTimeout(async () => {
+    if (!document.getElementById('ib-list')) return;  // đã rời trang Inbox
+    const fresh = await (await fetch('/api/inbox')).json();
+    const wasBusy = new Set(inboxData.items.filter(r => (r.sinh || {}).trang_thai === 'dang_sinh').map(r => r.id));
+    inboxData = fresh;
+    renderInboxList();
+    const done = fresh.items.find(r => wasBusy.has(r.id) && (r.sinh || {}).trang_thai === 'xong');
+    if (done && !document.getElementById('modal').classList.contains('open')) inboxViewScript(done.id);
+  }, 4000);
+}
+
+async function inboxGenerate(id) {
   const r = inboxData.items.find(x => x.id === id);
   if (r.dong_y !== 'Đã đồng ý') { alert(INBOX_WARN); return; }
-  if (r.khung_kich_ban && !confirm('Insight này đã có khung kịch bản. Tạo lại sẽ ghi đè khung cũ (phần đã viết tiếp trong app sẽ mất). Tiếp tục?')) return;
-  const d = await inboxPost(`/api/inbox/${encodeURIComponent(id)}/skeleton`);
+  if (r.kich_ban_so && (r.sinh || {}).luc && !confirm(`Sinh lại kịch bản #${r.kich_ban_so}? Bản hiện tại (kể cả phần đã sửa tay) sẽ bị ghi đè.`)) return;
+  const d = await inboxPost(`/api/inbox/${encodeURIComponent(id)}/generate`);
   if (!d.ok) { alert(d.error); return; }
-  inboxData.items[inboxData.items.findIndex(x => x.id === id)] = d.item;
+  inboxData = await (await fetch('/api/inbox')).json();
   renderInboxList();
-  inboxViewSkeleton(id);
 }
-function inboxViewSkeleton(id) {
+
+function highlightScript(md, check) {
+  let html = escapeHtml(md);
+  html = html.replace(/\[THIẾU THÔNG TIN:[^\]]*\]/g, m => `<mark style="background:#fff1c2;">${m}</mark>`);
+  const mark = (terms, color) => terms.forEach(t => {
+    const re = new RegExp(`(^|[^\\p{L}\\p{N}])(${escapeHtml(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})(?=[^\\p{L}\\p{N}]|$)`, 'giu');
+    html = html.replace(re, `$1<mark style="background:${color};">$2</mark>`);
+  });
+  if (check) { mark(check.vi_pham, '#f9c9c4'); mark(check.so_la, '#f9c9c4'); mark(check.can_nhac, '#ffe2bf'); }
+  return html;
+}
+
+async function inboxViewScript(id) {
   const r = inboxData.items.find(x => x.id === id);
+  const d = await (await fetch(`/api/inbox/${encodeURIComponent(id)}/script`)).json();
+  const c = (r.sinh || {}).check;
   document.getElementById('modal-body').innerHTML = `
-    <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px; font-size:12.5px; color:var(--text-muted);">
-      <button class="toggle-btn done" id="ib-copy">📋 Sao chép khung</button>
-      <span>Dán vào chat với Claude hoặc tự viết tiếp. Khi đã thành kịch bản trong Thư viện, ghi số kịch bản vào "Sửa / đồng ý".</span>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
+      <button class="toggle-btn done" id="is-copy">📋 Sao chép</button>
+      <button class="toggle-btn" id="is-edit">✏️ Sửa tay</button>
+      <button class="toggle-btn" id="is-regen">🔄 Sinh lại</button>
+      <span style="font-size:12px; color:var(--text-muted);">Đỏ = từ cấm / số không có trong knowledge base · Vàng = thiếu thông tin · Cam = vượt câu công dụng đã duyệt, cân nhắc khi chạy quảng cáo.</span>
     </div>
-    <pre class="script-detail"></pre>`;
-  document.querySelector('#modal-body pre').textContent = r.khung_kich_ban;
-  document.getElementById('ib-copy').onclick = async e => {
-    await navigator.clipboard.writeText(r.khung_kich_ban);
-    e.target.textContent = '✅ Đã sao chép';
+    <div id="is-body"><pre class="script-detail">${highlightScript(d.markdown, c)}</pre></div>`;
+  document.getElementById('is-copy').onclick = async e => { await navigator.clipboard.writeText(d.markdown); e.target.textContent = '✅ Đã sao chép'; };
+  document.getElementById('is-regen').onclick = () => { closeModal(); inboxGenerate(id); };
+  document.getElementById('is-edit').onclick = () => {
+    document.getElementById('is-body').innerHTML = `
+      <textarea id="is-text" rows="24" style="${INBOX_INPUT} width:100%; line-height:1.5;"></textarea>
+      <div style="margin-top:8px;"><button class="toggle-btn done" id="is-save">💾 Lưu bản sửa</button> <span id="is-status" style="font-size:12.5px;"></span></div>`;
+    document.getElementById('is-text').value = d.markdown;
+    document.getElementById('is-save').onclick = async () => {
+      const res = await inboxPost(`/api/inbox/${encodeURIComponent(id)}/script`, {markdown: document.getElementById('is-text').value});
+      if (!res.ok) { document.getElementById('is-status').textContent = 'Lỗi: ' + res.error; return; }
+      inboxData.items[inboxData.items.findIndex(x => x.id === id)] = res.item;
+      renderInboxList();
+      inboxViewScript(id);
+    };
   };
+  document.getElementById('modal').classList.add('open');
+}
+
+function inboxViewOldSkeleton(id) {
+  const r = inboxData.items.find(x => x.id === id);
+  document.getElementById('modal-body').innerHTML = `<div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">Khung trống tạo trước khi có tính năng sinh kịch bản. Bấm "Tạo kịch bản từ insight này" để Claude viết bản hoàn chỉnh.</div><pre class="script-detail"></pre>`;
+  document.querySelector('#modal-body pre').textContent = r.khung_kich_ban;
   document.getElementById('modal').classList.add('open');
 }
 

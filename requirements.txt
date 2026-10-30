@@ -1,7 +1,7 @@
 claude-agent-sdk
 python-dotenv
 httpx
-anthropic
+anthropic>=0.120
 python-multipart
 itsdangerous
 uvicorn

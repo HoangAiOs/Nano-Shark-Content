@@ -12,6 +12,7 @@ import json
 import re
 from pathlib import Path
 
+from webapp import inbox_store
 from webapp.persistent_storage import PERSISTENT_DIR
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -322,8 +323,9 @@ def read_scores() -> dict:
     return {"summary": summary, "top5": top5}
 
 
-def read_ideas_today() -> list[dict]:
-    """Danh sách 10 kịch bản như 'ý tưởng video' — điểm số + trạng thái đã quay."""
+def read_ideas_today(include_inbox: bool = True) -> list[dict]:
+    """Danh sách kịch bản trong Thư viện — điểm số + trạng thái đã quay. Kèm kịch bản sinh từ
+    Insight từ Inbox (lưu ở persistent disk, không vào git) khi include_inbox."""
     index_text = _read(SCRIPTS_DIR / "index.md")
     tables = parse_md_tables(index_text)
     idx_rows = tables[0] if tables else []
@@ -353,6 +355,16 @@ def read_ideas_today() -> list[dict]:
             }
         )
     out.sort(key=lambda r: int(r["score"]) if r["score"].isdigit() else -1, reverse=True)
+    if include_inbox:
+        git_ids = {r["script_id"] for r in out}
+        for e in inbox_store.library_entries():
+            if e["script_id"] in git_ids:
+                continue  # trùng số với kịch bản trong git → git thắng (xem cảnh báo trong Inbox)
+            out.append({
+                "script_id": e["script_id"], "name": e["name"], "insight": e["insight"], "hook": e["hook"],
+                "score": "", "quay_xong": quay_status.get(e["script_id"], False),
+                "pillar": f"Insight từ Inbox · {e['ten_khach']}", "inbox_id": e["inbox_id"],
+            })
     return out
 
 
@@ -398,7 +410,9 @@ def read_portfolio() -> list[dict]:
 
 def read_script_detail(script_id: str) -> str:
     path = SCRIPTS_DIR / f"script_{script_id}.md"
-    return _read(path)
+    if path.exists():
+        return _read(path)
+    return inbox_store.library_script(script_id) or ""
 
 
 # ---------------------------------------------------------------------------

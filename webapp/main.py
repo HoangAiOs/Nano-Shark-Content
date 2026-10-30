@@ -11,6 +11,7 @@ Mặc định mở tại http://127.0.0.1:8811
 
 from __future__ import annotations
 
+import asyncio
 import os
 import secrets
 from pathlib import Path
@@ -33,6 +34,7 @@ persistent_storage.bootstrap_persistent_data()
 from webapp import auth  # noqa: E402
 from webapp import data_reader as dr  # noqa: E402
 from webapp import inbox_store  # noqa: E402
+from webapp import script_generator  # noqa: E402
 
 SESSION_SECRET = os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
 if not os.environ.get("SESSION_SECRET"):
@@ -189,6 +191,7 @@ def _inbox_json(data, status_code=200):
 async def api_inbox_list(request):
     data = inbox_store.list_insights()
     data["library_scripts"] = {r["script_id"]: r["name"] for r in dr.read_ideas_today()}
+    data["has_api_key"] = bool(os.environ.get("ANTHROPIC_API_KEY"))
     return _inbox_json(data)
 
 
@@ -221,14 +224,54 @@ async def api_inbox_delete(request):
     return _inbox_json({"ok": True})
 
 
-async def api_inbox_skeleton(request):
+_generation_tasks: set = set()
+
+
+async def _run_generation(insight_id: str, rec: dict, script_no: str) -> None:
     try:
-        rec = inbox_store.create_skeleton(request.path_params["insight_id"])
+        result = await script_generator.generate(rec, script_no)
+        inbox_store.finish_generation(insight_id, result)
+    except script_generator.GeneratorError as e:
+        inbox_store.fail_generation(insight_id, str(e))
+    except Exception as e:  # noqa: BLE001 — mọi lỗi khác cũng phải ghi lại, không để kẹt "đang sinh"
+        inbox_store.fail_generation(insight_id, f"Lỗi không mong đợi: {e}")
+
+
+async def api_inbox_generate(request):
+    """Sinh kịch bản bằng Claude API — chạy nền (30–120 giây), trình duyệt hỏi lại trạng thái qua /api/inbox."""
+    insight_id = request.path_params["insight_id"]
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return _inbox_json({"ok": False, "error": script_generator.NO_KEY_MESSAGE, "no_key": True}, 503)
+    library_ids = {r["script_id"] for r in dr.read_ideas_today(include_inbox=False)}
+    try:
+        rec, script_no = inbox_store.start_generation(insight_id, library_ids)
     except PermissionError as e:
         return _inbox_json({"ok": False, "error": str(e)}, 403)
+    except inbox_store.InboxError as e:
+        return _inbox_json({"ok": False, "error": str(e)}, 409)
     except KeyError:
         return _inbox_json({"ok": False, "error": "Không có insight này"}, 404)
-    return _inbox_json({"ok": True, "item": rec})
+    task = asyncio.create_task(_run_generation(insight_id, rec, script_no))
+    _generation_tasks.add(task)
+    task.add_done_callback(_generation_tasks.discard)
+    return _inbox_json({"ok": True, "script_no": script_no}, 202)
+
+
+async def api_inbox_script(request):
+    insight_id = request.path_params["insight_id"]
+    try:
+        if request.method == "POST":
+            body = await request.json()
+            markdown = body.get("markdown") or ""
+            rec = next(r for r in inbox_store.list_insights()["items"] if r["id"] == insight_id)
+            check = script_generator.check_script(markdown, rec)
+            rec = inbox_store.save_manual_edit(insight_id, markdown, check)
+            return _inbox_json({"ok": True, "item": rec})
+        return _inbox_json({"ok": True, "markdown": inbox_store.read_generated(insight_id)})
+    except (KeyError, StopIteration):
+        return _inbox_json({"ok": False, "error": "Không có insight này"}, 404)
+    except inbox_store.InboxError as e:
+        return _inbox_json({"ok": False, "error": str(e)}, 400)
 
 
 async def api_inbox_evidence_upload(request):
@@ -279,7 +322,8 @@ app = Starlette(
         Route("/api/inbox/evidence/{name}", api_inbox_evidence_file),
         Route("/api/inbox/{insight_id}", api_inbox_update, methods=["POST"]),
         Route("/api/inbox/{insight_id}/delete", api_inbox_delete, methods=["POST"]),
-        Route("/api/inbox/{insight_id}/skeleton", api_inbox_skeleton, methods=["POST"]),
+        Route("/api/inbox/{insight_id}/generate", api_inbox_generate, methods=["POST"]),
+        Route("/api/inbox/{insight_id}/script", api_inbox_script, methods=["GET", "POST"]),
         Route("/api/inbox/{insight_id}/evidence", api_inbox_evidence_upload, methods=["POST"]),
         Route("/api/insight-bank", api_insight_bank),
         Route("/api/content-pillars", api_content_pillars),

@@ -4,8 +4,9 @@ Dữ liệu nhạy cảm nên:
 - Lưu ở thư mục riêng `inbox/` trên persistent disk (PERSISTENT_DIR), KHÔNG seed từ git,
   KHÔNG commit (data/inbox/ nằm trong .gitignore — repo đang public).
 - Chỉ đọc/ghi qua /api/inbox/* (đã nằm sau AuthMiddleware), không xuất hiện ở API khác.
-- Khung kịch bản chỉ tạo được khi khách "Đã đồng ý" — chặn cả ở server, không chỉ ở nút.
-- Không gọi AI: khung kịch bản là template trống, điền sẵn tên + tin nhắn gốc vào Bằng chứng.
+- Kịch bản chỉ sinh được khi khách "Đã đồng ý" — chặn cả ở server, không chỉ ở nút. Sinh bằng
+  Claude API (webapp/script_generator.py); file kịch bản lưu ở inbox/scripts/ (cũng không vào git)
+  và hiện trong Thư viện kịch bản với số tiếp theo — khách rút đồng ý thì tự ẩn khỏi Thư viện.
 """
 
 from __future__ import annotations
@@ -23,6 +24,8 @@ from webapp.persistent_storage import PERSISTENT_DIR
 INBOX_DIR = PERSISTENT_DIR / "inbox"
 INBOX_FILE = INBOX_DIR / "inbox_insights.json"
 EVIDENCE_DIR = INBOX_DIR / "evidence"
+SCRIPTS_DIR = INBOX_DIR / "scripts"
+GENERATION_STALE = timedelta(minutes=15)
 
 CONSENT_VALUES = ("Chưa hỏi", "Đã đồng ý", "Từ chối")
 CONSENT_OK = "Đã đồng ý"
@@ -30,7 +33,6 @@ DEFAULT_GROUPS = ["đã dùng glucosamine vẫn đau", "sợ mổ", "sợ hàng 
 EVIDENCE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic"}
 EVIDENCE_MAX_BYTES = 10 * 1024 * 1024
 
-DISCLAIMER = '"Thực phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh."'
 VN_TZ = timezone(timedelta(hours=7))
 _lock = threading.Lock()
 
@@ -148,63 +150,9 @@ def delete_insight(insight_id: str) -> None:
             p = EVIDENCE_DIR / name
             if p.is_file():
                 p.unlink()
+        if rec.get("kich_ban_so"):
+            _script_path(rec["kich_ban_so"]).unlink(missing_ok=True)
         _save([r for r in items if r["id"] != insight_id])
-
-
-def build_skeleton(rec: dict) -> str:
-    who = ", ".join(x for x in [rec["ten_khach"], f"{rec['tuoi']} tuổi" if rec.get("tuoi") else "",
-                                rec.get("tinh_thanh", "")] if x)
-    quoted = "\n".join(f"> {line}" if line else ">" for line in rec["tin_nhan_goc"].split("\n"))
-    ngay = rec.get("ngay_nhan") or "chưa ghi ngày"
-    return f"""# Khung kịch bản từ Inbox — {rec['ten_khach']} ({rec['id']})
-**Nguồn insight:** tin nhắn inbox page — {who} — nhận ngày {ngay} — nhóm "{rec.get('nhom_insight') or 'chưa phân nhóm'}"
-**Đồng ý sử dụng:** {rec['dong_y']} — {rec.get('ghi_chu_xac_nhan') or '(chưa ghi cách xác nhận)'}
-**Insight chính:** (viết tiếp)
-
-> Quy tắc khi viết tiếp (xoá khối này trước khi quay):
-> - Giữ nguyên tinh thần lời khách, không bịa thêm bệnh sử / kết quả ngoài tin nhắn gốc.
-> - Không dùng "chữa khỏi", "điều trị"; giữ nguyên Cảnh báo bắt buộc bên dưới.
-> - Chỉ dùng tên, tuổi, câu chuyện của khách vì khách đã "Đã đồng ý" — nếu khách rút đồng ý thì bỏ khung này.
-
-## Hook
-(viết tiếp)
-
-## Vấn đề
-(viết tiếp)
-
-## Giải pháp
-(viết tiếp)
-
-## Bằng chứng
-Khách: {who}
-Tin nhắn gốc (nguyên văn, nhận ngày {ngay}):
-{quoted}
-
-## CTA
-(viết tiếp)
-
-## Cảnh báo bắt buộc
-{DISCLAIMER}
-Kết quả có thể khác nhau tuỳ cơ địa.
-
-## Ghi chú dàn dựng
-(viết tiếp)
-"""
-
-
-def create_skeleton(insight_id: str) -> dict:
-    with _lock:
-        items = _load()
-        for rec in items:
-            if rec["id"] == insight_id:
-                if rec.get("dong_y") != CONSENT_OK:
-                    raise PermissionError(
-                        "Chưa được khách đồng ý dùng tên và câu chuyện — không đưa vào video")
-                rec["khung_kich_ban"] = build_skeleton(rec)
-                rec["khung_tao_luc"] = rec["updated_at"] = _now()
-                _save(items)
-                return rec
-    raise KeyError(insight_id)
 
 
 def save_evidence(insight_id: str, filename: str, contents: bytes) -> dict:
@@ -232,3 +180,101 @@ def evidence_path(name: str) -> Path | None:
         return None
     p = EVIDENCE_DIR / name
     return p if p.is_file() else None
+
+
+# --- Kịch bản sinh bằng Claude API ------------------------------------------------
+
+
+def _script_path(script_no: str) -> Path:
+    return SCRIPTS_DIR / f"script_{script_no}.md"
+
+
+def _find(items: list[dict], insight_id: str) -> dict:
+    rec = next((r for r in items if r["id"] == insight_id), None)
+    if rec is None:
+        raise KeyError(insight_id)
+    return rec
+
+
+def start_generation(insight_id: str, library_ids: set[str]) -> tuple[dict, str]:
+    """Đánh dấu 'đang sinh' và giữ chỗ số kịch bản (giữ số cũ nếu là Sinh lại)."""
+    with _lock:
+        items = _load()
+        rec = _find(items, insight_id)
+        if rec.get("dong_y") != CONSENT_OK:
+            raise PermissionError("Chưa được khách đồng ý dùng tên và câu chuyện — không đưa vào video")
+        sinh = rec.get("sinh") or {}
+        if sinh.get("trang_thai") == "dang_sinh" and \
+                datetime.now(VN_TZ) - datetime.fromisoformat(sinh["bat_dau"]) < GENERATION_STALE:
+            raise InboxError("Kịch bản đang được sinh — đợi xong rồi hãy bấm lại")
+        script_no = rec.get("kich_ban_so")
+        if not script_no:
+            used = {r["kich_ban_so"] for r in items if r.get("kich_ban_so")} | set(library_ids)
+            nums = [int(x) for x in used if x.isdigit()]
+            script_no = f"{(max(nums) + 1 if nums else 1):02d}"
+            rec["kich_ban_so"] = script_no
+        rec["sinh"] = {**sinh, "trang_thai": "dang_sinh", "bat_dau": _now(), "loi": ""}
+        rec["updated_at"] = _now()
+        _save(items)
+        return dict(rec), script_no
+
+
+def finish_generation(insight_id: str, result: dict) -> None:
+    with _lock:
+        items = _load()
+        rec = _find(items, insight_id)
+        SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
+        _script_path(rec["kich_ban_so"]).write_text(result["markdown"], encoding="utf-8")
+        rec["kich_ban_lien_ket"] = _clean_links([*rec.get("kich_ban_lien_ket", []), rec["kich_ban_so"]])
+        rec["sinh"] = {"trang_thai": "xong", "bat_dau": rec.get("sinh", {}).get("bat_dau", ""), "luc": _now(),
+                       "model": result["model"], "so_lan_goi": result["attempts"], "check": result["check"],
+                       "ten_kich_ban": result["ten_kich_ban"], "insight_chinh": result["insight_chinh"],
+                       "hook": result["hook"], "sua_tay": "", "loi": ""}
+        rec["updated_at"] = _now()
+        _save(items)
+
+
+def fail_generation(insight_id: str, message: str) -> None:
+    with _lock:
+        items = _load()
+        rec = _find(items, insight_id)
+        rec["sinh"] = {**(rec.get("sinh") or {}), "trang_thai": "loi", "loi": message, "luc_loi": _now()}
+        _save(items)
+
+
+def read_generated(insight_id: str) -> str:
+    rec = _find(_load(), insight_id)
+    p = _script_path(rec["kich_ban_so"]) if rec.get("kich_ban_so") else None
+    return p.read_text(encoding="utf-8") if p and p.is_file() else ""
+
+
+def save_manual_edit(insight_id: str, markdown: str, check: dict) -> dict:
+    with _lock:
+        items = _load()
+        rec = _find(items, insight_id)
+        if not rec.get("kich_ban_so") or not _script_path(rec["kich_ban_so"]).is_file():
+            raise InboxError("Insight này chưa có kịch bản để sửa")
+        _script_path(rec["kich_ban_so"]).write_text(markdown, encoding="utf-8")
+        rec["sinh"] = {**rec.get("sinh", {}), "check": check, "sua_tay": _now()}
+        rec["updated_at"] = _now()
+        _save(items)
+        return rec
+
+
+def library_entries() -> list[dict]:
+    """Kịch bản sinh từ Inbox để Thư viện kịch bản hiện chung — chỉ khách còn 'Đã đồng ý'."""
+    out = []
+    for r in _load():
+        if r.get("dong_y") == CONSENT_OK and r.get("kich_ban_so") and _script_path(r["kich_ban_so"]).is_file():
+            s = r.get("sinh") or {}
+            out.append({"script_id": r["kich_ban_so"], "inbox_id": r["id"], "ten_khach": r["ten_khach"],
+                        "name": s.get("ten_kich_ban") or f"Kịch bản từ inbox — {r['ten_khach']}",
+                        "insight": s.get("insight_chinh", ""), "hook": s.get("hook", "")})
+    return out
+
+
+def library_script(script_no: str) -> str | None:
+    for e in library_entries():
+        if e["script_id"] == script_no:
+            return _script_path(script_no).read_text(encoding="utf-8")
+    return None
