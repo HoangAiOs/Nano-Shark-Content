@@ -41,6 +41,8 @@ FORBIDDEN = [
     "hết thoát vị", "đảm bảo", "cam kết", "thay thế thuốc", "thay thuốc", "không cần mổ", "khỏi mổ",
     "tránh mổ", "thay cho mổ", "thay mổ", "thần dược", "100%", "chắc chắn", "sẽ hết",
 ]
+# Câu mẫu cũ đã bỏ theo yêu cầu (31/10/2026) — còn xuất hiện thì báo đỏ để sinh lại.
+DROPPED_BOILERPLATE = ["theo dõi với bác sĩ", "chỉ hỗ trợ khớp", "chỉ hỗ trợ cho khớp", "chỉ nằm ở phần khớp"]
 # Riêng mục Kết quả: cấm thêm các từ hứa hẹn tốc độ / khỏi bệnh.
 FORBIDDEN_RESULT = ["nhanh", "khỏi", "sẽ hết", "chắc chắn", "lập tức"]
 # Hàm lượng thành phần không được in ra kịch bản (knowledge base vẫn giữ số liệu).
@@ -60,6 +62,7 @@ SCRIPT_SCHEMA = {
         "insight_chinh": {"type": "string"},
         "hook": {"type": "string"},
         "van_de": {"type": "string"},
+        "co_che": {"type": "string", "description": "Cơ chế bệnh: 3–5 câu"},
         "giai_phap": {"type": "string"},
         "ket_qua": {"type": "string", "description": "3–5 gạch đầu dòng ngắn: điều khách có thể cảm nhận"},
         "cta": {"type": "string"},
@@ -68,7 +71,7 @@ SCRIPT_SCHEMA = {
             "description": "Mỗi mục thiếu dữ liệu đã đánh dấu [THIẾU THÔNG TIN: ...] trong kịch bản",
         },
     },
-    "required": ["ten_kich_ban", "insight_chinh", "hook", "van_de", "giai_phap", "ket_qua", "cta", "thieu_thong_tin"],
+    "required": ["ten_kich_ban", "insight_chinh", "hook", "van_de", "co_che", "giai_phap", "ket_qua", "cta", "thieu_thong_tin"],
     "additionalProperties": False,
 }
 
@@ -76,20 +79,22 @@ HARD_RULES = f"""QUY TẮC CỨNG (vi phạm bất kỳ điều nào là kịch 
 1. Công dụng chỉ được lấy từ mục "Công dụng được phép dùng trong kịch bản" trong KNOWLEDGE BASE (cùng câu đã duyệt "{APPROVED_CLAIM}"), luôn diễn đạt theo hướng "hỗ trợ". Mỗi thành phần chỉ được mô tả theo vai trò ghi trong KNOWLEDGE BASE.
 2. KHÔNG in hàm lượng ra kịch bản: không nêu mg, mcg, CFU, phần trăm, tỷ lệ hay bất kỳ hàm lượng thành phần nào — chỉ nói tên thành phần và nó hỗ trợ gì. Được giữ các mốc kiểm chứng không phải hàm lượng: bằng sáng chế Nhật số 3248170, GMP, số công bố, cua tuyết đỏ Tottori.
 3. Tuyệt đối không nói sản phẩm chữa/điều trị/làm hết/khỏi bệnh; không hứa kết quả; không nói thay thế thuốc, thay mổ hay thay điều trị của bác sĩ; không nói giúp hết tê bì, hết chèn ép thần kinh, hết thoát vị.
-4. Khách thoát vị đĩa đệm hoặc đau thần kinh toạ: chỉ nói sản phẩm hỗ trợ khớp/sụn, và khuyên cô chú/anh chị tiếp tục theo dõi với bác sĩ.
+4. Khách thoát vị đĩa đệm, đau thần kinh toạ hay tê bì do chèn ép: chỉ nói sản phẩm hỗ trợ khớp/sụn theo công dụng được phép. KHÔNG chèn các câu kiểu "sản phẩm chỉ hỗ trợ khớp và sụn", "cô/chị vẫn tiếp tục theo dõi với bác sĩ (đã khám cho cô)" — kịch bản không cần câu này.
 5. Mục Kết quả: dùng "hỗ trợ", "có thể cảm nhận", "giúp … theo cơ địa từng người"; không viết "sẽ hết đau", "chắc chắn", "nhanh", "khỏi", "ngay". Mỗi ý phải suy ra từ danh sách công dụng được phép VÀ đúng tình trạng của khách.
 6. Triệu chứng TÊ (tê bì, tê buốt, tê chân/tay, chèn ép thần kinh): file đào tạo KHÔNG có công dụng này — không được tự khẳng định sản phẩm giúp giảm/đỡ tê ở bất kỳ mục nào. Chỉ được nêu dưới dạng lời kể của khách hàng thật trong LỜI KỂ RESEARCH (chỉ các mục có tên khách, KHÔNG dùng mục "Chưa đủ chắc"), khi tình trạng tương ứng (cùng vùng, cùng kiểu triệu chứng), viết rõ tên khách kèm cụm "chia sẻ của khách, tuỳ cơ địa", không nêu con số. Không có trường hợp tương ứng thì đặt đúng [THIẾU THÔNG TIN: kết quả cho triệu chứng tê].
 7. Không bịa số liệu, bằng chứng, tên khách khác, hay kết quả mà khách chưa từng nói.
 8. Câu hỏi khách hỏi mà KNOWLEDGE BASE không có dữ liệu (ví dụ "có tăng cân không", tác dụng phụ, tương tác thuốc, liệu trình theo bệnh lý, chính sách giao hàng/thanh toán chưa ghi): KHÔNG trả lời đoán. Chèn đúng dấu [THIẾU THÔNG TIN: <mô tả ngắn>] vào chỗ đó, và liệt kê mỗi mục vào trường thieu_thong_tin.
-9. Không dùng các từ: {", ".join(FORBIDDEN)}. Muốn khuyên đi khám thì viết "tiếp tục theo dõi với bác sĩ". Chỉ nhắc "người đang điều trị bệnh nên tham khảo ý kiến trước khi dùng" khi cần, đúng như khuyến cáo trên nhãn.
+9. Không dùng các từ: {", ".join(FORBIDDEN)}. Chỉ nhắc "người đang điều trị bệnh nên tham khảo ý kiến trước khi dùng" khi cần, đúng như khuyến cáo trên nhãn.
 10. Chỉ dùng con số có trong KNOWLEDGE BASE hoặc trong tin nhắn/hồ sơ của khách, và không phải hàm lượng.
-11. Không tự viết câu cảnh báo bắt buộc và câu "{RESULT_NOTE}" — hệ thống tự gắn."""
+11. Mục Cơ chế bệnh: CHỈ lấy từ mục "Cơ chế (nguồn: file đào tạo)" trong KNOWLEDGE BASE, diễn đạt lại bằng lời đời thường, chỉ nêu ý phù hợp triệu chứng khách. Tình trạng cần giải thích cơ chế mà KNOWLEDGE BASE không có (thoát vị đĩa đệm, đau thần kinh toạ, tê bì do chèn ép…) thì KHÔNG tự bịa cơ chế y khoa: chỉ nói phần liên quan tới sụn, khớp, độ ẩm, chất nhầy, rồi đặt [THIẾU THÔNG TIN: cơ chế … cho tình trạng này] ở chỗ còn thiếu. Không chẩn đoán cho khách, không nói chắc "cô bị X là do Y"; dùng "thường", "một trong những lý do", "khi … thì có thể …".
+12. Không tự viết câu cảnh báo bắt buộc và câu "{RESULT_NOTE}" — hệ thống tự gắn."""
 
 TASK = """VIỆC CẦN LÀM: viết 1 kịch bản video ngắn để BS Sơn quay, đọc lên quay được ngay, dựa trên đúng một khách đã đồng ý cho dùng tên và câu chuyện.
 - ten_kich_ban: tên ngắn gọn cho kịch bản.
 - insight_chinh: 1 câu nêu nỗi đau/băn khoăn thật của khách này.
 - hook: 2–3 câu mở đầu, dùng chính hoàn cảnh khách: tên, tuổi, tình trạng, câu hỏi họ đã hỏi.
 - van_de: kể lại hành trình của khách bằng chính chi tiết trong tin nhắn: đã chẩn đoán gì, đã thử cách gì, còn lo gì. Không thêm chi tiết khách không nói.
+- co_che: 3–5 câu giải thích dễ hiểu vì sao khách có thể bị tình trạng đó, gắn với triệu chứng khách nói (theo quy tắc 11), rồi dẫn sang Giải pháp: mỗi thành phần sẽ bù đúng chỗ thiếu nào.
 - giai_phap: đi từng thành phần của sản phẩm; mỗi thành phần 1–2 câu nói rõ NÓ HỖ TRỢ GÌ cho đúng vấn đề của khách này (theo vai trò trong KNOWLEDGE BASE), không kèm hàm lượng. Chỉ nêu thành phần liên quan. Trả lời thẳng các câu hỏi khách đã hỏi nếu KNOWLEDGE BASE có dữ liệu (ví dụ nơi sản xuất); không có thì dùng [THIẾU THÔNG TIN: ...]. Trình bày thành gạch đầu dòng cho dễ nhấn nhá.
 - ket_qua: 3–5 gạch đầu dòng ngắn, điều khách có thể cảm nhận theo đúng tình trạng của họ (ví dụ đau gối: đứng lên ngồi xuống nhẹ nhàng hơn; đau lưng: vận động trơn tru hơn, đỡ đau hơn), mỗi ý suy ra từ công dụng được phép. Triệu chứng tê theo quy tắc 6.
 - cta: kêu gọi nhắn tin/để lại thông tin. Chỉ nhắc "nhận hàng rồi mới thanh toán" nếu KNOWLEDGE BASE có ghi chính sách đó; nếu không có thì chèn [THIẾU THÔNG TIN: chính sách nhận hàng rồi thanh toán].
@@ -151,7 +156,7 @@ def to_markdown(script_no: str, rec: dict, data: dict) -> str:
             f"{rec.get('ghi_chu_xac_nhan') or 'chưa ghi cách xác nhận'})\n"
             f"**Insight chính:** {data['insight_chinh'].strip()}\n\n{head}"
             f"## Hook\n{data['hook'].strip()}\n\n## Vấn đề\n{data['van_de'].strip()}\n\n"
-            f"## Giải pháp\n{data['giai_phap'].strip()}\n\n"
+            f"## Cơ chế bệnh\n{data['co_che'].strip()}\n\n## Giải pháp\n{data['giai_phap'].strip()}\n\n"
             f"{RESULT_HEADING}\n{_result_block(data['ket_qua'])}\n\n## CTA\n{data['cta'].strip()}\n\n"
             f"## Cảnh báo bắt buộc\n\"{DISCLAIMER}\"\n")
 
@@ -199,7 +204,7 @@ def check_script(markdown: str, rec: dict) -> dict:
     allowed |= _numbers(title_line)
     so_la = sorted({m for m in re.findall(r"\d+(?:[.,]\d+)*", body) if _norm_num(m) not in allowed},
                    key=lambda x: (len(x), x))
-    vi_pham = found(FORBIDDEN)
+    vi_pham = found(FORBIDDEN) + [f'câu mẫu đã bỏ: "{t}"' for t in DROPPED_BOILERPLATE if t in low]
     result_low = MISSING_RE.sub(" ", _section(markdown, RESULT_HEADING)).lower()
     vi_pham += [f"{t} (mục Kết quả)" for t in FORBIDDEN_RESULT
                 if t not in vi_pham and re.search(r"(?<![\wÀ-ỹ])" + re.escape(t) + r"(?![\wÀ-ỹ])", result_low)]

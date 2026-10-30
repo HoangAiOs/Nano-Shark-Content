@@ -33,6 +33,17 @@ Luôn diễn đạt theo hướng "hỗ trợ":
 - Hỗ trợ cơ bắp hoạt động linh hoạt (BCAA).
 - Không có công dụng nào về tê, tê bì, tê buốt hay chèn ép thần kinh.
 
+## Cơ chế (nguồn: file đào tạo — Thông tin sản phẩm)
+Nguồn DUY NHẤT cho mục "Cơ chế bệnh" trong kịch bản. Diễn đạt lại bằng lời đời thường; không có ở đây thì không được tự giải thích.
+- Glucosamine là thành phần của sụn, tạo "tấm đệm" bao quanh xương khớp; khi khớp thoái hoá, lớp đệm này mỏng và cứng dần, dẫn tới đau, khô, kém linh hoạt.
+- Sụn bị phân huỷ dần theo thời gian và tuổi tác, làm mất độ ẩm của sụn.
+- Hyaluronic acid là chất bôi trơn, giữ chất lỏng và độ ẩm cho sụn; lượng này giảm dần theo tuổi tác nên khớp dễ khô, thiếu chất nhầy, cử động kém trơn tru.
+- Chondroitin là thành phần chính của sụn, giữ nước cho tế bào sụn, giúp bôi trơn.
+- Collagen type 2 là thành phần chính của sụn và chất kết dính giữa xương và canxi; thiếu thì sụn kém bền, khớp khô.
+- Canxi cần được hấp thu tốt để liên kết với xương (bằng sáng chế chondroitin–canxi).
+- Viêm quanh khớp góp phần gây đau (MSM, cây móng mèo hỗ trợ giảm viêm).
+- CHƯA CÓ: cơ chế thoát vị đĩa đệm, đau thần kinh toạ, tê bì do chèn ép thần kinh.
+
 ## Công thức 5 hướng hỗ trợ
 1. Tái tạo/sửa chữa sụn.
 2. Giảm đau, kháng viêm.
